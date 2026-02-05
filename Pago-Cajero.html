@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago en Efectivo - Borrachorama</title>
+    <!-- Bootstrap CSS para menú y modal -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fffceb 0%, #ffeaa7 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        header {
+            background: url('img/fondocerveza.jpg') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        header img {
+            max-width: 220px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Navbar: conservar fondo actual y habilitar menú */
+        .navbar-custom {
+            background: linear-gradient(135deg, #ffc107 0%, #d57c00 100%);
+            padding: 15px 20px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky; top: 0; z-index: 1000;
+            overflow: visible; /* para dropdown */
+        }
+        
+        /* Fila única centrada */
+        .navbar-custom .menu-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: nowrap;
+            white-space: nowrap;
+            min-height: 40px;
+        }
+        
+        /* Botones negros en el menú */
+        .navbar-custom .btn,
+        .navbar-custom .dropdown-toggle {
+            background-color: #000 !important;
+            color: #fff !important;
+            border: none !important;
+            background-image: none !important;
+            box-shadow: none !important;
+            min-width: 140px;
+            padding: 8px 12px !important;
+            line-height: 1.2 !important;
+            border-radius: 6px;
+        }
+        .navbar-custom .btn:hover,
+        .navbar-custom .dropdown-toggle:hover {
+            background-color: #000 !important;
+            color: #fff !important;
+            opacity: 0.9;
+        }
+        .navbar-custom .dropdown { display: inline-block; }
+        .navbar-custom .dropdown-menu {
+            min-width: 180px;
+            text-align: left;
+            background-color: #fff;
+            color: #222;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .navbar-custom .dropdown-menu .dropdown-item { color:#222; }
+        .navbar-custom .dropdown-menu .dropdown-item:hover { background-color:#ffe08a; }
+        /* Cuenta fija a la izquierda y centrada verticalmente */
+        .btn-cuenta { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); padding: 8px 12px !important; line-height: 1.2 !important; }
+        /* Botón Acerca igual tamaño y no muy ancho */
+        .navbar-custom .menu-row .btn-acerca {
+            min-width: unset !important;
+            width: auto !important;
+            padding: 8px 12px !important;
+            font-size: 1rem !important;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-top: 5px solid #ffb300;
+        }
+        
+        h2 {
+            color: #d57c00;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 2em;
+        }
+        
+        .monto-destacado {
+            background: linear-gradient(135deg, #ffd166 0%, #ffb300 100%);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 25px 0;
+            color: white;
+            font-size: 1.3em;
+            box-shadow: 0 5px 15px rgba(255, 179, 0, 0.3);
+        }
+        
+        .monto-numero {
+            font-size: 2.5em;
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .opciones-pago {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin: 35px 0;
+            justify-content: center;
+        }
+        
+        .opcion {
+            flex: 1;
+            min-width: 250px;
+            max-width: 300px;
+            border: 3px solid #eee;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s;
+            background: white;
+        }
+        
+        .opcion:hover {
+            border-color: #ffb300;
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(255, 179, 0, 0.2);
+        }
+        
+        .opcion.seleccionada {
+            border-color: #d57c00;
+            background: linear-gradient(135deg, #fff9e6 0%, #ffecb3 100%);
+            box-shadow: 0 10px 25px rgba(213, 124, 0, 0.3);
+        }
+        
+        .icono-opcion {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            color: #d57c00;
+        }
+        
+        .opcion h3 {
+            color: #d57c00;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+        
+        .ventajas {
+            margin-top: 15px;
+            text-align: left;
+            padding-left: 15px;
+        }
+        
+        .ventajas li {
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: #555;
+        }
+        
+        .seccion-contenido {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tienda-info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            text-align: center;
+            border: 2px solid #90caf9;
+        }
+        
+        .tienda-info h3 {
+            color: #1565c0;
+            margin-bottom: 15px;
+        }
+        
+        .qr-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 2px solid #ffb300;
+        }
+        
+        .qr-code {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: monospace;
+            font-size: 0.9em;
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .codigo-reserva {
+            font-family: monospace;
+            font-size: 1.8em;
+            letter-spacing: 3px;
+            color: #d57c00;
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 10px;
+            background: #fff9e6;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        
+        .datos-banco {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border: 2px solid #81c784;
+        }
+        
+        .datos-banco h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        
+        .codigo-referencia {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 25px 0;
+            border: 2px solid #ffb300;
+        }
+        
+        .codigo {
+            font-family: 'Courier New', monospace;
+            font-size: 2em;
+            letter-spacing: 4px;
+            color: #d57c00;
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            display: inline-block;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .instrucciones {
+            background: #f8f9fa;
+            border-left: 5px solid #d57c00;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .instrucciones h4 {
+            color: #d57c00;
+            margin-bottom: 15px;
+        }
+        
+        .instrucciones ol {
+            padding-left: 25px;
+        }
+        
+        .instrucciones li {
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #ffb300 0%, #d57c00 100%);
+            color: white;
+            border: none;
+            padding: 18px 45px;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 20px;
+            box-shadow: 0 6px 20px rgba(255, 179, 0, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(213, 124, 0, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .info-advertencia {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffccbc 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 25px;
+            border-left: 5px solid #ff6f00;
+        }
+        
+        .simulacion-nota {
+            font-size: 0.9rem;
+            color: #666;
+            text-align: center;
+            margin-top: 25px;
+            font-style: italic;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px dashed #ffb300;
+        }
+        
+        @media (max-width: 768px) {
+            .opciones-pago {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .opcion {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 25px;
+            }
+            
+            h2 {
+                font-size: 1.6em;
+            }
+            
+            .monto-numero {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div style="position: relative; z-index: 1;">
+            <img src="img/Borrachoramalogo.png" alt="Borrachorama Logo">
+        </div>
+    </header>
+
+    <!-- Navbar: reemplaza el texto por el menú, conservando el fondo actual -->
+    <nav class="navbar-custom" id="navbar">
+        <a href="/Panel.html" class="btn btn-dark text-white btn-cuenta">Cuenta</a>
+        <div class="menu-row">
+            <a href="/inicio.html" class="btn btn-dark text-white">Inicio</a>
+            <a href="/src/html/cart.html" class="btn btn-dark text-white">🛒 Carrito</a>
+            <button type="button" class="btn btn-dark text-white btn-acerca" data-bs-toggle="modal" data-bs-target="#nosotrosModal">Acerca de Nosotros</button>
+            <div class="dropdown d-inline">
+                <button id="docsDropdownCajero" type="button" class="btn btn-dark dropdown-toggle text-white" data-bs-toggle="dropdown" aria-expanded="false">
+                    📂 Documentación
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/src/html/catalog.html">Catálogo</a></li>
+                    <li><a class="dropdown-item" href="/src/infraestructura.html">Infraestructura</a></li>
+                    <li><a class="dropdown-item" href="/Disponibilidad.html">Disponibilidad</a></li>
+                    <li><a class="dropdown-item" href="/Tecnologia.html">Tecnología</a></li>
+                    <li><a class="dropdown-item" href="/Status.html">Status</a></li>
+                    <li><a class="dropdown-item" href="/Pedidos_Especiales.html">Pedidos Especiales</a></li>
+                    <li><a class="dropdown-item" href="/Metricas.html">Métricas</a></li>
+                    <li><a class="dropdown-item" href="/Metodos_Pago.html">Métodos de Pago</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modal: Acerca de Nosotros -->
+    <div class="modal fade" id="nosotrosModal" tabindex="-1" aria-labelledby="nosotrosModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" id="nosotrosModalLabel">Acerca de Nosotros</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Borrachorama</strong> nació en Aguascalientes con el objetivo de ofrecer las mejores cervezas nacionales e internacionales en un ambiente único. 🍺</p>
+                    <p>Nos esforzamos por brindar calidad, seguridad y atención al cliente en cada experiencia de compra.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Pago en Efectivo o Transferencia</h2>
+            
+            <div class="monto-destacado">
+                <span>Total a pagar:</span>
+                <span class="monto-numero" id="montoPagar">$0.00</span>
+            </div>
+            
+            <p style="text-align: center; margin-bottom: 25px; font-size: 1.1em; color: #555;">
+                Selecciona cómo deseas realizar tu pago:
+            </p>
+            
+            <div class="opciones-pago">
+                <div class="opcion" onclick="seleccionarOpcion('efectivo')" id="opcionEfectivo">
+                    <div class="icono-opcion">💵</div>
+                    <h3>Efectivo en Tienda</h3>
+                    <p style="color: #666; margin-bottom: 15px;">Paga directamente en nuestra tienda física</p>
+                    <div class="ventajas">
+                        <ul style="list-style-type: none; padding: 0;">
+                            <li>✅ Pago inmediato</li>
+                            <li>✅ Sin comisiones adicionales</li>
+                            <li>✅ Recibo físico al momento</li>
+                            <li>✅ Atención personalizada</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="opcion" onclick="seleccionarOpcion('transferencia')" id="opcionTransferencia">
+                    <div class="icono-opcion">🏦</div>
+                    <h3>Transferencia Bancaria</h3>
+                    <p style="color: #666; margin-bottom: 15px;">Depósito o transferencia electrónica</p>
+                    <div class="ventajas">
+                        <ul style="list-style-type: none; padding: 0;">
+                            <li>✅ Desde la comodidad de tu banco</li>
+                            <li>✅ Transacción segura y rastreable</li>
+                            <li>✅ Disponible 24/7</li>
+                            <li>✅ Comprobante digital inmediato</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección para Efectivo -->
+            <div id="seccionEfectivo" class="seccion-contenido">
+                <div class="tienda-info">
+                    <h3>📍 Nuestra Tienda</h3>
+                    <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-bottom: 20px;">
+                        <div style="text-align: left;">
+                            <p><strong>🏠 Dirección:</strong><br>Av. Cervecera 123, Col. Lúpulo<br>Ciudad de México, CDMX</p>
+                            <p><strong>🕒 Horario:</strong><br>Lunes a Sábado: 10:00 - 20:00 hrs<br>Domingo: 11:00 - 18:00 hrs</p>
+                        </div>
+                        <div style="text-align: left;">
+                            <p><strong>📞 Teléfono:</strong><br>55 1234 5678</p>
+                            <p><strong>📧 Email:</strong><br>tienda@borrachorama.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="qr-container">
+                        <h4 style="color: #d57c00; margin-bottom: 15px;">Código de Reserva</h4>
+                        <div class="qr-code">
+                            <div>
+                                <div style="font-size: 3em; margin-bottom: 10px;">🛒</div>
+                                <div class="codigo-reserva" id="codigoReserva">GENERANDO...</div>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px; color: #555;"><strong>Muestra este código al llegar a la tienda</strong></p>
+                    </div>
+                </div>
+                
+                <div class="instrucciones">
+                    <h4>📋 Instrucciones para pago en efectivo:</h4>
+                    <ol>
+                        <li>Presiona el botón <strong>"Confirmar Reserva"</strong> para generar tu código único</li>
+                        <li>Acude a nuestra tienda en el horario indicado</li>
+                        <li>Muestra tu código de reserva en caja (puede ser en tu teléfono o impreso)</li>
+                        <li>Realiza el pago en efectivo por el monto exacto</li>
+                        <li>Recibe tu producto inmediatamente y tu factura física</li>
+                    </ol>
+                    <div style="margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: 8px;">
+                        <p style="margin: 0; color: #2e7d32;"><strong>⚠️ Importante:</strong> Tu reserva es válida por <strong>48 horas</strong>. Después de ese tiempo, se cancelará automáticamente.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección para Transferencia -->
+            <div id="seccionTransferencia" class="seccion-contenido">
+                <div class="datos-banco">
+                    <h3>🏦 Datos Bancarios para Transferencia</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                        <div>
+                            <p><strong>Banco:</strong> Banco de la Cerveza (BDC)</p>
+                            <p><strong>Beneficiario:</strong> Borrachorama S.A. de C.V.</p>
+                            <p><strong>RFC:</strong> BCH250101ABC</p>
+                        </div>
+                        <div>
+                            <p><strong>CLABE:</strong> 012 180 00123456789 0</p>
+                            <p><strong>Cuenta:</strong> 123-456789-0</p>
+                            <p><strong>Tipo de cuenta:</strong> Cuenta de cheques</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="codigo-referencia">
+                    <h4 style="color: #d57c00;">🔢 Referencia de Pago</h4>
+                    <p>Utiliza esta referencia al realizar tu transferencia:</p>
+                    <div class="codigo" id="codigoReferencia">GENERANDO...</div>
+                    <p><small style="color: #666;">Esta referencia identifica tu pago de forma única. Es obligatoria para procesar tu pedido.</small></p>
+                </div>
+                
+                <div class="instrucciones">
+                    <h4>📋 Instrucciones para transferencia:</h4>
+                    <ol>
+                        <li>Realiza la transferencia por el <strong>monto exacto</strong> indicado arriba</li>
+                        <li>Usa la <strong>referencia de pago</strong> proporcionada en el concepto</li>
+                        <li>Guarda tu <strong>comprobante de transferencia</strong> (número de folio)</li>
+                        <li>Una vez confirmado el pago por nuestro sistema (2-24 hrs), procesaremos tu pedido</li>
+                        <li>Recibirás un <strong>correo de confirmación</strong> con los detalles de entrega</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <button type="button" onclick="confirmarPagoCajero()" id="btnConfirmar">
+                Selecciona un método de pago
+            </button>
+            
+            <div class="info-advertencia">
+                <p style="margin: 0; color: #d57c00; font-weight: bold;">⚠️ Importante: Esta es una simulación educativa.</p>
+                <p style="margin: 10px 0 0 0; color: #555;">No se realizarán cobros reales. Tu pedido simulado se reservará por <strong>48 horas</strong> hasta que confirmes el pago en la simulación.</p>
+            </div>
+            
+            <p class="simulacion-nota">
+                💡 Sistema de pago en efectivo/transferencia simulado para fines educativos. 
+                Tiene un 50% de probabilidad de simular un fallo en la generación de reserva/referencia.
+            </p>
+        </div>
+    </div>
+
+    <!-- Agregar Bootstrap bundle para habilitar modal y dropdown -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Inicialización explícita del dropdown
+        document.addEventListener('DOMContentLoaded', function () {
+            var el = document.getElementById('docsDropdownCajero');
+            if (el && window.bootstrap && bootstrap.Dropdown) {
+                new bootstrap.Dropdown(el);
+            }
+        });
+    </script>
+
+    <script>
+        // ================= VARIABLES GLOBALES =================
+        let opcionSeleccionada = '';
+        let codigoReserva = '';
+        let codigoReferencia = '';
+        
+        // ================= CONFIGURACIÓN DE SIMULACIÓN =================
+        const ConfiguracionPagoCajero = {
+            probabilidadError: 0.5, // 50% de probabilidad de fallo
+            motivosError: [
+                "No se pudo generar la reserva. El sistema de reservas no responde.",
+                "Error al conectar con el sistema de pagos. Intenta más tarde.",
+                "Límite de reservas simultáneas excedido. Intenta en unos minutos.",
+                "Error en la generación del código de referencia. Sistema temporalmente no disponible.",
+                "No se pudo validar la información del cliente. Verifica tus datos.",
+                "El sistema de códigos QR está experimentando problemas técnicos."
+            ],
+            tiempoReserva: 48 // horas
+        };
+
+        // ================= INICIALIZACIÓN =================
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('paymentLocked') === 'true') {
+                try { document.getElementById('btnConfirmar').disabled = true; } catch(e){}
+                window.location.replace('/PagoRealizado.html');
+                return;
+            }
+            // Calcular monto del carrito
+            actualizarMonto();
+            
+            // Generar códigos iniciales
+            generarCodigos();
+            
+            // Seleccionar efectivo por defecto
+            setTimeout(() => {
+                seleccionarOpcion('efectivo');
+            }, 100);
+        });
+
+        // ================= FUNCIONES DE UTILIDAD =================
+        function actualizarMonto() {
+            let total = 0;
+            
+            // Intentar de múltiples fuentes
+            const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+            total = carrito.reduce((sum, item) => {
+                return sum + (parseFloat(item.precio) || 0) * (parseInt(item.cantidad) || 1);
+            }, 0);
+            
+            if (total === 0) {
+                const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+                const ultimoPedido = pedidos[pedidos.length - 1];
+                if (ultimoPedido && ultimoPedido.total) {
+                    total = ultimoPedido.total;
+                }
+            }
+            
+            if (total === 0) {
+                total = parseFloat(localStorage.getItem('pagoTotal') || '0');
+            }
+            
+            if (total === 0) {
+                total = 189.99; // Ejemplo
+            }
+            
+            document.getElementById('montoPagar').textContent = '$' + total.toFixed(2);
+            return total;
+        }
+
+        function generarCodigos() {
+            // Generar código de reserva
+            const timestamp = Date.now().toString().slice(-6);
+            codigoReserva = 'RES-' + timestamp + '-' + Math.floor(Math.random() * 100).toString().padStart(2, '0');
+            document.getElementById('codigoReserva').textContent = codigoReserva;
+            
+            // Generar código de referencia
+            const randomRef = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+            codigoReferencia = 'REF-' + randomRef + '-' + timestamp.slice(-3);
+            document.getElementById('codigoReferencia').textContent = codigoReferencia;
+        }
+
+        // ================= FUNCIONES DE INTERFAZ =================
+        function seleccionarOpcion(opcion) {
+            opcionSeleccionada = opcion;
+            
+            // Remover selección de todas
+            document.querySelectorAll('.opcion').forEach(el => {
+                el.classList.remove('seleccionada');
+            });
+            
+            // Ocultar todas las secciones
+            document.getElementById('seccionEfectivo').style.display = 'none';
+            document.getElementById('seccionTransferencia').style.display = 'none';
+            
+            // Seleccionar y mostrar la correcta
+            const opcionElement = document.getElementById('opcion' + opcion.charAt(0).toUpperCase() + opcion.slice(1));
+            opcionElement.classList.add('seleccionada');
+            
+            const seccionElement = document.getElementById('seccion' + opcion.charAt(0).toUpperCase() + opcion.slice(1));
+            seccionElement.style.display = 'block';
+            
+            // Cambiar texto del botón
+            const btn = document.getElementById('btnConfirmar');
+            if (opcion === 'efectivo') {
+                btn.innerHTML = '✅ Confirmar Reserva en Tienda';
+                btn.style.background = 'linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)';
+            } else {
+                btn.innerHTML = '🏦 Confirmar Datos para Transferencia';
+                btn.style.background = 'linear-gradient(135deg, #2196F3 0%, #0D47A1 100%)';
+            }
+        }
+
+        function mostrarNotificacion(mensaje) {
+            const notificacion = document.createElement('div');
+            notificacion.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: linear-gradient(135deg, #ffb300 0%, #d57c00 100%);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                z-index: 9998;
+                animation: slideIn 0.5s ease;
+                max-width: 300px;
+                font-weight: bold;
+            `;
+            
+            notificacion.innerHTML = mensaje;
+            
+            document.body.appendChild(notificacion);
+            
+            setTimeout(() => {
+                notificacion.style.animation = 'slideOut 0.5s ease';
+                setTimeout(() => notificacion.remove(), 500);
+            }, 4000);
+            
+            // Agregar estilos de animación si no existen
+            if (!document.querySelector('#animacion-estilos-cajero')) {
+                const estilos = document.createElement('style');
+                estilos.id = 'animacion-estilos-cajero';
+                estilos.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(estilos);
+            }
+        }
+
+        // ================= FUNCIÓN DE SIMULACIÓN DE FALLOS =================
+        function simularFalloCajero() {
+            
+            const tieneFallo = Math.random() < ConfiguracionPagoCajero.probabilidadError;
+            
+            if (tieneFallo) {
+                // Seleccionar motivo aleatorio
+                const motivoIndex = Math.floor(Math.random() * ConfiguracionPagoCajero.motivosError.length);
+                const motivo = ConfiguracionPagoCajero.motivosError[motivoIndex];
+                
+                return {
+                    exito: false,
+                    error: motivo,
+                    codigoError: `CAJ-ERR-${Date.now().toString().slice(-6)}`,
+                    recomendacion: "Por favor intenta nuevamente en unos minutos. Si el problema persiste, contacta a soporte.",
+                    tiempoSimulado: Math.floor(Math.random() * 2000) + 1000
+                };
+            }
+            
+            return { exito: true };
+        }
+
+        function mostrarSpinnerProcesamiento(mensaje = "Generando reserva...") {
+            const spinnerHTML = `
+                <div id="spinner-cajero" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+                    <div style="background: white; padding: 30px; border-radius: 15px; text-align: center; max-width: 400px; width: 90%;">
+                        <div style="border: 5px solid #f3f3f3; border-top: 5px solid ${opcionSeleccionada === 'efectivo' ? '#4CAF50' : '#2196F3'}; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+                        <h3 style="color: #333; margin-bottom: 10px;">${mensaje}</h3>
+                        <p style="color: #666; font-size: 0.9em;">Procesando solicitud...</p>
+                    </div>
+                </div>
+                <style>
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                </style>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', spinnerHTML);
+            
+            return {
+                eliminar: () => {
+                    const spinner = document.getElementById('spinner-cajero');
+                    if (spinner) spinner.remove();
+                }
+            };
+        }
+
+        // ================= FUNCIÓN PRINCIPAL =================
+        function confirmarPagoCajero() {
+            if (localStorage.getItem('paymentLocked') === 'true') {
+                alert('El pago ya fue realizado. Redirigiendo...');
+                window.location.replace('/PagoRealizado.html');
+                return;
+            }
+            
+            if (!opcionSeleccionada) {
+                alert('Por favor selecciona un método de pago.');
+                return;
+            }
+            
+            // Obtener datos
+            const total = actualizarMonto();
+            const datosPago = JSON.parse(localStorage.getItem('datosPagoTemp') || '{}');
+            
+            // Mostrar spinner
+            const spinner = mostrarSpinnerProcesamiento(
+                opcionSeleccionada === 'efectivo' ? 
+                'Generando código de reserva...' : 
+                'Generando referencia de transferencia...'
+            );
+            
+            // Simular procesamiento with posibilidad de fallo
+            setTimeout(() => {
+                spinner.eliminar();
+                const resultadoSimulacion = simularFalloCajero();
+
+                if (!resultadoSimulacion.exito) {
+                    // Fallo en la simulación
+                    const datosError = {
+                        motivo: resultadoSimulacion.error,
+                        codigo: resultadoSimulacion.codigoError,
+                        recomendacion: resultadoSimulacion.recomendacion,
+                        metodo: opcionSeleccionada,
+                        monto: total
+                    };
+                    
+                    // Guardar datos del error
+                    localStorage.setItem('ultimoErrorPago', JSON.stringify(datosError));
+                    localStorage.setItem('metodoPagoError', opcionSeleccionada);
+                    localStorage.setItem('montoPagoError', total.toString());
+                    localStorage.setItem('datosErrorPago', JSON.stringify(datosError));
+                    
+                    // Redirigir a página de error
+                    const params = new URLSearchParams({
+                        error: JSON.stringify(datosError),
+                        metodo: opcionSeleccionada,
+                        monto: total
+                    });
+                    
+                    window.location.href = `/Error-Pago.html?${params.toString()}`;
+                    return;
+                }
+                
+                // Doble verificación
+                if (localStorage.getItem('paymentLocked') === 'true') {
+                    alert('El pago ya fue realizado. Redirigiendo...');
+                    window.location.replace('/PagoRealizado.html');
+                    return;
+                }
+
+                // Éxito: registrar pedido como Pagado (sin registros previos)
+                generarCodigos(); // mantiene visual de códigos
+                const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+
+                const pedido = {
+                    id: 'PED-' + Date.now(),
+                    fecha: new Date().toISOString(),
+                    items: carrito.map(it => ({
+                        nombre: it.nombre,
+                        precio: parseFloat(it.precio) || 0,
+                        cantidad: parseInt(it.cantidad) || 1
+                    })),
+                    total: total,
+                    metodoPago: opcionSeleccionada,
+                    contacto: datosPago,
+                    estado: 'Pagado',
+                    codigoReserva: opcionSeleccionada === 'efectivo' ? codigoReserva : undefined,
+                    codigoReferencia: opcionSeleccionada === 'transferencia' ? codigoReferencia : undefined,
+                    fechaPago: new Date().toISOString(),
+                    detalles: opcionSeleccionada === 'efectivo' ? {
+                        tipo: 'Efectivo en tienda'
+                    } : {
+                        tipo: 'Transferencia bancaria'
+                    },
+                    historial: [
+                        { estado: 'Registrado', fecha: new Date().toISOString() },
+                        { estado: 'Pagado', fecha: new Date().toISOString() }
+                    ]
+                };
+                
+                const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+                pedidos.push(pedido);
+                localStorage.setItem('pedidos', JSON.stringify(pedidos));
+                localStorage.setItem('lastPedidoId', pedido.id);
+
+                alert('✅ Pago confirmado (simulado).');
+
+                localStorage.removeItem('reintentoPagoCajero');
+                localStorage.removeItem('carrito');
+                // Cerrar pago para impedir duplicados
+                localStorage.setItem('paymentLocked', 'true');
+                localStorage.setItem('paymentCompleted', 'true');
+                setTimeout(() => {
+                    window.location.href = '/Confirmacion.html';
+                }, 500);
+            }, 1500); // Simular 1.5 segundos de procesamiento
+        }
+
+    </script>
+</body>
+</html>

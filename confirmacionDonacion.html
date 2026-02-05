@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmación de Donación - Borrachorama</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .confirmation-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+            padding: 40px 30px;
+        }
+
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .donation-details {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .impact-visual {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .impact-item {
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .impact-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .impact-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #4CAF50;
+            margin: 5px 0;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-comprobante {
+            background: linear-gradient(135deg, #2196F3 0%, #0D47A1 100%);
+            color: white;
+        }
+
+        .btn-inicio {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .thank-you {
+            color: #666;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+
+        .social-share {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .share-btn {
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .share-fb {
+            background: #4267B2;
+            color: white;
+        }
+
+        .share-tw {
+            background: #1DA1F2;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="confirmation-card">
+        <div class="header">
+            <div class="checkmark">✓</div>
+            <h1>¡Gracias por Donar!</h1>
+            <p>Tu contribución hace la diferencia</p>
+        </div>
+
+        <div class="content">
+            <p class="thank-you">
+                Gracias por tu generosidad. Tu donación será utilizada para apoyar proyectos
+                de reforestación, conservación de agua y educación ambiental en comunidades mexicanas.
+            </p>
+
+            <div class="donation-details" id="donationDetails">
+                <!-- Los datos se cargarán con JavaScript -->
+            </div>
+
+            <div class="impact-visual">
+                <div class="impact-item">
+                    <div class="impact-icon">🌳</div>
+                    <div class="impact-number" id="arbolesPlantados">0</div>
+                    <div>árboles plantados</div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-icon">💧</div>
+                    <div class="impact-number" id="litrosAgua">0</div>
+                    <div>litros de agua</div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-icon">👨‍👩‍👧‍👦</div>
+                    <div class="impact-number" id="familias">0</div>
+                    <div>familias beneficiadas</div>
+                </div>
+            </div>
+
+            <div class="social-share">
+                <p>¡Comparte tu buena acción!</p>
+                <div class="share-buttons">
+                    <button class="share-btn share-fb" onclick="compartirFacebook()">
+                        📘 Facebook
+                    </button>
+                    <button class="share-btn share-tw" onclick="compartirTwitter()">
+                        🐦 Twitter
+                    </button>
+                    <button class="share-btn share-whatsapp" onclick="compartirWhatsApp()"
+                        style="background: #25D366; color: white;">
+                        💬 WhatsApp
+                    </button>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn btn-comprobante" onclick="descargarComprobante()">
+                    📄 Descargar Comprobante
+                </button>
+                <button class="btn btn-inicio" onclick="volverAlInicio()">
+                    🏠 Volver al Inicio
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Obtener última donación
+            const donacion = JSON.parse(localStorage.getItem('ultimaDonacion') || '{}');
+
+            if (donacion.id) {
+                // Mostrar detalles
+                const detalles = document.getElementById('donationDetails');
+                detalles.innerHTML = `
+                    <div class="detail-item">
+                        <span>ID de Donación:</span>
+                        <strong>${donacion.id}</strong>
+                    </div>
+                    <div class="detail-item">
+                        <span>Monto donado:</span>
+                        <strong style="color: #4CAF50;">$${donacion.monto.toFixed(2)}</strong>
+                    </div>
+                    <div class="detail-item">
+                        <span>Fundación:</span>
+                        <strong>${donacion.fundacion}</strong>
+                    </div>
+                    <div class="detail-item">
+                        <span>Fecha:</span>
+                        <strong>${new Date(donacion.fecha).toLocaleDateString('es-MX')}</strong>
+                    </div>
+                    <div class="detail-item">
+                        <span>Método de pago:</span>
+                        <strong>${donacion.metodo}</strong>
+                    </div>
+                    ${donacion.dedicatoria ? `
+                    <div class="detail-item">
+                        <span>Dedicatoria:</span>
+                        <em>"${donacion.dedicatoria}"</em>
+                    </div>` : ''}
+                `;
+
+                // Calcular impacto
+                const arboles = Math.floor(donacion.monto / 2); // $2 por árbol
+                const litros = donacion.monto * 10; // 10L por peso
+                const familias = Math.floor(donacion.monto / 20); // $20 por familia
+
+                document.getElementById('arbolesPlantados').textContent = arboles;
+                document.getElementById('litrosAgua').textContent = litros.toLocaleString('es-MX');
+                document.getElementById('familias').textContent = familias;
+
+                // Actualizar estadísticas generales
+                const donaciones = JSON.parse(localStorage.getItem('donaciones') || '[]');
+                const totalDonado = donaciones.reduce((sum, d) => sum + d.monto, 0);
+
+                // Guardar estadísticas
+                localStorage.setItem('estadisticasDonaciones', JSON.stringify({
+                    totalDonado,
+                    totalDonaciones: donaciones.length,
+                    ultimaActualizacion: new Date().toISOString()
+                }));
+
+            } else {
+                // Si no hay donación, redirigir
+                alert('No se encontró información de donación.');
+                window.location.href = 'Donacion.html';
+            }
+        });
+
+        function descargarComprobante() {
+            const donacion = JSON.parse(localStorage.getItem('ultimaDonacion') || '{}');
+
+            // Crear comprobante simple
+            const comprobante = `
+                ====================================
+                COMPROBANTE DE DONACIÓN DEDUCIBLE
+                Fundación "Verde por México"
+                ====================================
+                
+                ID de Donación: ${donacion.id}
+                Fecha: ${new Date(donacion.fecha).toLocaleString('es-MX')}
+                Monto: $${donacion.monto.toFixed(2)} MXN
+                Donante: ${donacion.donante?.nombre || 'Anónimo'}
+                RFC: XAXX010101000 (Genérico para donaciones)
+                
+                Concepto: Donación para proyectos de reforestación,
+                conservación de agua y educación ambiental.
+                
+                Este comprobante es válido para deducir impuestos
+                de acuerdo con la Ley del ISR, Artículo 151.
+                
+                Fundación "Verde por México"
+                RFC: VPM250101ABC
+                Domicilio: Av. Ecológica 123, CDMX
+                Contacto: donaciones@verdepormexico.org
+                
+                ====================================
+                ¡Gracias por tu contribución!
+                ====================================
+            `;
+
+            // Crear archivo para descargar
+            const blob = new Blob([comprobante], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `comprobante_donacion_${donacion.id}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            alert('Comprobante descargado exitosamente.');
+        }
+
+        function compartirFacebook() {
+            const donacion = JSON.parse(localStorage.getItem('ultimaDonacion') || '{}');
+            const texto = `Acabo de donar $${donacion.monto} a la Fundación "Verde por México" a través de Borrachorama. ¡Únete tú también! 🌱`;
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent(texto);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, '_blank');
+        }
+
+        function compartirTwitter() {
+            const donacion = JSON.parse(localStorage.getItem('ultimaDonacion') || '{}');
+            const texto = `Acabo de donar $${donacion.monto} para reforestar México 🌳 ¡Únete a la causa!`;
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent(texto);
+            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+        }
+
+        function compartirWhatsApp() {
+            const donacion = JSON.parse(localStorage.getItem('ultimaDonacion') || '{}');
+            const texto = `Acabo de donar $${donacion.monto} para reforestar México 🌳 a través de Borrachorama. ¡Únete a la causa!`;
+            const url = window.location.href;
+            const mensaje = encodeURIComponent(`${texto}\n\n${url}`);
+            window.open(`https://wa.me/?text=${mensaje}`, '_blank');
+        }
+
+        function volverAlInicio() {
+            // Limpiar datos temporales
+            localStorage.removeItem('ultimaDonacion');
+            localStorage.removeItem('facturaParaDonacion');
+
+            // Redirigir
+            window.location.href = 'inicio.html';
+        }
+    </script>
+</body>
+</html>

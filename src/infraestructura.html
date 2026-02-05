@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Borrachorama - Infraestructura</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fffbea;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        header {
+            background: url('/img/fondocerveza.jpg') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        header img {
+            max-width: 200px;
+        }
+
+        /* Barra amarilla */
+        .navbar-custom {
+            background-color: #ffc107;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-custom .btn {
+            margin: 0 5px;
+        }
+
+        /* Botón Cuenta fijo a la izquierda del menú */
+        .btn-cuenta{
+            position:absolute; left:20px; top:50%; transform:translateY(-50%);
+        }
+
+        /* Contenido principal */
+        main {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 2px solid #FFD600;
+            border-radius: 10px;
+        }
+
+        h1, h2 {
+            color: #000;
+        }
+
+        ul {
+            margin-left: 20px;
+        }
+
+        /* Tabla */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            border: 2px solid #FFD600;
+        }
+
+        th, td {
+            border: 1px solid #FFD600;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #FFD600;
+            color: #000;
+        }
+
+        td {
+            background-color: #fffbea;
+        }
+
+        caption {
+            caption-side: top;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        /* Footer */
+        .footer-borrachorama {
+            background-color: #ff7f00;
+            color: white;
+            padding: 40px 20px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .footer-borrachorama h5 {
+            margin-bottom: 20px;
+        }
+
+        .footer-borrachorama ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-borrachorama ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-borrachorama a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .footer-borrachorama a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <img src="/img/Borrachoramalogo.png" alt="Borrachorama Logo">
+    </header>
+
+    <!-- Barra amarilla con botones -->
+    <!-- Navbar (reemplazado por el de Metodos_Pago.html, ajustando rutas relativas) -->
+    <nav class="navbar-custom text-center" id="navbar" style="position: sticky; top:0; z-index:1000;">
+         <a href="/Panel.html" class="btn btn-dark text-white btn-cuenta">Cuenta</a>
+    <a href="/inicio.html" class="btn btn-dark text-white">Inicio</a>
+    <a href="/src/html/cart.html" class="btn btn-dark text-white">🛒 Carrito</a>
+        <button class="btn btn-dark text-white" data-bs-toggle="modal" data-bs-target="#nosotrosModal">Acerca de Nosotros</button>
+        <div class="dropdown d-inline">
+            <button class="btn btn-dark dropdown-toggle text-white" type="button" data-bs-toggle="dropdown">
+                Documentación
+            </button>
+            <ul class="dropdown-menu">
+               <li><a class="dropdown-item" href="/src/html/catalog.html">Catálogo</a></li>
+                <li><a class="dropdown-item" href="/src/infraestructura.html">Infraestructura</a></li>
+                <li><a class="dropdown-item" href="/Disponibilidad.html">Disponibilidad</a></li>
+                <li><a class="dropdown-item" href="/Tecnologia.html">Tecnología</a></li>
+                <li><a class="dropdown-item" href="/Status.html">Status</a></li>
+                <li><a class="dropdown-item" href="/Pedidos_Especiales.html">Pedidos Especiales</a></li>
+                <li><a class="dropdown-item" href="/Metricas.html">Métricas</a></li>
+                <li><a class="dropdown-item" href="/Metodos_Pago.html">Métodos de Pago</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main>
+        <section>
+            <h1>Infraestructura Técnica</h1>
+            <h2>Requisitos Técnicos</h2>
+            <ul>
+                <li><strong>Servidor web:</strong> Apache y JSON.</li>
+                <li><strong>Hosting escalable:</strong> Servicio en la nube.</li>
+                <li><strong>Base de datos:</strong> MySQL para gestionar productos, usuarios y pedidos.</li>
+                <li><strong>Seguridad:</strong> SSL/TLS, firewalls y copias de seguridad automáticas.</li>
+                <li><strong>Integración:</strong> Pasarelas de pago seguras y API de envíos.</li>
+                <li><strong>Front-end:</strong> HTML5, CSS3 y JavaScript con framework responsivo.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Explicación</h2>
+            <p>
+                La infraestructura de Borrachorama se diseñó para garantizar escalabilidad, seguridad y flexibilidad. 
+                Se eligió un servidor con soporte PHP y MySQL porque facilita la integración con WooCommerce o PrestaShop, 
+                manteniendo los datos bajo nuestro control. Además, se aplican certificados SSL y backups automáticos, 
+                fundamentales para la confianza del cliente.
+            </p>
+        </section>
+
+        <!-- ✅ Tabla de configuración técnica y seguridad -->
+        <section>
+            <h2>Configuración Técnica y Seguridad</h2>
+            <table>
+                <caption>Medidas de Seguridad Implementadas</caption>
+                <tr>
+                    <th>Medida</th>
+                    <th>Descripción</th>
+                </tr>
+                <tr>
+                    <td>🔐 SSL/TLS</td>
+                    <td>Encripta la comunicación entre servidor y cliente para proteger los datos.</td>
+                </tr>
+                <tr>
+                    <td>🧱 Firewall</td>
+                    <td>Previene ataques de fuerza bruta y bloquea IPs sospechosas.</td>
+                </tr>
+                <tr>
+                    <td>🔑 Cifrado de contraseñas</td>
+                    <td>Las contraseñas se almacenan mediante hash con algoritmos seguros (bcrypt).</td>
+                </tr>
+                <tr>
+                    <td>💾 Backups automáticos</td>
+                    <td>El servidor realiza copias de seguridad diarias para prevenir pérdida de datos.</td>
+                </tr>
+                <tr>
+                    <td>🕵️ Protección SQL</td>
+                    <td>Uso de consultas preparadas y validación de entrada para evitar inyecciones SQL.</td>
+                </tr>
+                <tr>
+                    <td>🧩 Autenticación por roles</td>
+                    <td>Control de acceso para administradores, empleados y usuarios comunes.</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Imagen (opcional, si quieres mostrar la tabla como imagen también) -->
+        <img src="/img/TABLA.png" alt="Tabla de Infraestructura" class="tabla-imagen">
+    </main>
+
+    <!-- Modal Acerca de Nosotros -->
+    <div class="modal fade" id="nosotrosModal" tabindex="-1" aria-labelledby="nosotrosModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" id="nosotrosModalLabel">Acerca de Nosotros</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Borrachorama</strong> nació en Aguascalientes con el objetivo de ofrecer las mejores cervezas nacionales e internacionales en un ambiente único. 🍺</p>
+                    <p>Nos esforzamos por brindar calidad, seguridad y atención al cliente en cada experiencia de compra.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Footer (copiado y adaptado desde inicio.html con rutas relativas correctas) -->
+    <footer style="background: linear-gradient(135deg, #FF6F00 0%, #F57C00 100%); color: white; padding: 40px 20px 20px;">
+      <div class="container">
+        <div
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-bottom: 30px;">
+
+          <!-- Columna 1: Sobre Nosotros -->
+          <div>
+            <h4 style="font-weight: bold; margin-bottom: 15px; font-size: 1.2rem;">🍺 Borrachorama</h4>
+            <p style="font-size: 0.9rem; line-height: 1.6; opacity: 0.95;">
+              Tu tienda digital de cervezas en Aguascalientes.
+              Entrega rápida, precios justos y la mejor selección de cervezas nacionales e importadas.
+            </p>
+            <div style="margin-top: 15px;">
+              <span
+                style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; display: inline-block;">
+                🔞 Prohibida venta a menores de 18 años
+              </span>
+            </div>
+          </div>
+
+          <!-- Columna 2: Enlaces Rápidos (ajuste de rutas desde /src) -->
+          <div>
+            <h4 style="font-weight: bold; margin-bottom: 15px; font-size: 1.2rem;">⚡ Enlaces Rápidos</h4>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+              <li style="margin-bottom: 10px;">
+                <a href="/inicio.html" style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+                  onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
+                  🏠 Inicio
+                </a>
+              </li>
+              <li style="margin-bottom: 10px;">
+                <a href="/html/catalog.html" style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+                  onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
+                  🍺 Catálogo
+                </a>
+              </li>
+              <li style="margin-bottom: 10px;">
+                <a href="/Pedidos_Especiales.html" style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+                  onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
+                  🎉 Pedidos Especiales
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Columna 3: Legal -->
+          <div>
+            <h4 style="font-weight: bold; margin-bottom: 15px; font-size: 1.2rem;">⚖️ Información Legal</h4>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+              <li style="margin-bottom: 10px;">
+                <a href="#" onclick="mostrarModal('aviso'); return false;"
+                  style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+                  onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
+                  🔒 Aviso de Privacidad
+                </a>
+              </li>
+              <li style="margin-bottom: 10px;">
+                <a href="#" onclick="mostrarModal('terminos'); return false;"
+                  style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+                  onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
+                  📋 Términos y Condiciones
+                </a>
+              </li>
+              <li style="margin-bottom: 10px;">
+                <a href="#" onclick="mostrarModal('creditos'); return false;"
+                  style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+                  onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
+                  📸 Créditos y Atribuciones
+                </a>
+              </li>
+              <li style="margin-bottom: 10px;">
+                <a href="#" onclick="mostrarModal('derechos'); return false;"
+                  style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+                  onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
+                  👥 Derechos del Consumidor
+                </a>
+              </li>
+              <li style="margin-bottom: 10px;">
+                <a href="#" onclick="mostrarModal('envio'); return false;"
+                  style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+                  onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
+                  🚚 Políticas de Envío
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Columna 4: Horarios -->
+          <div>
+            <h4 style="font-weight: bold; margin-bottom: 15px; font-size: 1.2rem;">🕐 Horarios de Entrega</h4>
+            <p style="font-size: 0.9rem; line-height: 1.8; opacity: 0.95; margin: 0;">
+              <strong>Lunes - Viernes:</strong><br>
+              2:00 PM - 10:00 PM<br><br>
+              <strong>Sábado - Domingo:</strong><br>
+              12:00 PM - 11:00 PM
+            </p>
+            <div style="margin-top: 15px; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px;">
+              <p style="margin: 0; font-size: 0.85rem; font-weight: 600;">
+                ⚡ Entrega en 1-2 horas
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Separador -->
+        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.3); margin: 30px 0 20px;">
+
+        <!-- Información final -->
+        <div style="text-align: center;">
+          <p style="margin: 0 0 10px 0; font-size: 0.9rem; opacity: 0.9;">
+            &copy; 2025 Borrachorama. Todos los derechos reservados.
+          </p>
+          <p style="margin: 0; font-size: 0.85rem; opacity: 0.8;">
+            Proyecto educativo - Instituto Tecnológico de Aguascalientes<br>
+            Materia: Negocios Electrónicos I
+          </p>
+          <p style="margin: 15px 0 0 0; font-size: 0.8rem; opacity: 0.7;">
+            ⚠️ Este sitio es una simulación con fines académicos. Las transacciones no son reales.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Modales para información legal (necesarios para los enlaces del footer) -->
+    <div id="modalOverlay"
+      style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9998; overflow-y: auto;"
+      onclick="cerrarModal()">
+      <div style="min-height: 100%; display: flex; align-items: center; justify-content: center; padding: 20px;">
+        <div id="modalContent"
+          style="background: white; border-radius: 15px; max-width: 700px; width: 100%; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); position: relative; margin: 20px 0;"
+          onclick="event.stopPropagation()">
+          <button onclick="cerrarModal()"
+            style="position: absolute; top: 15px; right: 15px; background: #FF6F00; color: white; border: none; border-radius: 50%; width: 35px; height: 35px; font-size: 20px; cursor: pointer; font-weight: bold;">×</button>
+          <div id="modalBody"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Contenido de los modales (copiado desde inicio.html)
+      const contenidoModales = {
+        aviso: `
+      <strong>Responsable:</strong> Borrachorama (Proyecto Educativo)<br><br>
+      
+      <strong>Datos personales recopilados:</strong><br>
+      • Nombre completo<br>
+      • Teléfono de contacto<br>
+      • Dirección de entrega<br>
+      • Correo electrónico (opcional)<br><br>
+      
+      <strong>Finalidad del uso:</strong><br>
+      Los datos se utilizan únicamente para:<br>
+      • Procesamiento de pedidos<br>
+      • Confirmación y seguimiento de entregas<br>
+      • Comunicación sobre el estado del pedido<br>
+      • Verificación de mayoría de edad (18+)<br><br>
+      
+      <strong>Protección de datos:</strong><br>
+      • No compartimos información con terceros<br>
+      • Uso de protocolo seguro (HTTPS)<br>
+      • Almacenamiento temporal para fines del pedido<br>
+      • Eliminación de datos al completar la transacción<br><br>
+      
+      <strong>Derechos ARCO:</strong><br>
+      Puedes ejercer tus derechos de Acceso, Rectificación, Cancelación y Oposición contactando a:<br>
+      📧 privacidad@borrachorama.com<br><br>
+      
+      <em style="color: #999; font-size: 0.9rem;">
+        ⚠️ Nota: Este es un proyecto educativo simulado. Los datos no son almacenados de forma permanente.
+      </em>
+  
+`,
+        terminos: `      <strong>1. Naturaleza del sitio:</strong><br>
+      Este sitio web es una simulación educativa creada con fines académicos. Las transacciones mostradas no son reales y no generan obligaciones comerciales.<br><br>
+      
+      <strong>2. Uso permitido:</strong><br>
+      • El sitio es exclusivo para evaluación académica<br>
+      • No se procesan pagos reales<br>
+      • La información de productos es ilustrativa<br><br>
+      
+      <strong>3. Restricción de edad:</strong><br>
+      El contenido simula la venta de bebidas alcohólicas, por lo que está dirigido a personas mayores de 18 años conforme a la legislación mexicana.<br><br>
+      
+      <strong>4. Responsabilidad del usuario:</strong><br>
+      • Proporcionar información verídica en formularios<br>
+      • No utilizar el sitio para fines distintos a los educativos<br>
+      • Respetar la propiedad intelectual del contenido<br><br>
+      
+      <strong>5. Limitación de responsabilidad:</strong><br>
+      Los creadores de este proyecto no se responsabilizan por:<br>
+      • Interpretaciones comerciales del contenido<br>
+      • Uso indebido de la información presentada<br>
+      • Expectativas de transacciones reales<br><br>
+      
+      <strong>6. Propiedad intelectual:</strong><br>
+      Las marcas y productos mostrados son propiedad de sus respectivos dueños. Su uso es únicamente ilustrativo y educativo.<br><br>
+      
+      <strong>7. Contacto:</strong><br>
+      Para consultas sobre estos términos:<br>
+      📧 contacto@borrachorama.com<br><br>
+      
+      <em style="color: #999; font-size: 0.9rem;">
+        Última actualización: Noviembre 2025
+      </em>
+`,
+        creditos: `      <strong>Borrachorama</strong> es un proyecto educativo simulado con fines académicos. Las imágenes de productos utilizadas en este sitio son propiedad de sus respectivas marcas y se utilizan únicamente con fines ilustrativos y educativos, sin intención comercial.<br><br>
+      
+      <strong>MARCAS Y PRODUCTOS REFERENCIADOS:</strong><br>
+      • Corona Extra - Grupo Modelo (AB InBev)<br>
+      • Modelo Especial - Grupo Modelo (AB InBev)<br>
+      • Victoria - Grupo Modelo (AB InBev)<br>
+      • Heineken - Heineken International<br>
+      • Tecate - Heineken México<br>
+      • Pacifico - Grupo Modelo (AB InBev)<br><br>
+      
+      <strong>FUENTES DE RECURSOS:</strong><br>
+      • Iconos: Flaticon (https://www.flaticon.com)<br>
+      • Imágenes de productos: Sitios oficiales de las marcas<br>
+      • Fotografías genéricas: Unsplash / Pexels<br><br>
+      
+      <strong>AVISO LEGAL:</strong><br>
+      Este proyecto NO está afiliado, patrocinado ni respaldado por ninguna de las marcas mencionadas. Todas las marcas registradas son propiedad de sus respectivos dueños.<br><br>
+      
+      El uso de estas imágenes está amparado bajo el principio de "uso educativo" conforme a la legislación mexicana de derechos de autor (Ley Federal del Derecho de Autor, Art. 148).<br><br>
+      
+      Si usted es propietario de algún contenido y considera que su uso no es apropiado, por favor contacte a: contacto@borrachorama.com<br><br>
+      
+      <strong>EQUIPO DE DESARROLLO:</strong><br>
+      • Diego Franco Escobedo (22151141)<br>
+      • Estefanía Sherlin González Jiménez (22151156)<br>
+      • Néstor Rangel Reyes (22151140)<br>
+      • Sharon Tapia Díaz (22151132)<br><br>
+      
+      <em style="color: #999; font-size: 0.9rem;">
+        Instituto Tecnológico de Aguascalientes<br>
+        Materia: Negocios Electrónicos I<br>
+        Noviembre 2025
+      </em>
+`,
+        derechos: `      Conforme a la PROFECO y legislación mexicana, como consumidor tienes los siguientes derechos:<br><br>
+      
+      <strong>1. Información Clara y Veraz:</strong><br>
+      • Derecho a conocer las características completas del producto<br>
+      • Precios visibles con IVA incluido<br>
+      • Descripción precisa de contenido, marca y presentación<br><br>
+      
+      <strong>2. Calidad y Garantía:</strong><br>
+      • Recibir productos en perfecto estado<br>
+      • Cambio inmediato si el producto llega dañado<br>
+      • Garantía de frescura y fecha de caducidad vigente<br><br>
+      
+      <strong>3. Protección de Datos Personales:</strong><br>
+      • Conocer qué datos se recopilan y con qué fin<br>
+      • Ejercer derechos ARCO (Acceso, Rectificación, Cancelación, Oposición)<br>
+      • Garantía de no compartir información con terceros<br><br>
+      
+      <strong>4. Precios Justos:</strong><br>
+      • No cobros ocultos o adicionales no especificados<br>
+      • Información clara sobre costos de envío<br>
+      • Respeto al precio publicado<br><br>
+      
+      <strong>5. Políticas de Cancelación:</strong><br>
+      • Derecho a cancelar antes de la preparación del pedido<br>
+      • Reembolso completo en caso de prepago y cancelación oportuna<br>
+      • Tiempo de respuesta máximo de 24 horas<br><br>
+      
+      <strong>6. Canales de Atención:</strong><br>
+      • Acceso a servicio al cliente vía WhatsApp, correo o formulario<br>
+      • Resolución de quejas en tiempo razonable<br>
+      • Respuestas claras y profesionales<br><br>
+      
+      <strong>Cómo ejercer tus derechos:</strong><br>
+      📧 Email: atencion@borrachorama.com<br>
+      💬 WhatsApp: +52 (449) 123-4567<br>
+      📞 Teléfono: (449) 123-4567<br><br>
+      
+      <em style="color: #999; font-size: 0.9rem;">
+        ⚠️ Nota: Este es un proyecto educativo. En un negocio real, estos derechos están protegidos por ley.
+      </em>
+`,
+        envio: `      Cobertura: Aguascalientes. Entrega en 1–2 horas (según demanda y tráfico). Envío estimado $80 MXN.<br>
+      Mayoría de edad requerida para la entrega.<br><br>
+      <strong>Devoluciones:</strong> Solo por producto dañado/defectuoso al recibir; reporte ≤ 24 horas; producto sin abrir.
+      Se ofrece reemplazo o nota de crédito.<br><br>
+      Soporte: atencion@borrachorama.com / WhatsApp +52 (449) 123-4567.
+`
+      };
+
+      function mostrarModal(tipo) {
+        const modal = document.getElementById('modalOverlay');
+        const body = document.getElementById('modalBody');
+        body.innerHTML = contenidoModales[tipo];
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+      }
+
+      function cerrarModal() {
+        const modal = document.getElementById('modalOverlay');
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') cerrarModal();
+      });
+    </script>
+</body>
+</html>

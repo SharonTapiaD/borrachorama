@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error de Pago - Borrachorama</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fff9f9 0%, #ffeaea 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        header {
+            background: url('img/fondocerveza.jpg') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        header img {
+            max-width: 220px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .navbar-custom {
+            background: linear-gradient(135deg, #ff6b6b 0%, #d9534f 100%);
+            padding: 15px 20px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .error-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-top: 5px solid #ff6b6b;
+            text-align: center;
+        }
+
+        .error-icon {
+            font-size: 5em;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        h1 {
+            color: #d9534f;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .error-details {
+            background: #fff5f5;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+            text-align: left;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .detail-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ffe0e0;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #666;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .recomendacion {
+            background: #e8f4ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: left;
+            border-left: 4px solid #2196F3;
+        }
+
+        .botones-accion {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            min-width: 180px;
+        }
+
+        .btn-reintentar {
+            background: linear-gradient(135deg, #ffb300 0%, #d57c00 100%);
+            color: white;
+        }
+
+        .btn-metodo-alterno {
+            background: linear-gradient(135deg, #2196F3 0%, #0D47A1 100%);
+            color: white;
+        }
+
+        .btn-contacto {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+        }
+
+        .btn-volver {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .estadisticas {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .timer {
+            font-size: 0.9em;
+            color: #999;
+            margin-top: 20px;
+        }
+
+        .auto-redirect {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 1px dashed #ffb300;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .error-card {
+                padding: 25px;
+            }
+            
+            .botones-accion {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <img src="img/Borrachoramalogo.png" alt="Borrachorama Logo">
+        </div>
+    </header>
+
+    <nav class="navbar-custom">
+        <strong>❌ Error en el Procesamiento del Pago</strong>
+    </nav>
+
+    <div class="container">
+        <div class="error-card">
+            <div class="error-icon">⚠️</div>
+            
+            <h1>El pago no pudo completarse</h1>
+            
+            <div class="error-details" id="errorDetails">
+                <!-- Los detalles del error se cargarán con JavaScript -->
+                <p>Cargando detalles del error...</p>
+            </div>
+            
+            <div class="recomendacion" id="recomendacion">
+                <h3 style="color: #2196F3; margin-bottom: 10px;">💡 Recomendación</h3>
+                <p>Cargando recomendación...</p>
+            </div>
+            
+            <div class="botones-accion">
+                <button class="btn btn-reintentar" onclick="reintentarPago()">
+                    🔄 Reintentar Pago
+                </button>
+                <button class="btn btn-metodo-alterno" onclick="cambiarMetodoPago()">
+                    💳 Cambiar Método de Pago
+                </button>
+                <button class="btn btn-contacto" onclick="contactarSoporte()">
+                    📞 Contactar Soporte
+                </button>
+                <a href="/inicio.html" class="btn btn-volver">
+                    🏠 Volver al Inicio
+                </a>
+            </div>
+
+            <div class="estadisticas">
+                
+            </div>
+            
+            <div class="timer">
+                <p>🕒 Hora del error: <span id="horaError"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ahora = new Date();
+            document.getElementById('horaError').textContent =
+                ahora.toLocaleTimeString('es-MX') + ' - ' + ahora.toLocaleDateString('es-MX');
+
+            const params = new URLSearchParams(window.location.search);
+            const error = params.get('error') || localStorage.getItem('ultimoErrorPago');
+            const codigo = params.get('codigo') || localStorage.getItem('codigoErrorPago');
+            const recomendacion = params.get('recomendacion') || localStorage.getItem('recomendacionErrorPago');
+            const metodo = params.get('metodo') || localStorage.getItem('metodoPagoError');
+            const monto = params.get('monto') || localStorage.getItem('montoPagoError');
+
+            const datosError = error ? JSON.parse(error) : {
+                motivo: "Error desconocido en el procesamiento",
+                codigo: codigo || "ERR-000000",
+                recomendacion: recomendacion || "Por favor intenta nuevamente.",
+                metodo: metodo || "Desconocido",
+                monto: monto || "0.00"
+            };
+
+            const detallesHTML = `
+                <div class="detail-item">
+                    <span class="detail-label">Motivo del error:</span>
+                    <span class="detail-value">${datosError.motivo || "Error en el procesamiento"}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Código de error:</span>
+                    <span class="detail-value">${datosError.codigo || "ERR-000000"}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Método de pago:</span>
+                    <span class="detail-value">${datosError.metodo || "No especificado"}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Monto intentado:</span>
+                    <span class="detail-value">$${parseFloat(datosError.monto || 0).toFixed(2)}</span>
+                </div>
+            `;
+            
+            document.getElementById('errorDetails').innerHTML = detallesHTML;
+            document.getElementById('recomendacion').innerHTML = `
+                <h3 style="color: #2196F3; margin-bottom: 10px;">💡 Recomendación</h3>
+                <p>${datosError.recomendacion || "Intenta nuevamente o contacta a servicio al cliente."}</p>
+            `;
+            
+            localStorage.setItem('datosErrorPago', JSON.stringify(datosError));
+
+            // Si ya se cerró un pago, no permitir reintentos desde error
+            if (localStorage.getItem('paymentLocked') === 'true') {
+                window.location.replace('/PagoRealizado.html');
+                return;
+            }
+        });
+        
+        function reintentarPago() {
+            // Bloqueo extra en el botón por si el estado cambia
+            if (localStorage.getItem('paymentLocked') === 'true') {
+                alert('El pago ya fue realizado. Redirigiendo...');
+                window.location.replace('/PagoRealizado.html');
+                return;
+            }
+
+            const datosError = JSON.parse(localStorage.getItem('datosErrorPago') || '{}');
+            const metodo = (datosError.metodo || 'tarjeta').toLowerCase();
+            const contacto = datosError.contacto || '';
+
+            // Persistir el valor que el usuario escribió para prellenar al regresar
+            if (contacto) {
+                const datosPagoMonedero = JSON.parse(localStorage.getItem('datosPagoMonedero') || '{}');
+                datosPagoMonedero[metodo] = contacto;
+                localStorage.setItem('datosPagoMonedero', JSON.stringify(datosPagoMonedero));
+            }
+
+            // Mapear rutas de reintento
+            const rutas = {
+                tarjeta: '/Pago-Tarjeta.html?reintento=true',
+                paypal: '/Pago-Monadero.html?reintento=true&metodo=paypal',
+                stripe: '/Pago-Monadero.html?reintento=true&metodo=stripe',
+                mercado: '/Pago-Monadero.html?reintento=true&metodo=mercado',
+                efectivo: '/Pago-Cajero.html?reintento=true',
+                transferencia: '/Pago-Cheque.html?reintento=true',
+                monedero: '/Pago-Monadero.html?reintento=true'
+            };
+            
+            const ruta = rutas[metodo] || '/Pago.html?reintento=true';
+            window.location.href = ruta;
+        }
+        
+        function cambiarMetodoPago() {
+            localStorage.removeItem('reintentoPago');
+            window.location.href = '/Pago.html?cambioMetodo=true';
+        }
+        
+        function contactarSoporte() {
+            const datosError = JSON.parse(localStorage.getItem('datosErrorPago') || '{}');
+            const mensaje = `Necesito ayuda con un error de pago:\n` +
+                            `Código: ${datosError.codigo || 'N/A'}\n` +
+                            `Motivo: ${datosError.motivo || 'Error desconocido'}\n` +
+                            `Monto: $${parseFloat(datosError.monto || 0).toFixed(2)}`;
+
+            alert("📞 Contactando a soporte técnico...\n\n" +
+                  "En una aplicación real, esto abriría:\n" +
+                  "• WhatsApp: +52 (449) 123-4567\n" +
+                  "• Email: soporte@borrachorama.com\n\n" +
+                  "Detalles del error:\n" + mensaje);
+        }
+    </script>
+</body>
+</html>

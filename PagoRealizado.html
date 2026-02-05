@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pago ya realizado - Borrachorama</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: linear-gradient(135deg,#e8f5e9 0%,#c8e6c9 100%); margin:0; min-height:100vh; color:#2e7d32; }
+    header { background: url('img/fondocerveza.jpg') center/cover no-repeat; color:#fff; text-align:center; padding:40px 20px; }
+    header img { max-width: 200px; }
+    .navbar-custom { background: linear-gradient(135deg,#4CAF50 0%,#2E7D32 100%); color:#fff; padding:15px; text-align:center; font-weight:bold; }
+    .container { max-width: 720px; margin: 30px auto; padding: 20px; }
+    .card { background:#fff; border-radius:16px; padding:28px; box-shadow:0 10px 25px rgba(0,0,0,.1); border-top:5px solid #4CAF50; }
+    h1 { color:#2E7D32; margin:0 0 10px 0; }
+    .ok-icon { font-size: 3.2em; }
+    .detalle { background:#f1f8e9; border-left:4px solid #4CAF50; padding:16px; border-radius:8px; margin-top:16px; color:#33691e; }
+    .acciones { display:flex; gap:12px; flex-wrap:wrap; margin-top:20px; }
+    .btn { padding:12px 20px; border:none; border-radius:10px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-block; }
+    .btn-primary { background: linear-gradient(135deg,#FF6F00 0%,#F57C00 100%); color:#fff; }
+    .btn-secondary { background:#f8f9fa; color:#555; border:2px solid #e0e0e0; }
+    .nota { font-size:.9rem; color:#555; margin-top:16px; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="img/Borrachoramalogo.png" alt="Borrachorama">
+  </header>
+  <nav class="navbar-custom">✅ Pago ya realizado</nav>
+
+  <div class="container">
+    <div class="card">
+      <div class="ok-icon">🎉</div>
+      <h1>Tu pago ya fue confirmado</h1>
+      <p>Gracias por tu compra. Ya registramos tu pedido en el sistema.</p>
+
+      <div class="detalle" id="detallePedido">
+        <!-- Se llena con JavaScript si existe lastPedidoId -->
+        <p>Cargando detalles del último pedido...</p>
+      </div>
+
+      <div class="acciones">
+        <a class="btn btn-primary" href="Confirmacion.html">Ver confirmación</a>
+        <a class="btn btn-secondary" href="inicio.html">Volver al inicio</a>
+      </div>
+
+      <p class="nota">Si necesitas cambiar el método de pago, por favor contacta soporte. Nuevos pagos están bloqueados para evitar duplicados.</p>
+    </div>
+  </div>
+
+  <script>
+    // Evitar que se intente pagar nuevamente desde esta pantalla
+    localStorage.setItem('paymentCompleted', 'true');
+
+    // Mostrar detalles del último pedido si existe
+    (function(){
+      const lastId = localStorage.getItem('lastPedidoId');
+      const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+      const pedido = pedidos.find(p => p.id === lastId) || pedidos[pedidos.length - 1];
+      const box = document.getElementById('detallePedido');
+      if (!pedido) {
+        box.innerHTML = '<p>No se encontraron pedidos recientes.</p>';
+        return;
+      }
+      const fecha = (()=>{ try{ return new Date(pedido.fecha).toLocaleString(); }catch(e){ return pedido.fecha; } })();
+      const total = (pedido.total || 0).toFixed(2);
+      const metodo = pedido.metodoPago || 'N/A';
+      const items = (pedido.items||[]).map(i => `${i.nombre} x ${i.cantidad}`).join(', ');
+      box.innerHTML = `
+        <p><strong>ID:</strong> ${pedido.id}</p>
+        <p><strong>Fecha:</strong> ${fecha}</p>
+        <p><strong>Método:</strong> ${metodo}</p>
+        <p><strong>Total:</strong> $${total} MXN</p>
+        <p><strong>Items:</strong> ${items || 'N/A'}</p>
+      `;
+    })();
+  </script>
+</body>
+</html>

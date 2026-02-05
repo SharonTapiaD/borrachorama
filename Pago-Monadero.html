@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monedero Digital - Borrachorama</title>
+    <!-- Bootstrap CSS para menú y modal -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fffceb 0%, #ffeaa7 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        header {
+            background: url('img/fondocerveza.jpg') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        header img {
+            max-width: 220px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Mantener fondo actual del navbar (morado-azul) y ajustar menú */
+        .navbar-custom {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky; top:0; z-index:1000;
+            overflow: visible; /* para dropdown */
+        }
+        /* Fila única centrada */
+        .navbar-custom .menu-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: nowrap;
+            white-space: nowrap;
+        }
+        /* Botones negros en el menú */
+        .navbar-custom .btn,
+        .navbar-custom .dropdown-toggle {
+            background-color: #000 !important;
+            color: #fff !important;
+            border: none !important;
+            background-image: none !important;
+            box-shadow: none !important;
+            min-width: 140px;
+        }
+        .navbar-custom .btn:hover,
+        .navbar-custom .dropdown-toggle:hover {
+            background-color: #000 !important;
+            color: #fff !important;
+            opacity: 0.9;
+        }
+        /* Dropdown */
+        .navbar-custom .dropdown { display: inline-block; }
+        .navbar-custom .dropdown-menu {
+            min-width: 180px;
+            text-align: left;
+            background-color: #fff;
+            color: #222;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .navbar-custom .dropdown-menu .dropdown-item { color:#222; }
+        .navbar-custom .dropdown-menu .dropdown-item:hover { background-color:#ffe08a; }
+        /* Cuenta fija a la izquierda */
+        .btn-cuenta { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); }
+        /* Botón “Acerca de Nosotros” más corto */
+        .navbar-custom .menu-row .btn-acerca {
+            min-width: unset !important;
+            width: auto !important;
+            padding: 6px 10px !important;
+            font-size: 1rem !important;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-top: 5px solid #6a11cb;
+        }
+        
+        h2 {
+            color: #6a11cb;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 2em;
+        }
+        
+        .monto-total {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 25px 0;
+            font-size: 1.3em;
+            border: 2px solid #2196F3;
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.2);
+        }
+        
+        .total-numero {
+            color: #0D47A1;
+            font-weight: bold;
+            font-size: 2.5em;
+            display: block;
+            margin-top: 10px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .pasos {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 35px;
+            gap: 30px;
+        }
+        
+        .paso {
+            text-align: center;
+            position: relative;
+            flex: 1;
+            max-width: 120px;
+        }
+        
+        .paso::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            right: -15px;
+            width: 30px;
+            height: 2px;
+            background: #ddd;
+        }
+        
+        .paso:last-child::after {
+            display: none;
+        }
+        
+        .numero-paso {
+            background: #e0e0e0;
+            color: #666;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .paso.activo .numero-paso {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            transform: scale(1.2);
+            box-shadow: 0 3px 10px rgba(106, 17, 203, 0.3);
+        }
+        
+        .metodo-opcion {
+            border: 3px solid #eee;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            background: white;
+        }
+        
+        .metodo-opcion:hover {
+            border-color: #6a11cb;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.1);
+        }
+        
+        .metodo-opcion.seleccionado {
+            border-color: #6a11cb;
+            background: linear-gradient(135deg, #f3e5f5 0%, #e8eaf6 100%);
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.2);
+        }
+        
+        .logo-metodo {
+            height: 40px;
+            width: 40px;
+            object-fit: contain;
+            margin-right: 15px;
+            border-radius: 8px;
+            padding: 5px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .metodo-info {
+            flex: 1;
+        }
+        
+        .metodo-info strong {
+            color: #333;
+            font-size: 1.1em;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .metodo-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .formulario-metodo {
+            display: none;
+            animation: fadeIn 0.5s ease;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 4px solid #6a11cb;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: #6a11cb;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
+        }
+        
+        .info-seguridad {
+            margin-top: 15px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            color: #2e7d32;
+            font-size: 0.9em;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 20px;
+            box-shadow: 0 6px 20px rgba(106, 17, 203, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(106, 17, 203, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .simulacion-nota {
+            font-size: 0.9rem;
+            color: #666;
+            text-align: center;
+            margin-top: 25px;
+            font-style: italic;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px dashed #6a11cb;
+        }
+        
+        .contador-reintento {
+            background: #fff3e0;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: inline-block;
+            font-weight: bold;
+            color: #d57c00;
+        }
+        
+        .metodo-icono {
+            font-size: 1.5em;
+            margin-right: 15px;
+            width: 50px;
+            text-align: center;
+        }
+        
+        .tarjeta-icono {
+            color: #6a11cb;
+        }
+        
+        .paypal-icono {
+            color: #003087;
+        }
+        
+        .stripe-icono {
+            color: #635bff;
+        }
+        
+        .mercado-icono {
+            color: #00b1ea;
+        }
+        
+        .notificacion-reintento {
+            background: linear-gradient(135deg, #ffb300 0%, #d57c00 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+            display: none;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 179, 0, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 179, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 179, 0, 0); }
+        }
+        
+        @media (max-width: 768px) {
+            .pasos {
+                gap: 15px;
+            }
+            
+            .paso::after {
+                right: -7px;
+                width: 15px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 25px;
+            }
+            
+            h2 {
+                font-size: 1.6em;
+            }
+            
+            .total-numero {
+                font-size: 2em;
+            }
+            
+            .metodo-opcion {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo-metodo {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div style="position: relative; z-index: 1;">
+            <img src="img/Borrachoramalogo.png" alt="Borrachorama Logo">
+        </div>
+    </header>
+
+    <!-- Navbar: reemplaza el texto por el menú, conservando el fondo actual -->
+    <nav class="navbar-custom" id="navbar">
+        <a href="/Panel.html" class="btn btn-dark text-white btn-cuenta">Cuenta</a>
+        <div class="menu-row">
+            <a href="/inicio.html" class="btn btn-dark text-white">Inicio</a>
+            <a href="/src/html/cart.html" class="btn btn-dark text-white">🛒 Carrito</a>
+            <button class="btn btn-dark text-white btn-acerca" data-bs-toggle="modal" data-bs-target="#nosotrosModal">Acerca de Nosotros</button>
+            <div class="dropdown d-inline">
+                <button class="btn btn-dark dropdown-toggle text-white" type="button" data-bs-toggle="dropdown">
+                    📂 Documentación
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/src/html/catalog.html">Catálogo</a></li>
+                    <li><a class="dropdown-item" href="/src/infraestructura.html">Infraestructura</a></li>
+                    <li><a class="dropdown-item" href="/Disponibilidad.html">Disponibilidad</a></li>
+                    <li><a class="dropdown-item" href="/Tecnologia.html">Tecnología</a></li>
+                    <li><a class="dropdown-item" href="/Status.html">Status</a></li>
+                    <li><a class="dropdown-item" href="/Pedidos_Especiales.html">Pedidos Especiales</a></li>
+                    <li><a class="dropdown-item" href="/Metricas.html">Métricas</a></li>
+                    <li><a class="dropdown-item" href="/Metodos_Pago.html">Métodos de Pago</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modal: Acerca de Nosotros -->
+    <div class="modal fade" id="nosotrosModal" tabindex="-1" aria-labelledby="nosotrosModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" id="nosotrosModalLabel">Acerca de Nosotros</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Borrachorama</strong> nació en Aguascalientes con el objetivo de ofrecer las mejores cervezas nacionales e internacionales en un ambiente único. 🍺</p>
+                    <p>Nos esforzamos por brindar calidad, seguridad y atención al cliente en cada experiencia de compra.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="pasos">
+            <div class="paso activo">
+                <div class="numero-paso">1</div>
+                <div>Selección</div>
+            </div>
+            <div class="paso">
+                <div class="numero-paso">2</div>
+                <div>Pago</div>
+            </div>
+            <div class="paso">
+                <div class="numero-paso">3</div>
+                <div>Confirmación</div>
+            </div>
+        </div>
+        
+        <div class="notificacion-reintento" id="notificacionReintento">
+            🔄 Reintentando pago... Intento #<span id="numeroReintento">1</span>
+        </div>
+        
+        <div class="card">
+            <h2>Pago con Monedero Digital</h2>
+            
+            <div class="monto-total">
+                Monto total a pagar: 
+                <span class="total-numero" id="montoTotal">$0.00</span>
+            </div>
+            
+            <div class="form-group">
+                <label style="margin-bottom: 15px; font-size: 1.1em;">Selecciona tu monedero digital:</label>
+                
+                <div class="metodo-opcion" onclick="seleccionarMetodo('paypal')" id="paypalOption">
+                    <div class="metodo-icono paypal-icono">💰</div>
+                    <div class="metodo-info">
+                        <strong>PayPal</strong>
+                        <p>Paga con tu cuenta PayPal de forma segura</p>
+                    </div>
+                </div>
+                
+                <div class="metodo-opcion" onclick="seleccionarMetodo('stripe')" id="stripeOption">
+                    <div class="metodo-icono stripe-icono">💳</div>
+                    <div class="metodo-info">
+                        <strong>Tarjeta via Stripe</strong>
+                        <p>Pago seguro con tarjeta de crédito/débito</p>
+                    </div>
+                </div>
+                
+                <div class="metodo-opcion" onclick="seleccionarMetodo('mercado')" id="mercadoOption">
+                    <div class="metodo-icono mercado-icono">🛒</div>
+                    <div class="metodo-info">
+                        <strong>Mercado Pago</strong>
+                        <p>Paga con Mercado Pago desde México</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Formulario PayPal -->
+            <div class="formulario-metodo" id="formularioPaypal">
+                <h3 style="color: #003087; margin-bottom: 15px;">PayPal</h3>
+                <div class="form-group">
+                    <label for="paypalEmail">Correo de PayPal:</label>
+                    <input type="email" id="paypalEmail" placeholder="tucorreo@paypal.com" required>
+                </div>
+                
+                <div class="info-seguridad">
+                    <strong>🔒 Seguridad PayPal:</strong>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9em;">
+                        Serás redirigido a PayPal para completar el pago de manera segura.
+                        No almacenamos tus credenciales de acceso.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Formulario Stripe -->
+            <div class="formulario-metodo" id="formularioStripe">
+                <h3 style="color: #635bff; margin-bottom: 15px;">Stripe</h3>
+                <div class="form-group">
+                    <label for="stripeEmail">Correo para recibo:</label>
+                    <input type="email" id="stripeEmail" placeholder="correo@ejemplo.com" required>
+                </div>
+                
+                <div class="info-seguridad">
+                    <strong>🔒 Seguridad Stripe:</strong>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9em;">
+                        Stripe procesará tu pago de forma segura. No almacenamos datos de tarjeta.
+                        Certificado PCI DSS Nivel 1.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Formulario Mercado Pago -->
+            <div class="formulario-metodo" id="formularioMercado">
+                <h3 style="color: #00b1ea; margin-bottom: 15px;">Mercado Pago</h3>
+                <div class="form-group">
+                    <label for="mercadoPhone">Teléfono vinculado a Mercado Pago:</label>
+                    <input type="tel" id="mercadoPhone" placeholder="55 1234 5678" maxlength="10" required>
+                </div>
+                
+                <div class="info-seguridad">
+                    <strong>🔒 Seguridad Mercado Pago:</strong>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9em;">
+                        Recibirás un código de confirmación en tu teléfono.
+                        Transacciones protegidas con 3D Secure.
+                    </p>
+                </div>
+            </div>
+            
+            <button onclick="procesarPagoMonedero()" id="btnPagar">
+                Proceder al Pago
+            </button>
+            
+            <div id="infoReintento" style="display: none;" class="contador-reintento">
+                ⚠️ Reintentos: <span id="contadorReintentos">0</span>/3
+            </div>
+            
+            <p class="simulacion-nota">
+                💡 Esta es una simulación educativa. No se procesarán pagos reales.
+                El sistema tiene un 50% de probabilidad de simular fallos de pago para demostración.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // ================= VARIABLES GLOBALES =================
+        let metodoSeleccionado = '';
+
+        // ================= CONFIGURACIÓN DE SIMULACIÓN =================
+        const ConfiguracionPagoMonedero = {
+            probabilidadError: 0.5, // 50% de probabilidad de fallo
+            motivosError: [
+                "Fondos insuficientes en la cuenta del monedero",
+                "Transacción rechazada por el proveedor de pagos", 
+                "Límite diario de compra excedido",
+                "Tiempo de espera agotado - conexión lenta",
+                "Error de autenticación con el proveedor",
+                "Cuenta temporalmente suspendida por seguridad",
+                "Proveedor de pagos no disponible",
+                "Token de seguridad inválido o expirado"
+            ],
+            tiemposProcesamiento: {
+                paypal: { min: 2000, max: 4000 },
+                stripe: { min: 1500, max: 3000 },
+                mercado: { min: 2500, max: 5000 }
+            }
+        };
+
+        // ================= INICIALIZACIÓN =================
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('paymentLocked') === 'true') {
+                try { document.getElementById('btnPagar').disabled = true; } catch(e){}
+                window.location.replace('/PagoRealizado.html');
+                return;
+            }
+            
+            // Bloquear si ya hay un pago cerrado
+            if (localStorage.getItem('paymentLocked') === 'true') {
+                window.location.href = '/PagoRealizado.html';
+                return;
+            }
+            
+            // Bloquear si ya se pagó
+            if (localStorage.getItem('paymentCompleted') === 'true') {
+                window.location.href = '/PagoRealizado.html';
+                return;
+            }
+            
+            // Calcular monto del carrito
+            actualizarMonto();
+            
+            // Detectar reintento y método previo para restaurar
+            const qs = new URLSearchParams(location.search);
+            const esReintento = qs.get('reintento') === 'true';
+            const metodoQS = (qs.get('metodo') || '').toLowerCase();
+            const metodoPrevio = (metodoQS || localStorage.getItem('metodoPagoError') || localStorage.getItem('metodoPagoSeleccionado') || 'paypal').toLowerCase();
+
+            // Seleccionar el método correcto (paypal/stripe/mercado) y restaurar datos si existen
+            seleccionarMetodo(['paypal','stripe','mercado'].includes(metodoPrevio) ? metodoPrevio : 'paypal');
+
+            // Si es reintento o existen datos guardados, cargar valores del formulario
+            if (esReintento) {
+                cargarDatosReintento(metodoPrevio);
+            } else {
+                cargarDatosReintento(metodoPrevio);
+            }
+        });
+
+        // ================= FUNCIONES DE UTILIDAD =================
+        function actualizarMonto() {
+            let total = 0;
+            
+            // Intentar de múltiples fuentes
+            const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+            total = carrito.reduce((sum, item) => {
+                return sum + (parseFloat(item.precio) || 0) * (parseInt(item.cantidad) || 1);
+            }, 0);
+            
+            if (total === 0) {
+                const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+                const ultimoPedido = pedidos[pedidos.length - 1];
+                if (ultimoPedido && ultimoPedido.total) {
+                    total = ultimoPedido.total;
+                }
+            }
+            
+            if (total === 0) {
+                total = parseFloat(localStorage.getItem('pagoTotal') || '0');
+            }
+            
+            if (total === 0) {
+                total = 225.50; // Ejemplo
+            }
+            
+            document.getElementById('montoTotal').textContent = '$' + total.toFixed(2);
+            return total;
+        }
+
+        function cargarDatosReintento(metodo) {
+            const datosGuardados = JSON.parse(localStorage.getItem('datosPagoMonedero') || '{}');
+            if (datosGuardados[metodo]) {
+                switch(metodo) {
+                    case 'paypal':
+                        document.getElementById('paypalEmail').value = datosGuardados.paypal || '';
+                        break;
+                    case 'stripe':
+                        document.getElementById('stripeEmail').value = datosGuardados.stripe || '';
+                        break;
+                    case 'mercado':
+                        document.getElementById('mercadoPhone').value = datosGuardados.mercado || '';
+                        break;
+                }
+            }
+        }
+
+        // ================= FUNCIONES DE INTERFAZ =================
+        function seleccionarMetodo(metodo) {
+            metodoSeleccionado = metodo;
+            localStorage.setItem('metodoPagoSeleccionado', metodo);
+            document.querySelectorAll('.metodo-opcion').forEach(el => el.classList.remove('seleccionado'));
+            document.getElementById('formularioPaypal').style.display = 'none';
+            document.getElementById('formularioStripe').style.display = 'none';
+            document.getElementById('formularioMercado').style.display = 'none';
+            document.getElementById(metodo + 'Option').classList.add('seleccionado');
+            document.getElementById('formulario' + metodo.charAt(0).toUpperCase() + metodo.slice(1)).style.display = 'block';
+
+            const btn = document.getElementById('btnPagar');
+            const metodosTexto = { paypal: 'Continuar con PayPal', stripe: 'Pagar con Stripe', mercado: 'Pagar con Mercado Pago' };
+            btn.innerHTML = metodosTexto[metodo];
+
+            actualizarPasos(2);
+
+            // Restaurar inmediatamente el valor del campo si fue guardado
+            cargarDatosReintento(metodo);
+        }
+
+        function cargarDatosReintento(metodo) {
+            const datosGuardados = JSON.parse(localStorage.getItem('datosPagoMonedero') || '{}');
+            if (!datosGuardados) return;
+            switch(metodo) {
+                case 'paypal':
+                    if (datosGuardados.paypal) document.getElementById('paypalEmail').value = datosGuardados.paypal;
+                    break;
+                case 'stripe':
+                    if (datosGuardados.stripe) document.getElementById('stripeEmail').value = datosGuardados.stripe;
+                    break;
+                case 'mercado':
+                    if (datosGuardados.mercado) document.getElementById('mercadoPhone').value = datosGuardados.mercado;
+                    break;
+            }
+        }
+
+        function actualizarPasos(pasoActivo) {
+            document.querySelectorAll('.paso').forEach((paso, index) => {
+                if (index + 1 <= pasoActivo) {
+                    paso.classList.add('activo');
+                } else {
+                    paso.classList.remove('activo');
+                }
+            });
+        }
+
+        function mostrarNotificacion(mensaje, tipo = 'info') {
+            const notificacion = document.createElement('div');
+            const colores = {
+                'info': 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
+                'error': 'linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%)',
+                'success': 'linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)'
+            };
+            
+            notificacion.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: ${colores[tipo] || colores.info};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                z-index: 9998;
+                animation: slideIn 0.5s ease;
+                max-width: 300px;
+                font-weight: bold;
+            `;
+            
+            notificacion.innerHTML = mensaje;
+            
+            document.body.appendChild(notificacion);
+            
+            setTimeout(() => {
+                notificacion.style.animation = 'slideOut 0.5s ease';
+                setTimeout(() => notificacion.remove(), 500);
+            }, 4000);
+            
+            // Agregar estilos de animación si no existen
+            if (!document.querySelector('#animacion-estilos-monedero')) {
+                const estilos = document.createElement('style');
+                estilos.id = 'animacion-estilos-monedero';
+                estilos.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(estilos);
+            }
+        }
+
+        // ================= FUNCIÓN DE SIMULACIÓN DE FALLOS =================
+        function simularProcesamientoPagoMonedero(metodo, monto) {
+            console.log(`Simulando pago con ${metodo} por $${monto}`);
+            
+            // Determinar si hay fallo (30% de probabilidad)
+            const tieneFallo = Math.random() < ConfiguracionPagoMonedero.probabilidadError;
+            
+            if (tieneFallo) {
+                // Seleccionar motivo aleatorio
+                const motivoIndex = Math.floor(Math.random() * ConfiguracionPagoMonedero.motivosError.length);
+                const motivo = ConfiguracionPagoMonedero.motivosError[motivoIndex];
+                
+                // Tiempo de procesamiento según método
+                const tiempoConfig = ConfiguracionPagoMonedero.tiemposProcesamiento[metodo] || { min: 2000, max: 4000 };
+                const tiempoSimulado = Math.floor(Math.random() * (tiempoConfig.max - tiempoConfig.min)) + tiempoConfig.min;
+                
+                return {
+                    exito: false,
+                    error: motivo,
+                    codigoError: `${metodo.toUpperCase()}-ERR-${Date.now().toString().slice(-6)}`,
+                    recomendacion: obtenerRecomendacionPorErrorMonedero(motivo, metodo),
+                    tiempoSimulado: tiempoSimulado,
+                    proveedor: metodo
+                };
+            } else {
+                // Pago exitoso
+                const tiempoConfig = ConfiguracionPagoMonedero.tiemposProcesamiento[metodo] || { min: 1500, max: 3000 };
+                const tiempoSimulado = Math.floor(Math.random() * (tiempoConfig.max - tiempoConfig.min)) + tiempoConfig.min;
+                
+                return {
+                    exito: true,
+                    transaccionId: `${metodo.toUpperCase()}-TRX-${Date.now().toString().slice(-8)}`,
+                    referencia: `REF-${Math.floor(Math.random() * 1000000).toString().padStart(6, '0')}`,
+                    tiempoSimulado: tiempoSimulado,
+                    proveedor: metodo,
+                    fecha: new Date().toISOString()
+                };
+            }
+        }
+
+        function obtenerRecomendacionPorErrorMonedero(motivo, metodo) {
+            const recomendaciones = {
+                "Fondos insuficientes en la cuenta del monedero": 
+                    `Verifica el saldo de tu cuenta ${metodo} o utiliza otro método de pago.`,
+                
+                "Transacción rechazada por el proveedor de pagos": 
+                    "Contacta al soporte de tu proveedor de pagos para autorizar la transacción.",
+                
+                "Límite diario de compra excedido": 
+                    "Divide tu compra en pagos más pequeños o intenta mañana.",
+                
+                "Tiempo de espera agotado - conexión lenta": 
+                    "Verifica tu conexión a internet e intenta nuevamente.",
+                
+                "Error de autenticación con el proveedor": 
+                    "Cierra sesión y vuelve a iniciar en tu cuenta del monedero.",
+                
+                "Cuenta temporalmente suspendida por seguridad": 
+                    "Contacta inmediatamente al soporte de tu monedero digital.",
+                
+                "Proveedor de pagos no disponible": 
+                    "Intenta nuevamente en unos minutos o utiliza otro método de pago.",
+                
+                "Token de seguridad inválido o expirado": 
+                    "Refresca la página e inicia el proceso de pago nuevamente."
+            };
+            
+            return recomendaciones[motivo] || "Intenta nuevamente o contacta a servicio al cliente.";
+        }
+
+        function mostrarSpinnerProcesamiento(mensaje = "Procesando pago...") {
+            const colores = {
+                'paypal': '#003087',
+                'stripe': '#635bff',
+                'mercado': '#00b1ea'
+            };
+            
+            const color = colores[metodoSeleccionado] || '#6a11cb';
+            
+            const spinnerHTML = `
+                <div id="spinner-monedero" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+                    <div style="background: white; padding: 30px; border-radius: 15px; text-align: center; max-width: 400px; width: 90%;">
+                        <div style="border: 5px solid #f3f3f3; border-top: 5px solid ${color}; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+                        <h3 style="color: #333; margin-bottom: 10px;">${mensaje}</h3>
+                        <p style="color: #666; font-size: 0.9em;">Conectando con ${metodoSeleccionado.toUpperCase()}...</p>
+                        <div style="margin-top: 20px; font-size: 0.8em; color: #999;">
+                            <div id="tiempo-restante-monedero">Tiempo estimado: 3 segundos</div>
+                        </div>
+                    </div>
+                </div>
+                <style>
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                </style>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', spinnerHTML);
+            
+            // Actualizar contador de tiempo
+            let segundos = 3;
+            const elemento = document.getElementById('tiempo-restante-monedero');
+            const intervalo = setInterval(() => {
+                segundos--;
+                if (elemento && segundos > 0) {
+                    elemento.textContent = `Tiempo estimado: ${segundos} segundo${segundos !== 1 ? 's' : ''}`;
+                }
+            }, 1000);
+            
+            return {
+                eliminar: () => {
+                    const spinner = document.getElementById('spinner-monedero');
+                    if (spinner) spinner.remove();
+                    clearInterval(intervalo);
+                },
+                intervalo: intervalo
+            };
+        }
+
+        // ================= VALIDACIÓN DE FORMULARIO =================
+        function validarFormulario() {
+            let valido = true;
+            let mensaje = '';
+            let valor = '';
+            
+            switch(metodoSeleccionado) {
+                case 'paypal':
+                    valor = document.getElementById('paypalEmail').value.trim();
+                    if (!valor || !valor.includes('@') || !valor.includes('.')) {
+                        valido = false;
+                        mensaje = 'Ingresa un correo de PayPal válido.';
+                    }
+                    break;
+                    
+                case 'stripe':
+                    valor = document.getElementById('stripeEmail').value.trim();
+                    if (!valor || !valor.includes('@') || !valor.includes('.')) {
+                        valido = false;
+                        mensaje = 'Ingresa un correo válido para el recibo.';
+                    }
+                    break;
+                    
+                case 'mercado':
+                    valor = document.getElementById('mercadoPhone').value.trim();
+                    const soloNumeros = valor.replace(/\D/g, '');
+                    if (!soloNumeros || soloNumeros.length !== 10) {
+                        valido = false;
+                        mensaje = 'Ingresa un número de teléfono válido (10 dígitos).';
+                    }
+                    break;
+            }
+            
+            if (!valido) {
+                alert(`❌ ${mensaje}`);
+            }
+            
+            return { valido, mensaje, valor };
+        }
+
+        // ================= FUNCIÓN PRINCIPAL =================
+        function procesarPagoMonedero() {
+          if (localStorage.getItem('paymentLocked') === 'true') {
+            alert('El pago ya fue realizado. Redirigiendo...');
+            window.location.replace('/PagoRealizado.html');
+            return;
+          }
+          
+          if (!metodoSeleccionado) {
+                alert('Por favor selecciona un método de pago.');
+                return;
+            }
+            
+            const validacion = validarFormulario();
+            if (!validacion.valido) {
+                return;
+            }
+            
+            // Guardar dato tecleado para poder restaurarlo si falla
+            const datosGuardados = JSON.parse(localStorage.getItem('datosPagoMonedero') || '{}');
+            datosGuardados[metodoSeleccionado] = validacion.valor;
+            localStorage.setItem('datosPagoMonedero', JSON.stringify(datosGuardados));
+            
+            // Obtener monto
+            const total = actualizarMonto();
+            
+            // Mostrar spinner
+            const spinner = mostrarSpinnerProcesamiento(
+                `Procesando pago con ${metodoSeleccionado}...`
+            );
+            
+            // Actualizar pasos
+            actualizarPasos(3); // Paso 3: Confirmación
+            
+            // Simular procesamiento con posibilidad de fallo
+            const resultadoSimulacion = simularProcesamientoPagoMonedero(metodoSeleccionado, total);
+            setTimeout(() => {
+                spinner.eliminar();
+                if (resultadoSimulacion.exito) {
+                  // Doble verificación
+                  if (localStorage.getItem('paymentLocked') === 'true') {
+                    alert('El pago ya fue realizado. Redirigiendo...');
+                    window.location.replace('/PagoRealizado.html');
+                    return;
+                  }
+
+                  // Registrar pedido SOLO en éxito
+                  const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+                  const datosPagoTemp = JSON.parse(localStorage.getItem('datosPagoMonedero') || '{}');
+                  const datosPagoPrev = JSON.parse(localStorage.getItem('datosPagoTemp') || '{}');
+
+                  const pedido = {
+                    id: 'PED-' + Date.now(),
+                    fecha: new Date().toISOString(),
+                    items: carrito.map(it => ({
+                      nombre: it.nombre,
+                      precio: parseFloat(it.precio) || 0,
+                      cantidad: parseInt(it.cantidad) || 1
+                    })),
+                    total: total,
+                    metodoPago: metodoSeleccionado,
+                    contacto: { ...datosPagoPrev, contactoProveedor: (datosPagoTemp[metodoSeleccionado] || '') },
+                    estado: 'Pagado',
+                    transaccionId: resultadoSimulacion.transaccionId,
+                    fechaPago: resultadoSimulacion.fecha,
+                    detallesPago: {
+                      proveedor: metodoSeleccionado,
+                      referencia: resultadoSimulacion.referencia,
+                      contacto: (datosPagoTemp[metodoSeleccionado] || '')
+                    },
+                    historial: [
+                      { estado: 'Registrado', fecha: new Date().toISOString() },
+                      { estado: 'Pagado', fecha: new Date().toISOString() }
+                    ]
+                  };
+
+                  const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+                  pedidos.push(pedido);
+                  localStorage.setItem('pedidos', JSON.stringify(pedidos));
+                  localStorage.setItem('lastPedidoId', pedido.id);
+                  // Limpiar estado de reintento y carrito
+                  localStorage.removeItem('reintentoPagoMonedero');
+                  localStorage.removeItem('datosPagoMonedero');
+                  localStorage.removeItem('datosErrorPago');
+                  localStorage.removeItem('ultimoErrorPago');
+                  localStorage.removeItem('carrito');
+
+                  // Cerrar pago para impedir duplicados
+                  localStorage.setItem('paymentLocked', 'true');
+                  localStorage.setItem('paymentCompleted', 'true');
+                  setTimeout(() => { window.location.href = 'Confirmacion.html'; }, 500);
+                } else {
+                  const datosError = {
+                    motivo: resultadoSimulacion.error,
+                    codigo: resultadoSimulacion.codigoError,
+                    recomendacion: resultadoSimulacion.recomendacion,
+                    metodo: metodoSeleccionado,
+                    monto: total,
+                    proveedor: resultadoSimulacion.proveedor,
+                    contacto: validacion.valor
+                  };
+                  localStorage.setItem('ultimoErrorPago', JSON.stringify(datosError));
+                  localStorage.setItem('metodoPagoError', metodoSeleccionado);
+                  localStorage.setItem('montoPagoError', total.toString());
+                  localStorage.setItem('datosErrorPago', JSON.stringify(datosError));
+
+                  const params = new URLSearchParams({
+                    error: JSON.stringify(datosError),
+                    metodo: metodoSeleccionado,
+                    monto: total,
+                    proveedor: resultadoSimulacion.proveedor
+                  });
+                  window.location.href = `/Error-Pago.html?${params.toString()}`;
+                }
+            }, resultadoSimulacion.tiempoSimulado);
+        }
+    </script>
+    <!-- Bootstrap JS para dropdowns y modal -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factura Electrónica - Borrachorama</title>
+    <!-- Agregar Bootstrap para el menú y modal -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Estilos mínimos para hero + navbar (copiados de catalog.html) */
+        .hero-header {
+            /* full-width background image covering entire row */
+            background: url('img/fondocerveza.jpg') no-repeat center center;
+            background-size: cover;
+            padding: 40px 20px;
+            text-align: center;
+            margin: 0;
+            /* remove gaps */
+            width: 100%;
+            /* ensure full width */
+            display: block;
+        }
+
+        .hero-header img {
+            max-width: 200px
+        }
+
+        /* Navbar: single row, Cuenta far-left, others centered */
+        .navbar-custom {
+            background-color: #ffc107;
+            padding: 12px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+            overflow: visible;
+            /* allow dropdown */
+        }
+
+        .navbar-custom .menu-row {
+            display: flex;
+            justify-content: center;
+            /* center the middle group */
+            align-items: center;
+            gap: 8px;
+            flex-wrap: nowrap;
+            /* one single row */
+            white-space: nowrap;
+            /* prevent wrap */
+            min-height: 40px;
+            position: relative;
+        }
+
+        .btn-cuenta {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            /* vertically center */
+        }
+
+        .navbar-custom .btn,
+        .navbar-custom .dropdown-toggle {
+            background-color: #000 !important;
+            color: #fff !important;
+            border: none !important;
+            background-image: none !important;
+            box-shadow: none !important;
+            min-width: 140px;
+            padding: 8px 12px !important;
+            line-height: 1.2 !important;
+            border-radius: 6px;
+        }
+
+        .navbar-custom .btn:hover,
+        .navbar-custom .dropdown-toggle:hover {
+            opacity: 0.9;
+        }
+
+        .navbar-custom .dropdown-menu {
+            min-width: 180px;
+            text-align: left;
+            background-color: #fff;
+            color: #222;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-custom .dropdown-menu .dropdown-item:hover {
+            background-color: #ffe08a;
+        }
+
+        .navbar-custom .btn-acerca {
+            min-width: unset !important;
+            width: auto !important;
+            padding: 8px 12px !important;
+            font-size: 1rem !important;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .factura-container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e0e0e0;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #ffb300;
+            padding-bottom: 25px;
+            margin-bottom: 35px;
+            position: relative;
+        }
+
+        .logo {
+            max-width: 220px;
+            margin-bottom: 15px;
+        }
+
+        .titulo-factura {
+            color: #d57c00;
+            font-size: 28px;
+            margin: 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .datos-empresa {
+            background: #fff9e6;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 5px solid #ffb300;
+        }
+
+        .datos-cliente {
+            background: #e8f4ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 5px solid #2196F3;
+        }
+
+        .seccion-titulo {
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+
+        .detalle-factura {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .detalle-factura th {
+            background: linear-gradient(135deg, #d57c00 0%, #ffb300 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .detalle-factura td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detalle-factura tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .detalle-factura tr:hover {
+            background: #fff4e6;
+        }
+
+        .totales {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border: 2px solid #e9ecef;
+        }
+
+        .linea-total {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+
+        .total-grande {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #d57c00;
+            border-top: 3px double #ddd;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .botones {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 35px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-descargar {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+        }
+
+        .btn-volver {
+            background: linear-gradient(135deg, #2196F3 0%, #0D47A1 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .qr-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .qr-code {
+            width: 180px;
+            height: 180px;
+            margin: 15px auto;
+            padding: 10px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .qr-code img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .instagram-info {
+            background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .instagram-info a {
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .instagram-info a:hover {
+            text-decoration: underline;
+        }
+
+        .leyenda-sat {
+            font-size: 0.8em;
+            color: #666;
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            border: 1px dashed #ccc;
+        }
+
+        .sellos {
+            display: flex;
+            justify-content: space-around;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+
+        .sello {
+            text-align: center;
+            padding: 15px;
+            min-width: 200px;
+        }
+
+        .sello-digital {
+            font-family: monospace;
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            word-break: break-all;
+            font-size: 0.7em;
+            margin-top: 10px;
+        }
+
+        .info-contacto {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .contacto-item {
+            text-align: center;
+            padding: 15px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .contacto-icono {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .factura-container {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+            }
+
+            .botones {
+                display: none;
+            }
+
+            .instagram-info {
+                background: #833AB4 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .factura-container {
+                padding: 20px;
+            }
+
+            .botones {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .sellos,
+            .info-contacto {
+                flex-direction: column;
+            }
+        }
+        /* Estilos para notificaciones personalizadas */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease-out;
+            border-left: 4px solid #2e7d32;
+        }
+        .notification.error {
+            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+            border-left-color: #b71c1c;
+        }
+        .notification.warning {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            border-left-color: #e65100;
+        }
+        .notification.info {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            border-left-color: #0d47a1;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+        .notification.removing {
+            animation: slideOut 0.3s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Hero con imagen + logo (como catalog.html) -->
+    <header class="hero-header">
+        <img src="img/Borrachoramalogo.png" alt="Borrachorama Logo">
+    </header>
+
+    <!-- Menú superior (idéntico a catalog.html) -->
+    <nav class="navbar-custom" id="navbar">
+        <div class="menu-row">
+            <a href="/Panel.html" class="btn btn-dark text-white btn-cuenta">Cuenta</a>
+            <!-- centered group -->
+            <a href="/inicio.html" class="btn btn-dark text-white">Inicio</a>
+            <a href="/src/html/cart.html" class="btn btn-dark text-white">🛒 Carrito</a>
+            <button type="button" class="btn btn-dark text-white btn-acerca" data-bs-toggle="modal" data-bs-target="#nosotrosModal">Acerca de Nosotros</button>
+            <div class="dropdown d-inline">
+                <button class="btn btn-dark dropdown-toggle text-white" type="button" data-bs-toggle="dropdown" aria-expanded="false">📂 Documentación</button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/src/html/cart.html">Catálogo</a></li>
+                    <li><a class="dropdown-item" href="/src/infraestructura.html">Infraestructura</a></li>
+                    <li><a class="dropdown-item" href="/Disponibilidad.html">Disponibilidad</a></li>
+                    <li><a class="dropdown-item" href="/Tecnologia.html">Tecnología</a></li>
+                    <li><a class="dropdown-item" href="/Status.html">Status</a></li>
+                    <li><a class="dropdown-item" href="/Pedidos_Especiales.html">Pedidos Especiales</a></li>
+                    <li><a class="dropdown-item" href="/Metricas.html">Métricas</a></li>
+                    <li><a class="dropdown-item" href="/Metodos_Pago.html">Métodos de Pago</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modal: Acerca de Nosotros -->
+    <div class="modal fade" id="nosotrosModal" tabindex="-1" aria-labelledby="nosotrosModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" id="nosotrosModalLabel">Acerca de Nosotros</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Borrachorama</strong> nació en Aguascalientes con el objetivo de ofrecer las mejores cervezas
+                        nacionales e internacionales en un ambiente único. 🍺</p>
+                    <p>Nos esforzamos por brindar calidad, seguridad y atención al cliente en cada experiencia de compra.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="factura-container" id="factura">
+        <!-- Encabezado con logo -->
+        <div class="header">
+            <div id="logo-container">
+                <!-- Logo se cargará dinámicamente -->
+            </div>
+            <h1 class="titulo-factura">FACTURA ELECTRÓNICA</h1>
+            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                <div style="text-align: left;">
+                    <p><strong>Folio Fiscal:</strong> <span id="folio" style="font-family: monospace;">FCT-001</span>
+                    </p>
+                    <p><strong>Fecha de Emisión:</strong> <span id="fecha-factura">2025-05-20</span></p>
+                </div>
+                <div style="text-align: right;">
+                    <p><strong>Serie:</strong> BCH-2025</p>
+                    <p><strong>Folio:</strong> <span id="folio-simple">001</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Datos del Emisor (Empresa) -->
+        <div class="datos-empresa">
+            <h3>📋 DATOS DEL EMISOR</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                <div>
+                    <p><strong>Razón Social:</strong> BORRACHORAMA, S.A. DE C.V.</p>
+                    <p><strong>RFC:</strong> BCH250101ABC</p>
+                    <p><strong>Régimen Fiscal:</strong> Régimen General de Ley Personas Morales</p>
+                </div>
+                <div>
+                    <p><strong>Domicilio Fiscal:</strong> Av. Cervecera No. 123, Col. Lúpulo, Alcaldía Cuauhtémoc, C.P.
+                        06000, CDMX</p>
+                    <p><strong>Teléfono:</strong> (55) 1234-5678</p>
+                    <p><strong>Correo:</strong> facturacion@borrachorama.com</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Datos del Receptor (Cliente) -->
+        <div class="datos-cliente">
+            <h3>👤 DATOS DEL RECEPTOR</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                <div>
+                    <p><strong>Nombre:</strong> <span id="nombre-cliente">Cliente</span></p>
+                    <p><strong>RFC:</strong> <span id="rfc-cliente">XAXX010101000</span></p>
+                    <p><strong>Uso de CFDI:</strong> G03 - Gastos en general</p>
+                </div>
+                <div>
+                    <p><strong>Correo:</strong> <span id="correo-cliente">cliente@ejemplo.com</span></p>
+                    <p><strong>Teléfono:</strong> <span id="telefono-cliente">55 9876 5432</span></p>
+                    <p><strong>Domicilio:</strong> <span id="domicilio-cliente">Por especificar</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detalle de la compra -->
+        <h3 class="seccion-titulo">🛒 DETALLE DE LA COMPRA</h3>
+        <table class="detalle-factura">
+            <thead>
+                <tr>
+                    <th width="10%">Cantidad</th>
+                    <th width="40%">Descripción</th>
+                    <th width="15%">P. Unitario</th>
+                    <th width="15%">Importe</th>
+                </tr>
+            </thead>
+            <tbody id="items-factura">
+                <!-- Los items se cargarán con JavaScript -->
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 30px; color: #666;">
+                        Cargando detalle de la compra...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Totales (sin IVA/Subtotal) -->
+        <div class="totales">
+            <div class="linea-total total-grande">
+                <span>TOTAL:</span>
+                <span>$<span id="total">0.00</span></span>
+            </div>
+        </div>
+
+        <!-- Información de pago -->
+        <div style="margin: 30px 0; padding: 20px; background: #e8f5e9; border-radius: 10px;">
+            <h3>💳 INFORMACIÓN DE PAGO</h3>
+            <p><strong>Método de Pago:</strong> <span id="metodo-pago">Transferencia electrónica</span></p>
+            <p><strong>Forma de Pago:</strong> Pago en una sola exhibición</p>
+            <p><strong>Cuenta:</strong> **** **** **** 1234</p>
+            <p><strong>Fecha de Pago:</strong> <span id="fecha-pago">Cargando...</span></p>
+        </div>
+
+        <!-- Sellos digitales -->
+        <div class="sellos">
+            <div class="sello">
+                <h4>🔏 Sello Digital del SAT</h4>
+                <div class="sello-digital" id="sello-sat">
+                    a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6
+                </div>
+            </div>
+
+            <div class="sello">
+                <h4>🏢 Sello del Emisor</h4>
+                <div class="sello-digital" id="sello-emisor">
+                    BCH2025XYZ789ABC123DEF456GHI789JKL012MNO345PQR678
+                </div>
+            </div>
+        </div>
+
+        <!-- Código QR de Instagram -->
+        <div class="qr-container">
+            <h4>📱 SÍGUENOS EN INSTAGRAM</h4>
+            <div class="qr-code" id="qr-code">
+                <!-- Aquí va la imagen del QR de Instagram -->
+                <img id="qr-image" src="" alt="QR Code de Instagram"
+                    onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://instagram.com/borrachorama_ags&color=000000&bgcolor=FFFFFF'">
+            </div>
+
+            <div class="instagram-info">
+                <p style="margin: 0;">
+                    <strong>¡Síguenos para ofertas exclusivas!</strong><br>
+                    <a href="https://instagram.com/borrachorama_ags" target="_blank">
+                        @borrachorama_ags
+                    </a>
+                </p>
+            </div>
+
+            <p style="font-size: 0.9em; color: #555; max-width: 500px; margin: 15px auto;">
+                Escanea el código QR con tu cámara para seguirnos en Instagram y
+                recibir promociones especiales, nuevos productos y eventos.
+            </p>
+        </div>
+
+        <!-- Información de contacto -->
+        <div class="info-contacto">
+            <div class="contacto-item">
+                <div class="contacto-icono">📱</div>
+                <h4>WhatsApp</h4>
+                <p>55 1234 5678</p>
+            </div>
+
+            <div class="contacto-item">
+                <div class="contacto-icono">🌐</div>
+                <h4>Sitio Web</h4>
+                <p>www.borrachorama.com</p>
+            </div>
+
+            <div class="contacto-item">
+                <div class="contacto-icono">📧</div>
+                <h4>Correo</h4>
+                <p>contacto@borrachorama.com</p>
+            </div>
+        </div>
+
+        <!-- Leyendas requeridas por el SAT -->
+        <div class="leyenda-sat">
+            <p><strong>LEYENDAS OBLIGATORIAS:</strong></p>
+            <p>Este documento es una representación impresa de un Comprobante Fiscal Digital por Internet (CFDI).</p>
+            <p>Para verificar la autenticidad de este comprobante, consulte la página del SAT:
+                https://verificacfdi.facturaelectronica.sat.gob.mx/</p>
+            <p>Certificado Digital del SAT No. 00001000000501234567</p>
+            <p>Número de Certificado del Emisor: 30001000000400002345</p>
+            <p>Fecha y Hora de Certificación: <span id="fecha-certificacion">Cargando...</span></p>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="botones">
+            <button class="btn btn-descargar" onclick="descargarFacturaPDF()">
+                📥 Descargar Factura (PDF)
+            </button>
+            <button class="btn btn-donar" onclick="irADonacion()"
+                style="background: linear-gradient(135deg, #FF5722 0%, #E64A19 100%); color: white;">
+                ❤️ ¿Quieres donar?
+            </button>
+            <button class="btn btn-volver" onclick="volverAlInicio()">
+                🏠 Volver al Inicio
+            </button>
+        </div>
+    </div>
+
+    <!-- Librerías para PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.5.28/dist/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        // ================= CONFIGURACIÓN =================
+        const CONFIG = {
+            empresa: {
+                nombre: "BORRACHORAMA, S.A. DE C.V.",
+                rfc: "BCH250101ABC",
+                direccion: "Av. Cervecera No. 123, Col. Lúpulo, Alcaldía Cuauhtémoc, C.P. 06000, CDMX",
+                telefono: "(55) 1234-5678",
+                correo: "facturacion@borrachorama.com",
+                regimen: "Régimen General de Ley Personas Morales",
+                instagram: "@borrachorama_ags",
+                instagramUrl: "https://instagram.com/borrachorama_ags",
+                whatsapp: "55 1234 5678",
+                website: "www.borrachorama.com",
+                email: "contacto@borrachorama.com"
+            }
+        };
+
+        // Variables globales
+        let qrImageDataURL = '';
+        let qrImageLoaded = false;
+
+        // ================= INICIALIZACIÓN =================
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("=== INICIANDO CARGA DE FACTURA ===");
+            console.log("Cargando datos de la factura...");
+
+            // Cargar QR de Instagram
+            cargarQRInstagram();
+
+            // PRIORIDAD 1: Buscar el último pedido registrado
+            const pedidoId = localStorage.getItem('lastPedidoId');
+            const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+            let pedido = pedidos.find(p => p.id === pedidoId);
+
+            console.log("1. Buscando pedido con ID:", pedidoId);
+            console.log("   Pedidos en localStorage:", pedidos);
+            console.log("   Pedido encontrado:", pedido);
+
+            // PRIORIDAD 2: Si no hay pedido, intentar obtener datos del carrito DIRECTAMENTE
+            if (!pedido || !pedido.items || pedido.items.length === 0) {
+                console.log("2. No se encontró pedido válido, buscando en carrito...");
+
+                const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+                console.log("   Carrito encontrado:", carrito);
+
+                if (carrito && carrito.length > 0) {
+                    console.log("   ✅ Usando datos del carrito directamente");
+
+                    // Calcular total del carrito
+                    const total = carrito.reduce((sum, item) => {
+                        const precio = parseFloat(item.precio) || 0;
+                        const cantidad = parseInt(item.cantidad) || 1;
+                        return sum + (precio * cantidad);
+                    }, 0);
+
+                    // Crear pedido temporal con datos del carrito
+                    pedido = {
+                        id: 'TEMP-' + Date.now(),
+                        fecha: new Date().toISOString(),
+                        items: carrito.map(item => ({
+                            nombre: item.nombre || 'Producto sin nombre',
+                            precio: parseFloat(item.precio) || 0,
+                            cantidad: parseInt(item.cantidad) || 1
+                        })),
+                        total: total,
+                        metodoPago: 'No especificado',
+                        contacto: {
+                            nombre: 'CONSUMIDOR FINAL',
+                            correo: 'No especificado'
+                        },
+                        estado: 'Registrado'
+                    };
+
+                    console.log("   Pedido temporal creado:", pedido);
+                } else {
+                    console.log("   ⚠️ No se encontró carrito con productos");
+                }
+            }
+
+            // PRIORIDAD 3: Cargar datos del cliente
+            const datosPago = JSON.parse(localStorage.getItem('datosPagoTemp') || '{}');
+            console.log("3. Datos del cliente:", datosPago);
+
+            // CARGAR DATOS EN LA FACTURA
+            if (pedido && pedido.items && pedido.items.length > 0) {
+                console.log("4. ✅ Cargando factura con datos reales");
+                cargarDatosFactura(pedido, datosPago);
+            } else {
+                console.log("4. ❌ No se encontraron datos, usando ejemplo");
+                cargarDatosEjemplo();
+            }
+
+            // Establecer fechas
+            const ahora = new Date();
+            document.getElementById('fecha-factura').textContent = ahora.toISOString().split('T')[0];
+            document.getElementById('fecha-pago').textContent =
+                ahora.toLocaleDateString('es-MX') + ' ' + ahora.toLocaleTimeString('es-MX');
+            document.getElementById('fecha-certificacion').textContent =
+                ahora.toLocaleDateString('es-MX') + ' ' + ahora.toLocaleTimeString('es-MX');
+
+            // Cargar método de pago
+            if (pedido && pedido.metodoPago) {
+                const metodos = {
+                    'tarjeta': 'Tarjeta de crédito/débito',
+                    'paypal': 'PayPal',
+                    'efectivo': 'Efectivo',
+                    'transferencia': 'Transferencia electrónica',
+                    'cheque': 'Cheque'
+                };
+                document.getElementById('metodo-pago').textContent =
+                    metodos[pedido.metodoPago] || pedido.metodoPago;
+            }
+
+            console.log("=== CARGA DE FACTURA COMPLETADA ===");
+        });
+
+        // ================= CARGAR QR DE INSTAGRAM =================
+        function cargarQRInstagram() {
+            const qrImg = document.getElementById('qr-image');
+
+            const rutasQR = [
+                'img/borrachorama_ags_qr.png',
+                '../img/borrachorama_ags_qr.png',
+                '/img/borrachorama_ags_qr.png',
+                'borrachorama_ags_qr.png',
+                'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' +
+                encodeURIComponent(CONFIG.empresa.instagramUrl) +
+                '&color=000000&bgcolor=FFFFFF&format=png'
+            ];
+
+            const qrLocal = new Image();
+
+            qrLocal.onload = function () {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = qrLocal.width;
+                canvas.height = qrLocal.height;
+                ctx.drawImage(qrLocal, 0, 0);
+                qrImageDataURL = canvas.toDataURL('image/png');
+                qrImageLoaded = true;
+                qrImg.src = qrImageDataURL;
+                console.log("✅ QR local cargado exitosamente para PDF");
+            };
+
+            qrLocal.onerror = function () {
+                console.log("⚠️ QR local no encontrado, usando fallback online");
+                const qrOnline = new Image();
+                qrOnline.crossOrigin = "Anonymous";
+                qrOnline.onload = function () {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = qrOnline.width;
+                    canvas.height = qrOnline.height;
+                    ctx.drawImage(qrOnline, 0, 0);
+                    qrImageDataURL = canvas.toDataURL('image/png');
+                    qrImageLoaded = true;
+                    qrImg.src = qrImageDataURL;
+                };
+                qrOnline.onerror = function () {
+                    console.error("❌ No se pudo cargar ningún QR");
+                };
+                qrOnline.src = rutasQR[rutasQR.length - 1];
+            };
+
+            qrLocal.src = rutasQR[0];
+        }
+
+        // ================= FUNCIÓN PARA CARGAR DATOS =================
+        function cargarDatosFactura(pedido, datosCliente) {
+            try {
+                console.log("--- CARGANDO DATOS EN FACTURA ---");
+                console.log("Pedido recibido:", pedido);
+                console.log("Items del pedido:", pedido.items);
+
+                // Datos del cliente
+                document.getElementById('nombre-cliente').textContent =
+                    datosCliente.nombre || pedido.contacto?.nombre || 'CONSUMIDOR FINAL';
+                document.getElementById('correo-cliente').textContent =
+                    datosCliente.correo || pedido.contacto?.correo || 'No especificado';
+
+                // Generar folios únicos
+                const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+                const folioSimple = String(pedidos.length + 1).padStart(3, '0');
+                const folioFiscal = 'FCT-' + Date.now().toString().slice(-8);
+
+                document.getElementById('folio').textContent = folioFiscal;
+                document.getElementById('folio-simple').textContent = folioSimple;
+
+                // Calcular y mostrar items
+                const itemsTabla = document.getElementById('items-factura');
+                itemsTabla.innerHTML = '';
+
+                let sumaImportes = 0;
+
+                // VERIFICACIÓN CRÍTICA: Asegurar que hay items
+                if (!pedido.items || pedido.items.length === 0) {
+                    console.error("❌ ERROR: No hay items en el pedido");
+                    cargarDatosEjemplo();
+                    return;
+                }
+
+                console.log(`✅ Procesando ${pedido.items.length} items`);
+
+                // Procesar cada item
+                pedido.items.forEach((item, index) => {
+                    console.log(`   Item ${index + 1}:`, item);
+
+                    const precio = parseFloat(item.precio) || 0;
+                    const cantidad = parseInt(item.cantidad) || 1;
+                    const importe = precio * cantidad;
+                    sumaImportes += importe;
+
+                    const fila = document.createElement('tr');
+                    fila.innerHTML = `
+                <td>${cantidad}</td>
+                <td>${item.nombre || 'Producto ' + (index + 1)}</td>
+                <td>$${precio.toFixed(2)}</td>
+                <td>$${importe.toFixed(2)}</td>
+            `;
+                    itemsTabla.appendChild(fila);
+                });
+
+                // Total sin IVA
+                document.getElementById('total').textContent = sumaImportes.toFixed(2);
+
+                // Guardar datos para PDF (sin IVA/Subtotal)
+                localStorage.setItem('facturaActual', JSON.stringify({
+                    folioFiscal: document.getElementById('folio').textContent,
+                    folioSimple: document.getElementById('folio-simple').textContent,
+                    fecha: new Date().toISOString(),
+                    cliente: datosCliente.nombre || pedido.contacto?.nombre || 'CONSUMIDOR FINAL',
+                    rfc: datosCliente.rfc || 'XAXX010101000',
+                    items: pedido.items,
+                    total: sumaImportes,
+                    metodoPago: pedido.metodoPago
+                }));
+
+                console.log("--- CARGA DE DATOS COMPLETADA ---");
+
+            } catch (error) {
+                console.error("❌ ERROR cargando datos:", error);
+                cargarDatosEjemplo();
+            }
+        }
+
+        // ================= FUNCIONES DE EJEMPLO (FALLBACK) =================
+        function cargarDatosEjemplo() {
+            console.log("⚠️ USANDO DATOS DE EJEMPLO - No se encontraron datos reales");
+
+            document.getElementById('nombre-cliente').textContent = "JUAN PÉREZ GÓMEZ";
+            document.getElementById('rfc-cliente').textContent = "PEGJ800101ABC";
+            document.getElementById('correo-cliente').textContent = "juan.perez@ejemplo.com";
+            document.getElementById('telefono-cliente').textContent = "55 1234 5678";
+            document.getElementById('domicilio-cliente').textContent = "Av. Reforma 123, CDMX";
+
+            const folioFiscal = 'FCT-' + Date.now().toString().slice(-8);
+            document.getElementById('folio').textContent = folioFiscal;
+
+            const itemsTabla = document.getElementById('items-factura');
+            itemsTabla.innerHTML = '';
+
+            cargarItemsEjemplo(itemsTabla);
+
+            // Total ejemplo sin IVA/Subtotal
+            const totalEjemplo = 1061.00; // ajusta si cambias los items de ejemplo
+            document.getElementById('total').textContent = totalEjemplo.toFixed(2);
+        }
+
+        function cargarItemsEjemplo(tabla) {
+            const ejemploItems = [
+                { cantidad: 2, nombre: "Cerveza Corona", precio: 25.50 },
+                { cantidad: 2, nombre: "Whisky Buchanan's", precio: 420.00 },
+                { cantidad: 2, nombre: "Agua Bonafont", precio: 15.00 },
+                { cantidad: 5, nombre: "Cerveza Modelo Especial", precio: 28.00 }
+            ];
+
+            ejemploItems.forEach(item => {
+                const importe = item.precio * item.cantidad;
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+            <td>${item.cantidad}</td>
+            <td>${item.nombre}</td>
+            <td>$${item.precio.toFixed(2)}</td>
+            <td>$${importe.toFixed(2)}</td>
+        `;
+                tabla.appendChild(fila);
+            });
+        }
+
+        // ================= FUNCIONES AUXILIARES =================
+        function volverAlInicio() {
+            if (confirm("¿Volver al inicio? Se perderá la vista de esta factura.")) {
+                window.location.href = "/inicio.html";
+            }
+        }
+
+        function irADonacion() {
+            const facturaData = JSON.parse(localStorage.getItem('facturaActual') || '{}');
+            localStorage.setItem('facturaParaDonacion', JSON.stringify(facturaData));
+            window.location.href = '/Donacion.html';
+        }
+
+        // ================= GENERAR PDF PROFESIONAL CON QR =================
+        function descargarFacturaPDF() {
+            try {
+                console.log("Iniciando generación de PDF con QR...");
+
+                // Verificar que jsPDF esté disponible
+                if (typeof jsPDF === 'undefined' && window.jspdf) {
+                    const { jsPDF } = window.jspdf;
+                    var doc = new jsPDF('p', 'mm', 'letter');
+                } else if (typeof jsPDF !== 'undefined') {
+                    var doc = new jsPDF('p', 'mm', 'letter');
+                } else {
+                    throw new Error("jsPDF no está disponible");
+                }
+
+                // Obtener datos de la factura
+                const facturaData = JSON.parse(localStorage.getItem('facturaActual') || '{}');
+                const fecha = new Date();
+
+                // ========== ENCABEZADO CON LOGO ==========
+                doc.setFontSize(24);
+                doc.setTextColor(213, 124, 0);
+                doc.text("BORRACHORAMA", 105, 20, { align: 'center' });
+
+                doc.setFontSize(10);
+                doc.setTextColor(100, 100, 100);
+                doc.text("SISTEMA DE FACTURACIÓN ELECTRÓNICA", 105, 27, { align: 'center' });
+
+                doc.setDrawColor(255, 179, 0);
+                doc.setLineWidth(1);
+                doc.line(15, 32, 195, 32);
+
+                doc.setFontSize(18);
+                doc.setTextColor(0, 0, 0);
+                doc.text("FACTURA ELECTRÓNICA", 105, 42, { align: 'center' });
+
+                // ========== DATOS DE LA FACTURA ==========
+                doc.setFontSize(9);
+                doc.setTextColor(80, 80, 80);
+
+                doc.text(`Folio Fiscal: ${facturaData.folioFiscal || 'FCT-' + Date.now().toString().slice(-8)}`, 15, 50);
+                doc.text(`Fecha de Emisión: ${fecha.toLocaleDateString('es-MX')}`, 15, 55);
+                doc.text(`Serie: BCH-2025`, 15, 60);
+                doc.text(`Folio: ${facturaData.folioSimple || '001'}`, 15, 65);
+
+                doc.text(`Certificado: 00001000000501234567`, 130, 50);
+                doc.text(`No. Certificado: 30001000000400002345`, 130, 55);
+                doc.text(`Lugar de Expedición: CDMX`, 130, 60);
+                doc.text(`Forma de Pago: Pago en una sola exhibición`, 130, 65);
+
+                // ========== DATOS DEL EMISOR ==========
+                doc.setFontSize(10);
+                doc.setTextColor(0, 0, 0);
+                doc.text("DATOS DEL EMISOR", 15, 75);
+
+                doc.setFontSize(9);
+                doc.setTextColor(80, 80, 80);
+                doc.text(`Razón Social: ${CONFIG.empresa.nombre}`, 15, 80);
+                doc.text(`RFC: ${CONFIG.empresa.rfc}`, 15, 85);
+                doc.text(`Domicilio: ${CONFIG.empresa.direccion}`, 15, 90);
+                doc.text(`Régimen Fiscal: ${CONFIG.empresa.regimen}`, 15, 95);
+
+                // ========== DATOS DEL RECEPTOR ==========
+                doc.setFontSize(10);
+                doc.setTextColor(0, 0, 0);
+                doc.text("DATOS DEL RECEPTOR", 115, 75);
+
+                doc.setFontSize(9);
+                doc.setTextColor(80, 80, 80);
+                doc.text(`Nombre: ${document.getElementById('nombre-cliente').textContent}`, 115, 80);
+                doc.text(`RFC: ${document.getElementById('rfc-cliente').textContent}`, 115, 85);
+                doc.text(`Uso de CFDI: G03 - Gastos en general`, 115, 90);
+                doc.text(`Domicilio: ${document.getElementById('domicilio-cliente').textContent}`, 115, 95);
+
+                // ========== TABLA DE PRODUCTOS ==========
+                doc.setFontSize(11);
+                doc.setTextColor(0, 0, 0);
+                doc.text("DETALLE DE LA COMPRA", 15, 105);
+
+                const items = facturaData.items || [];
+                let yPos = 115;
+
+                // Encabezado de tabla
+                doc.setFillColor(213, 124, 0);
+                doc.rect(15, yPos, 170, 8, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.text("Cant.", 20, yPos + 6);
+                doc.text("Descripción", 40, yPos + 6);
+                doc.text("P. Unitario", 130, yPos + 6);
+                doc.text("Importe", 160, yPos + 6);
+
+                yPos += 12;
+                doc.setTextColor(0, 0, 0);
+
+                // Filas de productos
+                items.forEach((item, index) => {
+                    if (yPos > 240) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+
+                    const precio = parseFloat(item.precio) || 0;
+                    const cantidad = parseInt(item.cantidad) || 1;
+                    const importe = precio * cantidad;
+
+                    if (index % 2 === 0) {
+                        doc.setFillColor(245, 245, 245);
+                        doc.rect(15, yPos - 4, 170, 8, 'F');
+                    }
+
+                    doc.text(cantidad.toString(), 20, yPos);
+                    doc.text(item.nombre || `Producto ${index + 1}`, 40, yPos);
+                    doc.text("$" + precio.toFixed(2), 130, yPos);
+                    doc.text("$" + importe.toFixed(2), 160, yPos);
+
+                    yPos += 10;
+                });
+
+                // ========== TOTALES ==========
+                yPos = Math.max(yPos, 150);
+                const total = (typeof facturaData.total === 'number')
+                    ? facturaData.total
+                    : items.reduce((acc, it) => acc + (parseFloat(it.precio) || 0) * (parseInt(it.cantidad) || 1), 0);
+
+                // Separador visual
+                doc.setDrawColor(200, 200, 200);
+                doc.setLineWidth(0.5);
+                doc.line(120, yPos, 180, yPos);
+                yPos += 10;
+
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.text("TOTAL:", 130, yPos);
+                doc.text("$" + total.toFixed(2), 165, yPos);
+                doc.setFont(undefined, 'normal');
+
+                // ========== SELLOS DIGITALES ==========
+                yPos += 20;
+                doc.setFontSize(8);
+                doc.setTextColor(100, 100, 100);
+
+                doc.text("SELLO DIGITAL DEL SAT:", 15, yPos);
+                doc.setFont(undefined, 'normal');
+                doc.text("a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6", 15, yPos + 4);
+
+                doc.text("SELLO DEL EMISOR:", 15, yPos + 12);
+                doc.text("BCH2025XYZ789ABC123DEF456GHI789JKL012MNO345PQR678", 15, yPos + 16);
+
+                // ========== QR DE INSTAGRAM EN PDF ==========
+                const qrX = 120;
+                const qrY = yPos - 5;
+                const qrSize = 60;
+
+                doc.setDrawColor(200, 200, 200);
+                doc.setLineWidth(0.5);
+                doc.rect(qrX, qrY, qrSize, qrSize);
+
+                if (qrImageLoaded && qrImageDataURL) {
+                    try {
+                        doc.addImage(qrImageDataURL, 'PNG', qrX + 2, qrY + 2, qrSize - 4, qrSize - 4);
+                        console.log("QR agregado al PDF exitosamente");
+                    } catch (error) {
+                        console.error("Error agregando QR al PDF:", error);
+                        dibujarQRSimulado(doc, qrX, qrY, qrSize);
+                    }
+                } else {
+                    dibujarQRSimulado(doc, qrX, qrY, qrSize);
+                }
+
+                doc.setFontSize(7);
+                doc.setTextColor(0, 0, 0);
+                doc.text("SÍGUENOS EN", qrX + qrSize / 2, qrY + qrSize + 8, { align: 'center' });
+                doc.text("INSTAGRAM", qrX + qrSize / 2, qrY + qrSize + 13, { align: 'center' });
+                doc.text(CONFIG.empresa.instagram, qrX + qrSize / 2, qrY + qrSize + 18, { align: 'center' });
+
+                // ========== INFORMACIÓN DE CONTACTO ==========
+                yPos += 80;
+                doc.setFontSize(9);
+                doc.setTextColor(0, 0, 0);
+                doc.text("CONTÁCTANOS:", 15, yPos);
+
+                doc.setFontSize(8);
+                doc.setTextColor(80, 80, 80);
+                doc.text(`WhatsApp: ${CONFIG.empresa.whatsapp}`, 15, yPos + 7);
+                doc.text(`Sitio Web: ${CONFIG.empresa.website}`, 15, yPos + 14);
+                doc.text(`Correo: ${CONFIG.empresa.email}`, 15, yPos + 21);
+                doc.text(`Instagram: ${CONFIG.empresa.instagram}`, 15, yPos + 28);
+
+                // ========== LEYENDAS DEL SAT ==========
+                yPos += 40;
+                doc.setFontSize(6);
+                doc.setTextColor(80, 80, 80);
+
+                const leyendas = [
+                    "Este documento es una representación impresa de un Comprobante Fiscal Digital por Internet (CFDI).",
+                    "Para verificar la autenticidad de este comprobante, visite:",
+                    "https://verificacfdi.facturaelectronica.sat.gob.mx/",
+                    `Fecha y Hora de Certificación: ${fecha.toLocaleString('es-MX')}`,
+                    "Cadena Original del Complemento de Certificación Digital del SAT:",
+                    "||1.1|" + (facturaData.folioFiscal || 'FCT-001') + "|" + fecha.toISOString() +
+                    "|" + CONFIG.empresa.rfc + "|" + document.getElementById('rfc-cliente').textContent +
+                    "|" + total.toFixed(2) + "|"
+                ];
+
+                leyendas.forEach((texto, index) => {
+                    doc.text(texto, 15, yPos + (index * 4));
+                });
+
+                // ========== PIE DE PÁGINA ==========
+                doc.setFontSize(7);
+                doc.setTextColor(150, 150, 150);
+                doc.text("Página 1 de 1", 105, 280, { align: 'center' });
+                doc.text("Documento generado electrónicamente - " + fecha.toLocaleString('es-MX'), 105, 285, { align: 'center' });
+
+                // ========== GUARDAR PDF ==========
+                const nombreArchivo = `factura_borrachorama_${facturaData.folioSimple || '001'}.pdf`;
+                doc.save(nombreArchivo);
+
+                console.log("PDF generado exitosamente:", nombreArchivo);
+                mostrarNotificacion("✅ Factura descargada exitosamente como: " + nombreArchivo);
+
+            } catch (error) {
+                console.error("Error generando PDF:", error);
+                mostrarNotificacion("❌ Error al generar el PDF: " + error.message, 'error');
+                try {
+                    window.print();
+                    mostrarNotificacion("Como alternativa, puedes imprimir la página desde el navegador.", 'info');
+                } catch (e) {
+                    console.error("Error alternativo:", e);
+                }
+            }
+        }
+
+        // ================= DIBUJAR QR SIMULADO =================
+        function dibujarQRSimulado(doc, x, y, size) {
+            try {
+                doc.setFillColor(0, 0, 0);
+                const cellSize = size / 21;
+
+                for (let i = 0; i < 7; i++) {
+                    for (let j = 0; j < 7; j++) {
+                        if ((i < 2 || i > 4) && (j < 2 || j > 4)) {
+                            doc.rect(x + i * cellSize, y + j * cellSize, cellSize, cellSize, 'F');
+                        }
+                        if ((i > 13 && i < 16) && (j < 2 || j > 4)) {
+                            doc.rect(x + i * cellSize, y + j * cellSize, cellSize, cellSize, 'F');
+                        }
+                        if ((i < 2 || i > 4) && (j > 13 && j < 16)) {
+                            doc.rect(x + i * cellSize, y + j * cellSize, cellSize, cellSize, 'F');
+                        }
+                    }
+                }
+
+                for (let i = 0; i < 50; i++) {
+                    const randX = Math.floor(Math.random() * 17) + 2;
+                    const randY = Math.floor(Math.random() * 17) + 2;
+                    doc.rect(x + randX * cellSize, y + randY * cellSize, cellSize, cellSize, 'F');
+                }
+
+            } catch (error) {
+                console.error("Error dibujando QR simulado:", error);
+                doc.setFontSize(20);
+                doc.text("📷", x + size / 2 - 5, y + size / 2 + 5);
+                doc.setFontSize(6);
+                doc.text("Instagram", x + size / 2, y + size / 2 + 15, { align: 'center' });
+                doc.text(CONFIG.empresa.instagram, x + size / 2, y + size / 2 + 20, { align: 'center' });
+            }
+        }
+
+        // Función para mostrar notificaciones personalizadas
+        function mostrarNotificacion(mensaje, tipo = 'success') {
+            const notif = document.createElement('div');
+            notif.className = `notification ${tipo}`;
+            notif.innerHTML = `
+                <span>${tipo === 'success' ? '✓' : tipo === 'error' ? '✕' : tipo === 'warning' ? '⚠' : 'ℹ'}</span>
+                <span>${mensaje}</span>
+            `;
+            document.body.appendChild(notif);
+            
+            setTimeout(() => {
+                notif.classList.add('removing');
+                setTimeout(() => notif.remove(), 300);
+            }, 3000);
+        }
+    </script>
+    <!-- Bootstrap JS para dropdown y modal -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

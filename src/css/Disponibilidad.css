@@ -1,0 +1,61 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 40px;
+  background: #FFD600; /* Fondo amarillo Borrachorama */
+  color: #000; /* Texto en negro */
+}
+
+h1 {
+  color: #000; /* Negro para resaltar sobre el amarillo */
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+p {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 1.1em;
+  color: #000; /* Negro para contraste */
+}
+
+table {
+  width: 80%;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background: #000; /* Fondo negro de la tabla */
+  color: #FFD600; /* Texto amarillo */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  border: 2px solid #FFD600; /* Borde amarillo */
+}
+
+th, td {
+  border: 1px solid #FFD600; /* Bordes amarillos */
+  padding: 12px;
+  text-align: center;
+}
+
+th {
+  background: #FFD600; /* Cabecera amarilla */
+  color: #000; /* Texto en negro */
+}
+
+tr:nth-child(even) {
+  background-color: #222; /* Filas pares en gris oscuro */
+  color: #FFD600; /* Texto amarillo */
+}
+
+tr:nth-child(odd) {
+  background-color: #000; /* Filas impares negras */
+  color: #FFD600;
+}
+
+.nota {
+  margin-top: 30px;
+  font-style: italic;
+  text-align: center;
+  color: #000; /* Negro */
+  background: #fffae3; /* Amarillo claro pastel */
+  padding: 10px;
+  border-left: 5px solid #000; /* Línea negra */
+  border-radius: 5px;
+}

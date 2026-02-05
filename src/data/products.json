@@ -1,0 +1,59 @@
+
+[
+  {
+    "name": "Cerveza Corona",
+    "price": 25.50,
+    "category": "Cerveza",
+    "image": "https://static.wixstatic.com/media/1bbfe3_16a3fee6bc2b4f7cbd869c96342223a4~mv2.jpg/v1/fill/w_480,h_480,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/1bbfe3_16a3fee6bc2b4f7cbd869c96342223a4~mv2.jpg",
+    "description": "Cerveza rubia, refrescante, 355 ml."
+  },
+  {
+    "name": "Cerveza Modelo Especial",
+    "price": 28.00,
+    "category": "Cerveza",
+    "image": "https://static.wixstatic.com/media/1bbfe3_414567bee24248f2ba619642d84ba7b4~mv2.jpg/v1/fill/w_480,h_480,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/1bbfe3_414567bee24248f2ba619642d84ba7b4~mv2.jpg",
+    "description": "Cerveza tipo lager, sabor equilibrado, 355 ml."
+  },
+  {
+    "name": "Cerveza Tecate",
+    "price": 23.00,
+    "category": "Cerveza",
+    "image": "https://m.media-amazon.com/images/I/41QPZuzP95L.jpg",
+    "description": "Cerveza ligera y refrescante, ideal para acompañar comida, 355 ml."
+  },
+  {
+    "name": "Whisky Buchanan's",
+    "price": 420.00,
+    "category": "Licor",
+    "image": "https://i5.walmartimages.com/asr/89a01594-a560-4e3e-a66a-2b84d60b643f.fa49cc19012205895286177fa95c6131.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF",
+    "description": "Whisky escocés de 12 años, sabor suave y aroma ahumado."
+  },
+  {
+    "name": "Ron Bacardí",
+    "price": 180.00,
+    "category": "Licor",
+    "image": "https://i5.walmartimages.com.mx/samsmx/images/product-images/img_large/981021871l.jpg?odnHeight=612&odnWidth=612&odnBg=FFFFFF",
+    "description": "Ron blanco, perfecto para preparar cocteles."
+  },
+  {
+    "name": "Tequila José Cuervo",
+    "price": 350.00,
+    "category": "Licor",
+    "image": "https://www.costco.com.mx/medias/sys_master/products/h82/h2f/29908573356062.jpg",
+    "description": "Tequila reposado, 100% agave, sabor auténtico mexicano."
+  },
+  {
+    "name": "Coca-Cola",
+    "price": 20.00,
+    "category": "Bebida sin alcohol",
+    "image": "https://www.cityclub.com.mx/on/demandware.static/-/Sites-soriana-grocery-master-catalog/default/dw60f6f9ab/images/product/7501055300075_A.jpg",
+    "description": "Refresco clásico, 355 ml."
+  },
+  {
+    "name": "Agua Bonafont",
+    "price": 15.00,
+    "category": "Bebida sin alcohol",
+    "image": "https://lacharcu.com.mx/wp-content/uploads/2024/05/agua_bonaf_600.jpg",
+    "description": "Agua purificada, 600 ml."
+  }
+]

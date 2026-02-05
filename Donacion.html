@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donación - Borrachorama</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #d57c00;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .fundacion-info {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+        }
+
+        .donation-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            color: #d57c00;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ffb300;
+        }
+
+        .fundacion-title {
+            color: white;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .fundacion-logo {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #4CAF50;
+        }
+
+        .cause-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .cause-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        .cause-list li:before {
+            content: "✓";
+            color: #4CAF50;
+            font-weight: bold;
+            margin-right: 10px;
+            background: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .donation-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .donation-option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .donation-option:hover {
+            border-color: #d57c00;
+            transform: translateY(-3px);
+        }
+
+        .donation-option.selected {
+            background: #fff4e6;
+            border-color: #d57c00;
+            box-shadow: 0 5px 15px rgba(213, 124, 0, 0.2);
+        }
+
+        .donation-amount {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #d57c00;
+            margin-bottom: 5px;
+        }
+
+        .custom-amount {
+            margin: 20px 0;
+        }
+
+        .custom-amount input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .payment-methods {
+            margin: 20px 0;
+        }
+
+        .payment-option {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .payment-option.selected {
+            background: #e8f4ff;
+            border-color: #2196F3;
+        }
+
+        .payment-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            width: 40px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin: 20px 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #d57c00;
+            outline: none;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-donar {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+        }
+
+        .btn-cancelar {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .impact-counter {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .counter-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4CAF50;
+            margin: 10px 0;
+        }
+
+        .testimonial {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 5px solid #d57c00;
+            font-style: italic;
+        }
+        /* Estilos para notificaciones personalizadas */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease-out;
+            border-left: 4px solid #2e7d32;
+        }
+        .notification.error {
+            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+            border-left-color: #b71c1c;
+        }
+        .notification.warning {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            border-left-color: #e65100;
+        }
+        .notification.info {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            border-left-color: #0d47a1;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+        .notification.removing {
+            animation: slideOut 0.3s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <img src="img/Borrachoramalogo.png" alt="Borrachorama Logo" class="logo">
+            <h1>Haz la Diferencia</h1>
+            <p class="subtitle">Tu donación puede cambiar vidas y ayudar al planeta</p>
+        </header>
+
+        <div class="content">
+            <!-- Sección de información de la fundación -->
+            <div class="info-section fundacion-info">
+                <h2 class="section-title fundacion-title">🌍 Fundación "Verde por México"</h2>
+
+                <div class="fundacion-logo">
+                    🌱
+                </div>
+
+                <p style="margin-bottom: 20px; line-height: 1.6;">
+                    Somos una organización sin fines de lucro dedicada a la reforestación,
+                    conservación de agua y apoyo a comunidades rurales en México.
+                </p>
+
+                <h3 style="margin: 20px 0 10px 0; color: white;">Tu donación ayudará a:</h3>
+                <ul class="cause-list">
+                    <li>Plantar árboles nativos en áreas deforestadas</li>
+                    <li>Proteger mantos acuíferos y fuentes de agua</li>
+                    <li>Educar a comunidades sobre sustentabilidad</li>
+                    <li>Crear empleos verdes en zonas rurales</li>
+                    <li>Rescatar especies en peligro de extinción</li>
+                </ul>
+
+                <div class="testimonial">
+                    <p>"Gracias a donaciones como la tuya, hemos plantado más de 50,000 árboles
+                        y ayudado a 100 comunidades este año."</p>
+                    <p style="text-align: right; margin-top: 10px;"><strong>- María González, Directora</strong></p>
+                </div>
+            </div>
+
+            <!-- Formulario de donación -->
+            <div class="donation-form">
+                <h2 class="section-title">Realizar Donación</h2>
+
+                <div class="donation-options" id="donationOptions">
+                    <div class="donation-option" data-amount="5">
+                        <div class="donation-amount">$5</div>
+                        <div>Planta 1 árbol</div>
+                    </div>
+                    <div class="donation-option" data-amount="10">
+                        <div class="donation-amount">$10</div>
+                        <div>Protege 100L de agua</div>
+                    </div>
+                    <div class="donation-option" data-amount="20">
+                        <div class="donation-amount">$20</div>
+                        <div>Educa a 1 familia</div>
+                    </div>
+                </div>
+
+                <div class="custom-amount">
+                    <label>O escribe la cantidad que deseas donar:</label>
+                    <input type="number" id="customAmount" min="1" max="10000" placeholder="Ej: 50" step="1">
+                </div>
+
+                <div class="payment-methods">
+                    <h3 style="margin-bottom: 15px;">Método de Pago</h3>
+
+                    <div class="payment-option" data-method="tarjeta">
+                        <div class="payment-icon">💳</div>
+                        <div>
+                            <strong>Tarjeta de crédito/débito</strong>
+                            <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #666;">
+                                Pago seguro con encriptación SSL
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="payment-option" data-method="paypal">
+                        <div class="payment-icon">💰</div>
+                        <div>
+                            <strong>PayPal / Monedero digital</strong>
+                            <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #666;">
+                                Transacción rápida y segura
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="payment-option" data-method="transferencia">
+                        <div class="payment-icon">🏦</div>
+                        <div>
+                            <strong>Transferencia bancaria</strong>
+                            <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #666;">
+                                Depósito en cuenta BBVA, Banamex, etc.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="nombre">Nombre completo *</label>
+                    <input type="text" id="nombre" placeholder="Tu nombre">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Correo electrónico *</label>
+                    <input type="email" id="email" placeholder="tu@correo.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="dedicatoria">Dedicatoria (opcional)</label>
+                    <input type="text" id="dedicatoria" placeholder="Ej: En memoria de... o Para mi comunidad">
+                </div>
+
+                <div class="buttons">
+                    <button class="btn btn-donar" id="btnDonar">Donar Ahora</button>
+                    <button class="btn btn-cancelar" id="btnCancelar">Cancelar</button>
+                </div>
+
+                <p style="margin-top: 20px; font-size: 0.9em; color: #666; text-align: center;">
+                    ❤️ El 100% de tu donación va directamente a los proyectos. Recibirás un comprobante fiscal
+                    deducible.
+                </p>
+            </div>
+        </div>
+
+        <div class="impact-counter">
+            <h3>Impacto de las Donaciones</h3>
+            <div class="counter-number" id="totalDonaciones">$12,540</div>
+            <p>recaudados este mes, equivalentes a:</p>
+            <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+                <div>
+                    <div style="font-size: 1.5rem; color: #4CAF50; font-weight: bold;">2,508</div>
+                    <div>árboles plantados</div>
+                </div>
+                <div>
+                    <div style="font-size: 1.5rem; color: #2196F3; font-weight: bold;">250,800</div>
+                    <div>litros de agua</div>
+                </div>
+                <div>
+                    <div style="font-size: 1.5rem; color: #FF9800; font-weight: bold;">1,254</div>
+                    <div>familias educadas</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let selectedAmount = 0;
+        let selectedMethod = '';
+        let donationCount = 12540; // Simulación de donaciones acumuladas
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function () {
+            // Cargar datos del usuario si existen
+            const datosPago = JSON.parse(localStorage.getItem('datosPagoTemp') || '{}');
+            if (datosPago.nombre) {
+                document.getElementById('nombre').value = datosPago.nombre;
+            }
+            if (datosPago.correo) {
+                document.getElementById('email').value = datosPago.correo;
+            }
+
+            // Configurar opciones de donación
+            setupDonationOptions();
+            setupPaymentMethods();
+            setupButtons();
+        });
+
+        function setupDonationOptions() {
+            const options = document.querySelectorAll('.donation-option');
+            const customInput = document.getElementById('customAmount');
+
+            options.forEach(option => {
+                option.addEventListener('click', function () {
+                    // Remover selección previa
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    // Seleccionar actual
+                    this.classList.add('selected');
+                    // Obtener monto
+                    selectedAmount = parseFloat(this.dataset.amount);
+                    // Limpiar input personalizado
+                    customInput.value = '';
+
+                    console.log('Monto seleccionado:', selectedAmount);
+                });
+            });
+
+            // Input personalizado
+            customInput.addEventListener('input', function () {
+                // Remover selección de botones
+                options.forEach(opt => opt.classList.remove('selected'));
+                // Establecer monto personalizado
+                selectedAmount = parseFloat(this.value) || 0;
+                console.log('Monto personalizado:', selectedAmount);
+            });
+        }
+
+        function setupPaymentMethods() {
+            const methods = document.querySelectorAll('.payment-option');
+
+            methods.forEach(method => {
+                method.addEventListener('click', function () {
+                    // Remover selección previa
+                    methods.forEach(m => m.classList.remove('selected'));
+                    // Seleccionar actual
+                    this.classList.add('selected');
+                    // Obtener método
+                    selectedMethod = this.dataset.method;
+
+                    console.log('Método seleccionado:', selectedMethod);
+                });
+            });
+        }
+
+        function setupButtons() {
+            // Botón de donar - MODIFICADO
+            document.getElementById('btnDonar').addEventListener('click', function () {
+                const nombre = document.getElementById('nombre').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const dedicatoria = document.getElementById('dedicatoria').value.trim();
+
+                // Validaciones
+                if (!nombre) {
+                    alert('Por favor ingresa tu nombre completo.');
+                    return;
+                }
+
+                if (!email) {
+                    alert('Por favor ingresa tu correo electrónico.');
+                    return;
+                }
+
+                if (selectedAmount <= 0) {
+                    alert('Por favor selecciona o escribe un monto para donar.');
+                    return;
+                }
+
+                if (!selectedMethod) {
+                    alert('Por favor selecciona un método de pago.');
+                    return;
+                }
+
+                // Crear objeto de donación
+                const donacion = {
+                    id: 'DON-' + Date.now(),
+                    fecha: new Date().toISOString(),
+                    monto: selectedAmount,
+                    metodo: selectedMethod,
+                    donante: { nombre, email },
+                    dedicatoria: dedicatoria || '',
+                    fundacion: 'Verde por México',
+                    estado: 'Completada'  // Cambiado a completada directamente
+                };
+
+                // Guardar en localStorage
+                const donaciones = JSON.parse(localStorage.getItem('donaciones') || '[]');
+                donaciones.push(donacion);
+                localStorage.setItem('donaciones', JSON.stringify(donaciones));
+                localStorage.setItem('ultimaDonacion', JSON.stringify(donacion));
+
+                // Actualizar estadísticas
+                actualizarEstadisticasDonaciones(selectedAmount);
+
+                // Redirigir directo a confirmación
+                window.location.href = 'ConfirmacionDonacion.html';
+            });
+
+            // Botón de cancelar (sin cambios)
+            document.getElementById('btnCancelar').addEventListener('click', function () {
+                if (confirm('¿Cancelar la donación?')) {
+                    const tieneFactura = localStorage.getItem('facturaParaDonacion');
+                    if (tieneFactura) {
+                        window.location.href = 'factura.html';
+                    } else {
+                        window.location.href = 'inicio.html';
+                    }
+                }
+            });
+        }
+
+        function actualizarEstadisticasDonaciones(monto) {
+            // Cargar estadísticas existentes
+            let estadisticas = JSON.parse(localStorage.getItem('estadisticasDonaciones') || '{}');
+
+            // Inicializar si no existen
+            if (!estadisticas.totalDonado) {
+                estadisticas = {
+                    totalDonado: 12540, // Valor inicial simulado
+                    totalDonaciones: 42,
+                    ultimaActualizacion: new Date().toISOString()
+                };
+            }
+
+            // Actualizar con nueva donación
+            estadisticas.totalDonado += parseFloat(monto);
+            estadisticas.totalDonaciones += 1;
+            estadisticas.ultimaActualizacion = new Date().toISOString();
+
+            // Guardar
+            localStorage.setItem('estadisticasDonaciones', JSON.stringify(estadisticas));
+
+            // Actualizar visualización
+            document.getElementById('totalDonaciones').textContent =
+                '$' + estadisticas.totalDonado.toLocaleString('es-MX');
+
+            return estadisticas;
+        }
+    </script>
+</body>
+</html>

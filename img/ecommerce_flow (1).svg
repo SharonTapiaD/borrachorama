@@ -1,0 +1,145 @@
+<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="startGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#45a049;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="processGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2196F3;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1976D2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="checkoutGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF9800;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F57C00;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="endGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#9C27B0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7B1FA2;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Title -->
+  <text x="400" y="30" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#333">
+    Proceso de Compra en Línea
+  </text>
+  
+  <!-- Step 1: Inicio -->
+  <rect x="50" y="70" width="140" height="80" rx="10" fill="url(#startGrad)" filter="url(#shadow)"/>
+  <text x="120" y="100" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">
+    1. Inicio
+  </text>
+  <text x="120" y="122" font-family="Arial, sans-serif" font-size="13" text-anchor="middle" fill="white">
+    Bienvenido
+  </text>
+  <text x="120" y="140" font-family="Arial, sans-serif" font-size="13" text-anchor="middle" fill="white">
+    a la tienda
+  </text>
+  
+  <!-- Arrow 1 -->
+  <path d="M 190 110 L 230 110" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 2: Navegación -->
+  <rect x="230" y="70" width="140" height="80" rx="10" fill="url(#processGrad)" filter="url(#shadow)"/>
+  <text x="300" y="95" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">
+    2. Explorar
+  </text>
+  <text x="300" y="115" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">
+    Buscar y navegar
+  </text>
+  <text x="300" y="132" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">
+    por el catálogo
+  </text>
+  
+  <!-- Arrow 2 -->
+  <path d="M 370 110 L 410 110" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 3: Selección -->
+  <rect x="410" y="70" width="140" height="80" rx="10" fill="url(#processGrad)" filter="url(#shadow)"/>
+  <text x="480" y="95" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">
+    3. Seleccionar
+  </text>
+  <text x="480" y="115" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">
+    Agregar productos
+  </text>
+  <text x="480" y="132" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">
+    al carrito
+  </text>
+  
+  <!-- Arrow 3 -->
+  <path d="M 550 110 L 590 110" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 4: Carrito -->
+  <rect x="590" y="70" width="140" height="80" rx="10" fill="url(#processGrad)" filter="url(#shadow)"/>
+  <text x="660" y="95" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">
+    4. Carrito
+  </text>
+  <text x="660" y="115" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">
+    Revisar productos
+  </text>
+  <text x="660" y="132" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">
+    y cantidades
+  </text>
+  
+  <!-- Arrow 4 down -->
+  <path d="M 660 150 L 660 190" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 5: Checkout -->
+  <rect x="540" y="190" width="240" height="100" rx="10" fill="url(#checkoutGrad)" filter="url(#shadow)"/>
+  <text x="660" y="215" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">
+    5. Proceso de Pago
+  </text>
+  <text x="660" y="238" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">
+    • Datos de envío
+  </text>
+  <text x="660" y="256" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">
+    • Método de pago
+  </text>
+  <text x="660" y="274" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">
+    • Confirmar orden
+  </text>
+  
+  <!-- Arrow 5 down -->
+  <path d="M 660 290 L 660 330" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 6: Confirmación -->
+  <rect x="540" y="330" width="240" height="80" rx="10" fill="url(#endGrad)" filter="url(#shadow)"/>
+  <text x="660" y="360" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">
+    6. Confirmación
+  </text>
+  <text x="660" y="380" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">
+    Registro, email y notificación
+  </text>
+  <text x="660" y="397" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">
+    de seguimiento
+  </text>
+  
+  <!-- Arrow 6 down -->
+  <path d="M 660 410 L 660 450" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 7: Fin -->
+  <rect x="590" y="450" width="140" height="40" rx="10" fill="url(#endGrad)" filter="url(#shadow)"/>
+  <text x="660" y="475" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">
+    Entrega / Recogida
+  </text>
+  
+  <!-- Back arrow (optional continue shopping) -->
+  <path d="M 540 240 L 480 240 L 480 180 L 300 180 L 300 150" stroke="#999" stroke-width="2" fill="none" stroke-dasharray="5,5" marker-end="url(#arrowhead2)"/>
+  <text x="400" y="175" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">
+    Seguir comprando
+  </text>
+  
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#666" />
+    </marker>
+    <marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#999" />
+    </marker>
+  </defs>
+  
+
+</svg>

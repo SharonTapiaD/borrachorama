@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pedido - Borrachorama</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body{background:#fffbea;font-family:Arial, sans-serif;color:#222}
+    .container {max-width:900px;margin:30px auto}
+    .badge-state{font-size:1rem}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/User.html" class="btn btn-link">← Volver a Mi cuenta</a>
+    <h1 id="page-title">Pedido</h1>
+
+    <div id="pedido-notice" class="alert alert-info" role="alert">Cargando pedido...</div>
+
+    <div id="pedido-content" style="display:none;">
+      <div class="mb-3">
+        <h4>ID: <span id="pedido-id"></span> <small class="text-muted">(<span id="pedido-fecha"></span>)</small></h4>
+        <p>Método de pago: <strong id="pedido-metodo"></strong></p>
+        <p>Estado: <span id="pedido-estado" class="badge bg-secondary badge-state"></span></p>
+      </div>
+
+      <h5>Envío</h5>
+      <p id="pedido-envio"></p>
+
+      <h5>Items</h5>
+      <ul id="pedido-items"></ul>
+
+      <h4>Total: $<span id="pedido-total">0.00</span> MXN</h4>
+
+      <div class="mt-4">
+        <button id="simular-next" class="btn btn-outline-primary">Simular siguiente estado</button>
+        <button id="ver-seguimiento" class="btn btn-info">Ver seguimiento</button>
+      </div>
+
+      <div id="seguimiento-visual" class="mt-4" style="display:none;"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function(){
+      const STATUS_ORDER = ['Registrado', 'Preparando', 'Enviado', 'Entregado'];
+
+      function qs(name){
+        const params = new URLSearchParams(location.search);
+        return params.get(name);
+      }
+
+      function cargarPedidos(){
+        return JSON.parse(localStorage.getItem('pedidos')) || [];
+      }
+
+      function guardarPedidos(p){
+        localStorage.setItem('pedidos', JSON.stringify(p));
+      }
+
+      function formatFecha(iso){try{const d=new Date(iso);return d.toLocaleString()}catch(e){return iso}}
+
+      const id = qs('id');
+      const notice = document.getElementById('pedido-notice');
+      const content = document.getElementById('pedido-content');
+      if(!id){ notice.textContent = 'No se proporcionó id de pedido en la URL.'; return; }
+
+      const pedidos = cargarPedidos();
+      const pedido = pedidos.find(p => p.id === id);
+      if(!pedido){ notice.textContent = 'Pedido no encontrado en localStorage.'; return; }
+
+      // Llenar contenido
+      document.getElementById('pedido-id').textContent = pedido.id;
+      document.getElementById('pedido-fecha').textContent = formatFecha(pedido.fecha);
+      document.getElementById('pedido-metodo').textContent = pedido.metodoPago || 'N/A';
+      const estadoEl = document.getElementById('pedido-estado');
+      estadoEl.textContent = pedido.estado || 'Registrado';
+      // color según estado
+      const statesColor = {'Registrado':'secondary','Preparando':'warning','Enviado':'info','Entregado':'success'};
+      estadoEl.className = 'badge bg-'+(statesColor[pedido.estado]||'secondary')+' badge-state';
+
+      document.getElementById('pedido-envio').textContent = pedido.envio ? (pedido.envio.nombre + ' — ' + pedido.envio.direccion) : 'Sin datos de envío';
+      const itemsEl = document.getElementById('pedido-items');
+      itemsEl.innerHTML = pedido.items.map(it=>`<li>${it.nombre} x ${it.cantidad} — $${(it.precio*it.cantidad).toFixed(2)}</li>`).join('');
+      document.getElementById('pedido-total').textContent = (pedido.total||0).toFixed(2);
+
+      notice.style.display = 'none';
+      content.style.display = '';
+
+      function renderSeguimiento(){
+        const idx = STATUS_ORDER.indexOf(pedido.estado || 'Registrado');
+        const html = '<ol>'+STATUS_ORDER.map((s,i)=>`<li class="${i<=idx? 'fw-bold text-success':'text-muted'}">${s}${i<=idx? ' ✓':''}</li>`).join('')+'</ol>';
+        document.getElementById('seguimiento-visual').innerHTML = html;
+        document.getElementById('seguimiento-visual').style.display = '';
+      }
+
+      document.getElementById('ver-seguimiento').addEventListener('click', ()=>{
+        renderSeguimiento();
+      });
+
+      document.getElementById('simular-next').addEventListener('click', ()=>{
+        const ci = STATUS_ORDER.indexOf(pedido.estado);
+        if(ci < STATUS_ORDER.length-1){
+          pedido.estado = STATUS_ORDER[ci+1];
+          guardarPedidos(pedidos);
+          // actualizar UI
+          estadoEl.textContent = pedido.estado;
+          estadoEl.className = 'badge bg-'+(statesColor[pedido.estado]||'secondary')+' badge-state';
+          renderSeguimiento();
+          alert('Estado actualizado a: '+pedido.estado);
+        } else {
+          alert('El pedido ya está en el estado final.');
+        }
+      });
+
+    })();
+  </script>
+</body>
+</html>

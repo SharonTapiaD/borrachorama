@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedidos Especiales | Borrachorama</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* === ESTILO BASE === */
+    :root {
+      --color-primary: #c9a63b;
+      --color-secondary: #5c4b2a;
+      --color-light: #f8f9fa;
+      --color-dark: #343a40;
+      --color-accent: #e9d6ac;
+    }
+
+    body {
+      background-color: var(--color-light);
+      font-family: 'Poppins', sans-serif;
+      color: var(--color-dark);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+    }
+
+    /* === HEADER Y NAVEGACIÓN === */
+    header {
+      background-color: #ffffff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: var(--color-secondary) !important;
+    }
+
+    .navbar-nav .nav-link {
+      color: var(--color-dark) !important;
+      font-weight: 500;
+      margin: 0 0.5rem;
+      transition: color 0.3s ease;
+    }
+
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link.active {
+      color: var(--color-primary) !important;
+    }
+
+    .hero-section {
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+        url('https://images.unsplash.com/photo-1505075106905-fb052892c116?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      padding: 8rem 0 5rem;
+      text-align: center;
+    }
+
+    .hero-section h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero-section p {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+    }
+
+    /* === SECCIÓN DE PEDIDOS === */
+    #pedidos-especiales {
+      background: linear-gradient(180deg, #f3e4c2 0%, #e9d6ac 100%);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      max-width: 900px;
+      margin: 4rem auto;
+      padding: 3rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #pedidos-especiales::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    }
+
+    #pedidos-especiales h2 {
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--color-dark);
+      margin-bottom: 1rem;
+    }
+
+    #pedidos-especiales p.subtitle {
+      font-size: 1.1rem;
+      color: var(--color-secondary);
+      margin-bottom: 2.5rem;
+    }
+
+    /* === FORMULARIO === */
+    form {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(240, 212, 56, 0.15);
+      text-align: left;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: var(--color-dark);
+      margin-bottom: 0.4rem;
+    }
+
+    .form-control,
+    .form-select {
+      border: 1px solid #d4b97b;
+      border-radius: 8px;
+      padding: 0.75rem;
+      transition: all 0.3s ease;
+      background-color: #fffdf8;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 5px rgba(201, 166, 59, 0.4);
+    }
+
+    textarea {
+      resize: none;
+    }
+
+    .btn-enviar {
+      background-color: var(--color-dark);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.9rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .btn-enviar:hover {
+      background-color: var(--color-primary);
+      color: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(240, 212, 56, 0.3);
+    }
+
+    /* === SECCIÓN DE SERVICIOS === */
+    .services-section {
+      padding: 5rem 0;
+      background-color: #fff;
+    }
+
+    .service-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      height: 100%;
+    }
+
+    .service-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .service-icon {
+      font-size: 2.5rem;
+      color: var(--color-primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .service-card h3 {
+      color: var(--color-secondary);
+      margin-bottom: 1rem;
+    }
+
+    /* === TESTIMONIOS === */
+    .testimonials-section {
+      padding: 5rem 0;
+      background-color: var(--color-light);
+    }
+
+    .testimonial-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
+
+    .testimonial-text {
+      font-style: italic;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .testimonial-text::before {
+      content: "";
+      font-size: 4rem;
+      color: var(--color-primary);
+      opacity: 0.2;
+      position: absolute;
+      top: -1.5rem;
+      left: -1rem;
+      font-family: serif;
+    }
+
+    .testimonial-author {
+      font-weight: 600;
+      color: var(--color-secondary);
+    }
+
+    /* === DETALLES VISUALES === */
+    .section-divider {
+      width: 80px;
+      height: 4px;
+      background-color: var(--color-primary);
+      margin: 0 auto 2rem auto;
+      border-radius: 2px;
+    }
+
+    .highlight {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    /* === FOOTER === */
+    footer {
+      background-color: var(--color-dark);
+      color: #fff;
+      padding: 3rem 0 1.5rem;
+    }
+
+    .footer-content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .footer-column {
+      flex: 1;
+      min-width: 250px;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-column h4 {
+      color: var(--color-primary);
+      margin-bottom: 1.5rem;
+      font-size: 1.2rem;
+    }
+
+    .footer-column ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .footer-column ul li {
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-column ul li a {
+      color: #ddd;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-column ul li a:hover {
+      color: var(--color-primary);
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .social-icons a {
+      color: white;
+      font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+
+    .social-icons a:hover {
+      color: var(--color-primary);
+    }
+
+    .copyright {
+      text-align: center;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 768px) {
+      .hero-section h1 {
+        font-size: 2.5rem;
+      }
+
+      .hero-section p {
+        font-size: 1rem;
+      }
+
+      #pedidos-especiales {
+        margin: 2rem 1rem;
+        padding: 2rem 1rem;
+      }
+
+      .footer-column {
+        flex: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header y Navegación -->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <div class="container">
+        <a class="navbar-brand" href="#">Borrachorama</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="inicio.html">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <button class="btn btn-dark text-white" data-bs-toggle="modal" data-bs-target="#nosotrosModal">Acerca de Nosotros</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MODAL REUBICADO: colocar aquí, como hijo directo de body -->
+  <div class="modal fade" id="nosotrosModal" tabindex="-1" aria-labelledby="nosotrosModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-warning">
+          <h5 class="modal-title" id="nosotrosModalLabel">Acerca de Nosotros</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Borrachorama</strong> nació en Aguascalientes con el objetivo de ofrecer las mejores cervezas
+            nacionales e internacionales en un ambiente único. 🍺</p>
+          <p>Nos esforzamos por brindar calidad, seguridad y atención al cliente en cada experiencia de compra.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <h1>Pedidos Especiales y Personalizados</h1>
+      <p>¿Buscas algo único? Cuéntanos tu idea y crearemos la cerveza perfecta para tu evento. Sabores únicos para
+        momentos inolvidables 🍺</p>
+      <a href="#pedidos-especiales" class="btn btn-primary btn-lg">Solicitar Ahora</a>
+    </div>
+  </section>
+
+  <!-- Sección de Servicios -->
+  <section class="services-section">
+    <div class="container">
+      <div class="section-title">
+        <h2>Nuestros Servicios Personalizados</h2>
+        <div class="section-divider"></div>
+        <p>Ofrecemos una amplia gama de opciones para hacer tu evento único</p>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="service-card">
+            <div class="service-icon">
+              <i class="fas fa-beer"></i>
+            </div>
+            <h3>Cervezas Personalizadas</h3>
+            <p>Creamos recetas únicas adaptadas a tus preferencias de sabor, aroma y apariencia.</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="service-card">
+            <div class="service-icon">
+              <i class="fas fa-wine-bottle"></i>
+            </div>
+            <h3>Etiquetas Exclusivas</h3>
+            <p>Diseñamos etiquetas personalizadas con tu logo, fotos o diseños para una presentación única.</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="service-card">
+            <div class="service-icon">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h3>Eventos Especiales</h3>
+            <p>Servicio completo para bodas, eventos corporativos, fiestas privadas y celebraciones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección de Pedidos Especiales -->
+  <section id="pedidos-especiales">
+    <div class="container text-center">
+      <h2>Realiza tu Pedido Especial</h2>
+      <div class="section-divider"></div>
+      <p class="subtitle">
+        ¿Buscas algo <span class="highlight">único</span>? Cuéntanos tu idea y crearemos la cerveza perfecta para tu
+        evento.
+      </p>
+
+      <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+          <form>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="nombre" class="form-label">Nombre Completo</label>
+                <input type="text" class="form-control" id="nombre" placeholder="Tu nombre" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">Correo Electrónico</label>
+                <input type="email" class="form-control" id="email" placeholder="ejemplo@correo.com" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="tipoEvento" class="form-label">Tipo de Evento o Solicitud</label>
+              <select class="form-select" id="tipoEvento" required>
+                <option selected disabled value="">Selecciona una opción</option>
+                <option>Boda</option>
+                <option>Evento Corporativo</option>
+                <option>Fiesta Privada</option>
+                <option>Regalo Personalizado</option>
+                <option>Otra</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="cantidad" class="form-label">Cantidad Aproximada (litros o unidades)</label>
+              <input type="number" class="form-control" id="cantidad" placeholder="Ej: 50 litros o 100 botellas">
+            </div>
+
+            <div class="mb-3">
+              <label for="fecha" class="form-label">Fecha del Evento (si aplica)</label>
+              <input type="date" class="form-control" id="fecha">
+            </div>
+
+            <div class="mb-3">
+              <label for="descripcion" class="form-label">Describe tu idea de cerveza o pedido</label>
+              <textarea class="form-control" id="descripcion" rows="5"></textarea>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn-enviar">Enviar Solicitud</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección de Testimonios -->
+  <section class="testimonials-section">
+    <div class="container">
+      <div class="section-title">
+        <h2>Lo Que Dicen Nuestros Clientes</h2>
+        <div class="section-divider"></div>
+        <p>Experiencias reales de quienes han confiado en nosotros</p>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <div class="testimonial-card">
+            <div class="testimonial-text">
+              "La cerveza personalizada que crearon para nuestra boda fue el centro de atención. Todos nuestros
+              invitados quedaron impresionados con el sabor y las etiquetas con nuestros nombres."
+            </div>
+            <div class="testimonial-author">- María y Carlos</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="testimonial-card">
+            <div class="testimonial-text">
+              "Como empresa, queríamos algo único para nuestro evento anual. La cervecería creó una IPA excepcional con
+              nuestro logo. ¡Fue un éxito total entre empleados y clientes!"
+            </div>
+            <div class="testimonial-author">- Javier Rodríguez, Director de Marketing</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="testimonial-card">
+            <div class="testimonial-text">
+              "Regalé una cerveza personalizada a mi mejor amigo para su cumpleaños. No solo le encantó el detalle, sino
+              que el sabor era increíble. Definitivamente repetiré."
+            </div>
+            <div class="testimonial-author">- Ana López</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección de Contacto -->
+<section id="contacto" class="text-center p-5" style="background: linear-gradient(135deg, #FFF8E1 0%, #FFE0B2 100%);">
+  <div class="container">
+    <h2 style="color: #FF6F00; font-weight: bold; margin-bottom: 20px;">📍 Contáctanos</h2>
+    <p style="font-size: 1.1rem; color: #555; margin-bottom: 30px;">
+      Visítanos en Aguascalientes o escríbenos por redes sociales
+    </p>
+
+    <div class="social-links" style="display: flex; justify-content: center; gap: 20px; margin-bottom: 30px;">
+      <a href="https://facebook.com" target="_blank" style="transition: transform 0.3s;"
+        onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook Logo"
+          style="width: 40px; height: 40px;">
+      </a>
+      <a href="https://instagram.com" target="_blank" style="transition: transform 0.3s;"
+        onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram Logo"
+          style="width: 40px; height: 40px;">
+      </a>
+      <a href="https://wa.me/524491234567" target="_blank" style="transition: transform 0.3s;"
+        onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp Logo"
+          style="width: 40px; height: 40px;">
+      </a>
+    </div>
+
+    <div
+      style="background: white; border-radius: 15px; padding: 20px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+      <p style="margin: 0; color: #333;">
+        <strong style="color: #FF6F00;">📍 Ubicación:</strong> Calle Paseo de la Presa #123, Aguascalientes, México
+      </p>
+      <p style="margin: 10px 0 0 0; color: #333;">
+        <strong style="color: #FF6F00;">📞 Teléfono:</strong> +52 (449) 123-4567
+      </p>
+      <p style="margin: 10px 0 0 0; color: #333;">
+        <strong style="color: #FF6F00;">📧 Email:</strong> contacto@borrachorama.com
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer Principal -->
+<footer style="background: linear-gradient(135deg, #FF6F00 0%, #F57C00 100%); color: white; padding: 40px 20px 20px;">
+  <div class="container">
+    <div
+      style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-bottom: 30px;">
+
+      <!-- Columna 1: Sobre Nosotros -->
+      <div>
+        <h4 style="font-weight: bold; margin-bottom: 15px; font-size: 1.2rem;">🍺 Borrachorama</h4>
+        <p style="font-size: 0.9rem; line-height: 1.6; opacity: 0.95;">
+          Tu tienda digital de cervezas en Aguascalientes.
+          Entrega rápida, precios justos y la mejor selección de cervezas nacionales e importadas.
+        </p>
+        <div style="margin-top: 15px;">
+          <span
+            style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; display: inline-block;">
+            🔞 Prohibida venta a menores de 18 años
+          </span>
+        </div>
+      </div>
+
+      <!-- Columna 2: Enlaces Rápidos -->
+      <div>
+        <h4 style="font-weight: bold; margin-bottom: 15px; font-size: 1.2rem;">⚡ Enlaces Rápidos</h4>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li style="margin-bottom: 10px;">
+            <a href="inicio.html" style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+              onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
+              🏠 Inicio
+            </a>
+          </li>
+          <li style="margin-bottom: 10px;">
+            <a href="src/html/catalog.html" style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+              onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
+              🍺 Catálogo
+            </a>
+          </li>
+          <li style="margin-bottom: 10px;">
+            <a href="Pedidos_Especiales.html" style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+              onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
+              🎉 Pedidos Especiales
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Columna 3: Legal -->
+      <div>
+        <h4 style="font-weight: bold; margin-bottom: 15px; font-size: 1.2rem;">⚖️ Información Legal</h4>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li style="margin-bottom: 10px;">
+            <a href="#" onclick="mostrarModal('aviso'); return false;"
+              style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+              onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
+              🔒 Aviso de Privacidad
+            </a>
+          </li>
+          <li style="margin-bottom: 10px;">
+            <a href="#" onclick="mostrarModal('terminos'); return false;"
+              style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+              onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
+              📋 Términos y Condiciones
+            </a>
+          </li>
+          <li style="margin-bottom: 10px;">
+            <a href="#" onclick="mostrarModal('creditos'); return false;"
+              style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+              onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
+              📸 Créditos y Atribuciones
+            </a>
+          </li>
+          <li style="margin-bottom: 10px;">
+            <a href="#" onclick="mostrarModal('derechos'); return false;"
+              style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+              onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
+              👥 Derechos del Consumidor
+            </a>
+          </li>
+          <li style="margin-bottom: 10px;">
+            <a href="#" onclick="mostrarModal('envio'); return false;"
+              style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+              onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
+              🚚 Políticas de Envío
+            </a>
+          </li>
+          <li style="margin-bottom: 10px;">
+            <a href="/Certificacion.html"
+              style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+              onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
+              🔐 Certificación digital
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Columna 4: Horarios -->
+      <div>
+        <h4 style="font-weight: bold; margin-bottom: 15px; font-size: 1.2rem;">🕐 Horarios de Entrega</h4>
+        <p style="font-size: 0.9rem; line-height: 1.8; opacity: 0.95; margin: 0;">
+          <strong>Lunes - Viernes:</strong><br>
+          2:00 PM - 10:00 PM<br><br>
+          <strong>Sábado - Domingo:</strong><br>
+          12:00 PM - 11:00 PM
+        </p>
+        <div style="margin-top: 15px; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px;">
+          <p style="margin: 0; font-size: 0.85rem; font-weight: 600;">
+            ⚡ Entrega en 1-2 horas
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Separador -->
+    <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.3); margin: 30px 0 20px;">
+
+    <!-- Información final -->
+    <div style="text-align: center;">
+      <p style="margin: 0 0 10px 0; font-size: 0.9rem; opacity: 0.9;">
+        &copy; 2025 Borrachorama. Todos los derechos reservados.
+      </p>
+      <p style="margin: 0; font-size: 0.85rem; opacity: 0.8;">
+        Proyecto educativo - Instituto Tecnológico de Aguascalientes<br>
+        Materia: Negocios Electrónicos I
+      </p>
+      <p style="margin: 15px 0 0 0; font-size: 0.8rem; opacity: 0.7;">
+        ⚠️ Este sitio es una simulación con fines académicos. Las transacciones no son reales.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<!-- Modales para información legal -->
+<div id="modalOverlay"
+  style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9998; overflow-y: auto;"
+  onclick="cerrarModal()">
+  <div style="min-height: 100%; display: flex; align-items: center; justify-content: center; padding: 20px;">
+    <div id="modalContent"
+      style="background: white; border-radius: 15px; max-width: 700px; width: 100%; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); position: relative; margin: 20px 0;"
+      onclick="event.stopPropagation()">
+      <button onclick="cerrarModal()"
+        style="position: absolute; top: 15px; right: 15px; background: #FF6F00; color: white; border: none; border-radius: 50%; width: 35px; height: 35px; font-size: 20px; cursor: pointer; font-weight: bold;">×</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Contenido de los modales
+  const contenidoModales = {
+    aviso: `
+    <h3 style="color: #FF6F00; margin-bottom: 20px; font-size: 1.8rem;">🔒 Aviso de Privacidad</h3>
+    <p style="line-height: 1.8; color: #333;">
+      <strong>Responsable:</strong> Borrachorama (Proyecto Educativo)<br><br>
+      
+      <strong>Datos personales recopilados:</strong><br>
+      • Nombre completo<br>
+      • Teléfono de contacto<br>
+      • Dirección de entrega<br>
+      • Correo electrónico (opcional)<br><br>
+      
+      <strong>Finalidad del uso:</strong><br>
+      Los datos se utilizan únicamente para:<br>
+      • Procesamiento de pedidos<br>
+      • Confirmación y seguimiento de entregas<br>
+      • Comunicación sobre el estado del pedido<br>
+      • Verificación de mayoría de edad (18+)<br><br>
+      
+      <strong>Protección de datos:</strong><br>
+      • No compartimos información con terceros<br>
+      • Uso de protocolo seguro (HTTPS)<br>
+      • Almacenamiento temporal para fines del pedido<br>
+      • Eliminación de datos al completar la transacción<br><br>
+      
+      <strong>Derechos ARCO:</strong><br>
+      Puedes ejercer tus derechos de Acceso, Rectificación, Cancelación y Oposición contactando a:<br>
+      📧 privacidad@borrachorama.com<br><br>
+      
+      <em style="color: #999; font-size: 0.9rem;">
+        ⚠️ Nota: Este es un proyecto educativo simulado. Los datos no son almacenados de forma permanente.
+      </em>
+    </p>
+  `,
+
+    terminos: `
+    <h3 style="color: #FF6F00; margin-bottom: 20px; font-size: 1.8rem;">📋 Términos y Condiciones</h3>
+    <p style="line-height: 1.8; color: #333;">
+      <strong>1. Naturaleza del sitio:</strong><br>
+      Este sitio web es una simulación educativa creada con fines académicos. Las transacciones mostradas no son reales y no generan obligaciones comerciales.<br><br>
+      
+      <strong>2. Uso permitido:</strong><br>
+      • El sitio es exclusivo para evaluación académica<br>
+      • No se procesan pagos reales<br>
+      • La información de productos es ilustrativa<br><br>
+      
+      <strong>3. Restricción de edad:</strong><br>
+      El contenido simula la venta de bebidas alcohólicas, por lo que está dirigido a personas mayores de 18 años conforme a la legislación mexicana.<br><br>
+      
+      <strong>4. Responsabilidad del usuario:</strong><br>
+      • Proporcionar información verídica en formularios<br>
+      • No utilizar el sitio para fines distintos a los educativos<br>
+      • Respetar la propiedad intelectual del contenido<br><br>
+      
+      <strong>5. Limitación de responsabilidad:</strong><br>
+      Los creadores de este proyecto no se responsabilizan por:<br>
+      • Interpretaciones comerciales del contenido<br>
+      • Uso indebido de la información presentada<br>
+      • Expectativas de transacciones reales<br><br>
+      
+      <strong>6. Propiedad intelectual:</strong><br>
+      Las marcas y productos mostrados son propiedad de sus respectivos dueños. Su uso es únicamente ilustrativo y educativo.<br><br>
+      
+      <strong>7. Contacto:</strong><br>
+      Para consultas sobre estos términos:<br>
+      📧 contacto@borrachorama.com<br><br>
+      
+      <em style="color: #999; font-size: 0.9rem;">
+        Última actualización: Noviembre 2025
+      </em>
+    </p>
+  `,
+
+    creditos: `
+    <h3 style="color: #FF6F00; margin-bottom: 20px; font-size: 1.8rem;">📸 Créditos y Atribuciones</h3>
+    <p style="line-height: 1.8; color: #333;">
+      <strong>Borrachorama</strong> es un proyecto educativo simulado con fines académicos. Las imágenes de productos utilizadas en este sitio son propiedad de sus respectivas marcas y se utilizan únicamente con fines ilustrativos y educativos, sin intención comercial.<br><br>
+      
+      <strong>MARCAS Y PRODUCTOS REFERENCIADOS:</strong><br>
+      • Corona Extra - Grupo Modelo (AB InBev)<br>
+      • Modelo Especial - Grupo Modelo (AB InBev)<br>
+      • Victoria - Grupo Modelo (AB InBev)<br>
+      • Heineken - Heineken International<br>
+      • Tecate - Heineken México<br>
+      • Pacifico - Grupo Modelo (AB InBev)<br><br>
+      
+      <strong>FUENTES DE RECURSOS:</strong><br>
+      • Iconos: Flaticon (https://www.flaticon.com)<br>
+      • Imágenes de productos: Sitios oficiales de las marcas<br>
+      • Fotografías genéricas: Unsplash / Pexels<br><br>
+      
+      <strong>AVISO LEGAL:</strong><br>
+      Este proyecto NO está afiliado, patrocinado ni respaldado por ninguna de las marcas mencionadas. Todas las marcas registradas son propiedad de sus respectivos dueños.<br><br>
+      
+      El uso de estas imágenes está amparado bajo el principio de "uso educativo" conforme a la legislación mexicana de derechos de autor (Ley Federal del Derecho de Autor, Art. 148).<br><br>
+      
+      Si usted es propietario de algún contenido y considera que su uso no es apropiado, por favor contacte a: contacto@borrachorama.com<br><br>
+      
+      <strong>EQUIPO DE DESARROLLO:</strong><br>
+      • Diego Franco Escobedo (22151141)<br>
+      • Estefanía Sherlin González Jiménez (22151156)<br>
+      • Néstor Rangel Reyes (22151140)<br>
+      • Sharon Tapia Díaz (22151132)<br><br>
+      
+      <em style="color: #999; font-size: 0.9rem;">
+        Instituto Tecnológico de Aguascalientes<br>
+        Materia: Negocios Electrónicos I<br>
+        Noviembre 2025
+      </em>
+    </p>
+  `,
+
+    derechos: `
+    <h3 style="color: #FF6F00; margin-bottom: 20px; font-size: 1.8rem;">👥 Derechos del Consumidor</h3>
+    <p style="line-height: 1.8; color: #333;">
+      Conforme a la PROFECO y legislación mexicana, como consumidor tienes los siguientes derechos:<br><br>
+      
+      <strong>1. Información Clara y Veraz:</strong><br>
+      • Derecho a conocer las características completas del producto<br>
+      • Precios visibles con IVA incluido<br>
+      • Descripción precisa de contenido, marca y presentación<br><br>
+      
+      <strong>2. Calidad y Garantía:</strong><br>
+      • Recibir productos en perfecto estado<br>
+      • Cambio inmediato si el producto llega dañado<br>
+      • Garantía de frescura y fecha de caducidad vigente<br><br>
+      
+      <strong>3. Protección de Datos Personales:</strong><br>
+      • Conocer qué datos se recopilan y con qué fin<br>
+      • Ejercer derechos ARCO (Acceso, Rectificación, Cancelación, Oposición)<br>
+      • Garantía de no compartir información con terceros<br><br>
+      
+      <strong>4. Precios Justos:</strong><br>
+      • No cobros ocultos o adicionales no especificados<br>
+      • Información clara sobre costos de envío<br>
+      • Respeto al precio publicado<br><br>
+      
+      <strong>5. Políticas de Cancelación:</strong><br>
+      • Derecho a cancelar antes de la preparación del pedido<br>
+      • Reembolso completo en caso de prepago y cancelación oportuna<br>
+      • Tiempo de respuesta máximo de 24 horas<br><br>
+      
+      <strong>6. Canales de Atención:</strong><br>
+      • Acceso a servicio al cliente vía WhatsApp, correo o formulario<br>
+      • Resolución de quejas en tiempo razonable<br>
+      • Respuestas claras y profesionales<br><br>
+      
+      <strong>Cómo ejercer tus derechos:</strong><br>
+      📧 Email: atencion@borrachorama.com<br>
+      💬 WhatsApp: +52 (449) 123-4567<br>
+      📞 Teléfono: (449) 123-4567<br><br>
+      
+      <em style="color: #999; font-size: 0.9rem;">
+        ⚠️ Nota: Este es un proyecto educativo. En un negocio real, estos derechos están protegidos por ley.
+      </em>
+    </p>
+  `,
+
+    envio: `
+    <h3 style="color:#FF6F00;margin-bottom:20px;font-size:1.8rem;">🚚 Políticas de Envío y Devoluciones</h3>
+    <p style="line-height:1.8;color:#333;">
+      Entrega local en 1–2 horas, dentro de Aguascalientes y zona metropolitana.<br>
+      Horarios de operación: L–V 2:00–10:00 PM, S–D 12:00–11:00 PM.<br>
+      Costo estimado de envío: $80 MXN (puede variar).<br>
+      Requisito: mayoría de edad (18+).<br><br>
+      <strong>Devoluciones:</strong> Solo por daños o defectos al recibir. Reporte en las primeras 24 horas
+      con evidencia; producto sin abrir. Se ofrece reemplazo o nota de crédito.<br><br>
+      Contacto: atencion@borrachorama.com / WhatsApp +52 (449) 123-4567.<br><br>
+      <em style="color:#999;font-size:0.9rem;">Proyecto educativo simulado.</em>
+    </p>
+  `
+  };
+
+  function mostrarModal(tipo) {
+    const modal = document.getElementById('modalOverlay');
+    const body = document.getElementById('modalBody');
+    body.innerHTML = contenidoModales[tipo];
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function cerrarModal() {
+    const modal = document.getElementById('modalOverlay');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+
+  // Cerrar modal con tecla ESC
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      cerrarModal();
+    }
+  });
+</script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

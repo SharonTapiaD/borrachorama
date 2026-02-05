@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Borrachorama - Disfruta de las mejores cervezas</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fffceb;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: url('img/fondocerveza.jpg') no-repeat center center;
+      background-size: cover;
+      color: white;
+      padding: 40px 20px;
+      position: relative;
+    }
+    header img {
+      max-width: 220px;
+    }
+    .header-buttons {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+    .cta-btn {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      padding: 12px 25px;
+      border-radius: 30px;
+    }
+    .promo-banner {
+      background-color: #ffc107;
+      color: #000;
+      padding: 15px;
+      font-weight: bold;
+      text-align: center;
+    }
+    footer {
+      background-color: #222;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    footer a {
+      color: #ffc107;
+      text-decoration: none;
+    }
+    .cta-btn.sticky {
+      position: fixed;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%) scale(0.8);
+      z-index: 1000;
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-10px);
+      }
+      60% {
+        transform: translateY(-5px);
+      }
+    }
+
+    /* Estilo llamativo para los subtítulos */
+    .section-title {
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #d4a017; /* Dorado cervecero */
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      position: relative;
+      display: inline-block;
+      animation: fadeIn 1.2s ease-in-out;
+    }
+
+    /* Línea decorativa debajo del título */
+    .section-title::after {
+      content: "";
+      display: block;
+      width: 70%;
+      height: 4px;
+      margin: 8px auto 0;
+      background: linear-gradient(90deg, #ffc107, #ff7300);
+      border-radius: 2px;
+    }
+
+    /* Animación de entrada */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header con logo y botones -->
+  <header class="text-center">
+    <div class="header-buttons d-flex gap-2">
+  <!-- Botón Acerca de Nosotros -->
+  <button class="btn btn-warning text-dark" data-bs-toggle="modal" data-bs-target="#nosotrosModal">
+    Acerca de Nosotros
+  </button>
+
+  <!-- Menú desplegable Documentación -->
+  <div class="dropdown">
+    <button class="btn btn-dark dropdown-toggle" type="button" id="docDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+      Documentación
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="docDropdown">
+      <li><a class="dropdown-item" href="src/html/cart.html">Carrito</a></li>
+      <li><a class="dropdown-item" href="src/html/catalog.html">Catálogo</a></li>
+      <li><a class="dropdown-item" href="src/infraestructura.html">Infraestructura</a></li>
+      <li><a class="dropdown-item" href="Disponibilidad.html">Disponibilidad</a></li>
+      <li><a class="dropdown-item" href="Tecnologia.html">Tecnología</a></li>
+      <li><a class="dropdown-item" href="Status.html">Status</a></li>
+      <li><a class="dropdown-item" href="/Pedidos_Especiales.html">Pedidos Especiales</a></li>
+      <li><a class="dropdown-item" href="/Metricas.html">Métricas</a></li>
+    </ul>
+  </div>
+</div>
+
+    <img src="img/Borrachoramalogo.png" alt="Borrachorama Logo">
+    <p class="mt-3">¡La fiesta empieza aquí con las mejores cervezas!</p>
+    <a href="inicio.html#contacto" class="btn btn-warning text-dark cta-btn sticky">¡Haz tu pedido ahora!</a>
+
+  </header>
+
+  <!-- Banner Promociones -->
+  <div class="promo-banner">
+    📢 Síguenos en redes sociales para obtener descuentos exclusivos 🎉 | 
+    En tu primera compra, ¡envío gratis! 🚚🍺
+  </div>
+
+  <main>
+    <section id="publicidad" class="text-center p-5">
+      <h3 class="section-title">🍺 La experiencia Borrachorama</h3>
+      <p>Disfruta de una amplia selección de cervezas nacionales e internacionales, promociones exclusivas y un ambiente diseñado para que cada sorbo sea inolvidable.</p>
+      <img src="img/borrachoramaimg.jpg" alt="Cerveza fría" class="img-fluid rounded mt-4" style="max-width:550px;">
+    </section>
+
+    <section id="fiesta" class="text-center p-5 bg-light">
+      <h2 class="section-title">🎉 Ambiente de fiesta</h2>
+      <p>No solo vendemos cerveza, vendemos momentos de alegría, amistad y diversión.</p>
+      <img src="img/fiestacerveza.jpg" alt="Amigos brindando cerveza" class="img-fluid rounded mt-4" style="max-width:850px;">
+    </section>
+
+    <section id="contacto" class="text-center p-5">
+      <h2>📍 Contáctanos</h2>
+      <p>Visítanos en Aguascalientes o escríbenos por redes sociales:</p>
+      <div class="social-links">
+        <a href="https://facebook.com" target="_blank">
+          <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook Logo" style="width: 30px; height: 30px;">
+        </a>
+        <a href="https://instagram.com" target="_blank">
+          <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram Logo" style="width: 30px; height: 30px;">
+        </a>
+      </div>
+      <p class="mt-3"><strong>Ubicación:</strong> Calle paseo de la presa #123, Aguascalientes, México</p>
+    </section>
+  </main>
+
+  <footer>
+    <p><a href="terminos.html">Términos y condiciones</a> | <a href="privacidad.html">Política de privacidad</a></p>
+    <p>&copy; 2025 Borrachorama. Todos los derechos reservados.</p>
+  </footer>
+
+  <!-- Modal Acerca de Nosotros -->
+  <div class="modal fade" id="nosotrosModal" tabindex="-1" aria-labelledby="nosotrosModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-warning">
+          <h5 class="modal-title" id="nosotrosModalLabel">Acerca de Nosotros</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Borrachorama</strong> nació en el año 2025 en Aguascalientes con un objetivo claro: 
+          ofrecer las mejores cervezas nacionales e internacionales en un ambiente único. 
+          Con el paso de los años nos hemos convertido en el lugar favorito de quienes disfrutan 
+          de buenos momentos acompañados de una cerveza fría.</p>
+          <p>Hoy seguimos innovando para que cada compra, cada reunión y cada brindis sea inolvidable 🍻.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

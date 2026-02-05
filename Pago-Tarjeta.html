@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago con Tarjeta - Borrachorama</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: linear-gradient(135deg, #fffceb 0%, #ffeaa7 100%);
+            margin: 0; 
+            min-height: 100vh;
+        }
+        
+        header { 
+            background: url('img/fondocerveza.jpg') center/cover; 
+            color: white; 
+            padding: 40px 20px; 
+            text-align: center; 
+        }
+        
+        header img { 
+            max-width: 220px; 
+        }
+        
+        /* Fondo del menú (ámbar) */
+        .navbar-custom {
+            background: linear-gradient(135deg, #ffc107 0%, #d57c00 100%);
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky; top: 0; z-index: 1000;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 0;
+            font-family: Arial, sans-serif;
+            font-weight: 400;
+            overflow: visible;
+        }
+        /* Una sola fila */
+        .navbar-custom .menu-row {
+            display: flex;
+            justify-content: center;   /* centra Carrito, Acerca y Documentación */
+            align-items: center;
+            gap: 8px;
+            flex-wrap: nowrap;       /* no wrap */
+            white-space: nowrap;     /* evita salto en botones */
+        }
+        
+        /* Botones del menú en negro (remueve gradiente del <button>) */
+        .navbar-custom .btn,
+        .navbar-custom .dropdown-toggle {
+          background-color: #000 !important;
+          color: #fff !important;
+          border: none !important;
+          background-image: none !important; /* quita el gradiente de button */
+          box-shadow: none !important;
+        }
+        .navbar-custom .btn:hover,
+        .navbar-custom .dropdown-toggle:hover {
+          background-color: #000 !important;
+          color: #fff !important;
+          opacity: 0.9;
+        }
+        
+        .navbar-custom .dropdown { display: inline-block; }
+        .navbar-custom .dropdown-menu {
+            min-width: 180px;
+            text-align: left;
+            background-color: #fff;
+            color: #222;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .navbar-custom .dropdown-menu .dropdown-item {
+            color: #222;
+        }
+        .navbar-custom .dropdown-menu .dropdown-item:hover {
+            background-color: #ffe08a;
+        }
+        
+        .btn-cuenta { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); }
+
+        /* Botón “Acerca de Nosotros” más corto y con override fuerte */
+        .navbar-custom .menu-row .btn-acerca {
+          min-width: unset !important;   /* elimina min-width heredado */
+          width: auto !important;        /* ajusta al contenido */
+          padding: 6px 10px !important;  /* reduce padding */
+          font-size: 1rem !important;  /* iguala tamaño de letra a otros botones */
+        }
+        
+        /* Opcional: reducir ligeramente el gap para ayudar a caber mejor */
+        .navbar-custom .menu-row { gap: 6px; }
+        
+        .container { 
+            padding: 30px; 
+            max-width: 600px; 
+            margin: auto; 
+        }
+        
+        .card { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-top: 5px solid #ffb300;
+        }
+        
+        h2 {
+            color: #d57c00;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+        }
+        
+        .monto-info {
+            background: linear-gradient(135deg, #fff9e6 0%, #ffecb3 100%);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 25px;
+            border: 2px solid #ffb300;
+            font-weight: bold;
+        }
+        
+        .monto-numero {
+            font-size: 1.8em;
+            color: #d57c00;
+            font-weight: bold;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e6b04d;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            border-color: #ffb300;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 179, 0, 0.2);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .input-group > div {
+            flex: 1;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #ffb300 0%, #d57c00 100%);
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(255, 179, 0, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 179, 0, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .simulacion-nota {
+            font-size: 0.85rem;
+            color: #666;
+            text-align: center;
+            margin-top: 20px;
+            font-style: italic;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .tarjeta-iconos {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .tarjeta-icono {
+            font-size: 2em;
+        }
+        
+        .seguridad-info {
+            background: #e8f5e9;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #2e7d32;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }   
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="img/Borrachoramalogo.png" alt="Logo">
+    </header>
+
+    <!-- Barra amarilla con botones (idéntica a catalog.html) -->
+    <nav class="navbar-custom text-center" id="navbar" style="position: sticky; top:0;">
+        <a href="/Panel.html" class="btn btn-dark text-white btn-cuenta">Cuenta</a>
+        <div class="menu-row">
+          <a href="/inicio.html" class="btn btn-dark text-white">Inicio</a>
+          <a href="/src/html/cart.html" class="btn btn-dark text-white">🛒 Carrito</a>
+          <button class="btn btn-dark text-white btn-acerca" data-bs-toggle="modal" data-bs-target="#nosotrosModal">Acerca de Nosotros</button>
+          <div class="dropdown d-inline">
+            <button class="btn btn-dark dropdown-toggle text-white" type="button" data-bs-toggle="dropdown">
+              📂 Documentación
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/src/html/catalog.html">Catálogo</a></li>
+                <li><a class="dropdown-item" href="/src/infraestructura.html">Infraestructura</a></li>
+                <li><a class="dropdown-item" href="/Disponibilidad.html">Disponibilidad</a></li>
+                <li><a class="dropdown-item" href="/Tecnologia.html">Tecnología</a></li>
+                <li><a class="dropdown-item" href="/Status.html">Status</a></li>
+                <li><a class="dropdown-item" href="/Pedidos_Especiales.html">Pedidos Especiales</a></li>
+                <li><a class="dropdown-item" href="/Metricas.html">Métricas</a></li>
+                <li><a class="dropdown-item" href="/Metodos_Pago.html">Métodos de Pago</a></li>
+            </ul>
+          </div>
+        </div>
+    </nav>
+
+    <!-- Modal: Acerca de Nosotros -->
+    <div class="modal fade" id="nosotrosModal" tabindex="-1" aria-labelledby="nosotrosModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" id="nosotrosModalLabel">Acerca de Nosotros</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Borrachorama</strong> nació en Aguascalientes con el objetivo de ofrecer las mejores cervezas nacionales e internacionales en un ambiente único. 🍺</p>
+                    <p>Nos esforzamos por brindar calidad, seguridad y atención al cliente en cada experiencia de compra.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="card">
+            <h2>Datos de la Tarjeta</h2>
+            
+            <div class="monto-info">
+                <span>Total a pagar: </span>
+                <span class="monto-numero" id="montoTotal">$0.00</span>
+            </div>
+            
+            <div class="tarjeta-iconos">
+                <div class="tarjeta-icono">💳</div>
+                <div class="tarjeta-icono">🏦</div>
+                <div class="tarjeta-icono">🔒</div>
+            </div>
+            
+            <form id="form-tarjeta">
+                <div class="form-group">
+                    <label for="nombreTitular">Nombre del titular</label>
+                    <input type="text" id="nombreTitular" placeholder="Ej. Juan Pérez González" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="numeroTarjeta">Número de tarjeta</label>
+                    <input type="text" id="numeroTarjeta" placeholder="1234 5678 9012 3456" 
+                           maxlength="19" pattern="[0-9\s]{13,19}" required
+                           oninput="formatoNumeroTarjeta(this)">
+                    <div class="seguridad-info">
+                        <span>🔒</span> Los datos se transmiten de forma segura
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="form-group">
+                        <label for="fechaExpiracion">Fecha de expiración (MM/AA)</label>
+                        <input type="text" id="fechaExpiracion" placeholder="12/25" 
+                               maxlength="5" pattern="(0[1-9]|1[0-2])\/([0-9]{2})" required
+                               oninput="formatoFechaExpiracion(this)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cvv">CVV</label>
+                        <input type="password" id="cvv" placeholder="123" 
+                               maxlength="3" pattern="[0-9]{3}" required>
+                        <div style="font-size: 0.8em; color: #666; margin-top: 5px;">
+                            Últimos 3 dígitos en el reverso
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="button" onclick="confirmarPago()" id="btnPagar">
+                    Confirmar Pago
+                </button>
+                
+                <p class="simulacion-nota">
+                    ⚠️ Esta es una simulación educativa. No se procesarán datos reales ni se realizarán cobros.
+                    El sistema tiene un 50% de probabilidad de simular un fallo de pago para demostración.
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ================= CONFIGURACIÓN DE SIMULACIÓN =================
+        const ConfiguracionPago = {
+            probabilidadError: 0.5, // 50% de probabilidad de fallo
+            motivosError: [
+                "Fondos insuficientes",
+                "Tarjeta rechazada por el banco", 
+                "Excedió el límite de compra",
+                "Tiempo de espera agotado",
+                "Error de conexión con el procesador",
+                "Código de seguridad incorrecto",
+                "Tarjeta vencida",
+                "Transacción marcada como sospechosa"
+            ]
+        };
+
+        // ================= INICIALIZACIÓN =================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Bloqueo fuerte: si ya se pagó, redirigir inmediatamente
+            if (localStorage.getItem('paymentLocked') === 'true') {
+                try { document.getElementById('btnPagar').disabled = true; } catch(e){}
+                window.location.replace('/PagoRealizado.html');
+                return;
+            }
+            
+            // Obtener monto a pagar
+            actualizarMonto();
+            
+            // Forzar texto del botón a "Pagar" incluso en reintentos
+            document.getElementById('btnPagar').textContent = 'Pagar';
+
+            // Quitar notificación de reintento al cargar
+            // const esReintento = localStorage.getItem('reintentoPago') === 'true';
+            // if (esReintento) {
+            //   mostrarNotificacionReintento();
+            // }
+        });
+
+        // ================= FUNCIONES DE FORMATEO =================
+        function formatoNumeroTarjeta(input) {
+            // Eliminar cualquier carácter no numérico
+            let valor = input.value.replace(/\D/g, '');
+            
+            // Agrupar en bloques de 4
+            valor = valor.replace(/(\d{4})/g, '$1 ').trim();
+            
+            // Limitar a 16 dígitos + 3 espacios
+            valor = valor.substring(0, 19);
+            
+            input.value = valor;
+        }
+
+        function formatoFechaExpiracion(input) {
+            let valor = input.value.replace(/\D/g, '');
+            
+            if (valor.length >= 2) {
+                valor = valor.substring(0, 2) + '/' + valor.substring(2, 4);
+            }
+            
+            input.value = valor.substring(0, 5);
+        }
+
+        // ================= ACTUALIZAR MONTO =================
+        function actualizarMonto() {
+            let total = 0;
+
+            // 1) Intentar desde querystring (?monto=...)
+            const params = new URLSearchParams(window.location.search);
+            const montoQS = parseFloat(params.get('monto') || '0');
+            if (!isNaN(montoQS) && montoQS > 0) {
+                total = montoQS;
+            }
+
+            // 2) Intentar desde localStorage set por Pago.html
+            if (total === 0) {
+                const montoIntento = parseFloat(localStorage.getItem('montoPagoIntento') || '0');
+                if (!isNaN(montoIntento) && montoIntento > 0) {
+                    total = montoIntento;
+                }
+            }
+
+            // 3) Intentar desde carrito/pedidos/pagoTotal como respaldo
+            if (total === 0) {
+                const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+                total = carrito.reduce((s, it) => s + (parseFloat(it.precio) || 0) * (parseInt(it.cantidad) || 1), 0);
+            }
+
+            if (total === 0) {
+                const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+                const ultimoPedido = pedidos[pedidos.length - 1];
+                if (ultimoPedido && ultimoPedido.total) {
+                    total = ultimoPedido.total;
+                }
+            }
+
+            if (total === 0) {
+                total = parseFloat(localStorage.getItem('pagoTotal') || '0') || 0;
+            }
+
+            // 4) Último fallback (evitar cero visual)
+            if (total === 0) {
+                total = 150.75;
+            }
+
+            document.getElementById('montoTotal').textContent = '$' + total.toFixed(2);
+            return total;
+        }
+
+        // ================= FUNCIÓN DE SIMULACIÓN =================
+        function simularProcesamientoPago(metodoPago, monto) {
+            console.log(`Simulando pago con ${metodoPago} por $${monto}`);
+            
+            // Determinar si hay fallo (30% de probabilidad)
+            const tieneFallo = Math.random() < ConfiguracionPago.probabilidadError;
+            
+            if (tieneFallo) {
+                // Seleccionar motivo aleatorio
+                const motivoIndex = Math.floor(Math.random() * ConfiguracionPago.motivosError.length);
+                const motivo = ConfiguracionPago.motivosError[motivoIndex];
+                
+                return {
+                    exito: false,
+                    error: motivo,
+                    codigoError: `ERR-${Date.now().toString().slice(-6)}`,
+                    recomendacion: obtenerRecomendacionPorError(motivo),
+                    tiempoSimulado: Math.floor(Math.random() * 3000) + 2000 // 2-5 segundos
+                };
+            } else {
+                // Pago exitoso
+                return {
+                    exito: true,
+                    transaccionId: `TRX-${Date.now().toString().slice(-8)}`,
+                    referencia: `REF-${Math.floor(Math.random() * 1000000).toString().padStart(6, '0')}`,
+                    tiempoSimulado: Math.floor(Math.random() * 2000) + 1000 // 1-3 segundos
+                };
+            }
+        }
+
+        function obtenerRecomendacionPorError(motivo) {
+            const recomendaciones = {
+                "Fondos insuficientes": "Verifica el saldo de tu cuenta o intenta con otra tarjeta.",
+                "Tarjeta rechazada por el banco": "Contacta a tu banco para autorizar la transacción.",
+                "Excedió el límite de compra": "Divide tu compra en pagos más pequeños o contacta a tu banco.",
+                "Tiempo de espera agotado": "Intenta nuevamente en unos minutos.",
+                "Error de conexión con el procesador": "Verifica tu conexión a internet e intenta de nuevo.",
+                "Código de seguridad incorrecto": "Asegúrate de ingresar correctamente el CVV de tu tarjeta.",
+                "Tarjeta vencida": "Verifica la fecha de expiración de tu tarjeta.",
+                "Transacción marcada como sospechosa": "Contacta a tu banco para autorizar esta compra."
+            };
+            
+            return recomendaciones[motivo] || "Intenta nuevamente o contacta a servicio al cliente.";
+        }
+
+        // ================= FUNCIÓN PARA MOSTRAR SPINNER =================
+        function mostrarSpinnerProcesamiento(mensaje = "Procesando pago...") {
+            const spinnerHTML = `
+                <div id="spinner-pago" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+                    <div style="background: white; padding: 30px; border-radius: 15px; text-align: center; max-width: 400px; width: 90%;">
+                        <div style="border: 5px solid #f3f3f3; border-top: 5px solid #ffb300; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+                        <h3 style="color: #333; margin-bottom: 10px;">${mensaje}</h3>
+                        <p style="color: #666; font-size: 0.9em;">Simulando procesamiento de pago...</p>
+                        <div style="margin-top: 20px; font-size: 0.8em; color: #999;">
+                            <div id="tiempo-restante">Tiempo estimado: 3 segundos</div>
+                        </div>
+                    </div>
+                </div>
+                <style>
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                </style>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', spinnerHTML);
+            
+            // Actualizar contador de tiempo
+            let segundos = 3;
+            const elemento = document.getElementById('tiempo-restante');
+            const intervalo = setInterval(() => {
+                segundos--;
+                if (elemento && segundos > 0) {
+                    elemento.textContent = `Tiempo estimado: ${segundos} segundo${segundos !== 1 ? 's' : ''}`;
+                }
+            }, 1000);
+            
+            return {
+                eliminar: () => {
+                    const spinner = document.getElementById('spinner-pago');
+                    if (spinner) spinner.remove();
+                    clearInterval(intervalo);
+                },
+                intervalo: intervalo
+            };
+        }
+
+        // ================= NOTIFICACIÓN DE REINTENTO =================
+        function mostrarNotificacionReintento() {
+            const notificacion = document.createElement('div');
+            notificacion.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: linear-gradient(135deg, #ffb300 0%, #d57c00 100%);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                z-index: 9998;
+                animation: slideIn 0.5s ease;
+                max-width: 300px;
+                font-weight: bold;
+            `;
+            
+            notificacion.innerHTML = `
+                🔄 Reintentando pago...
+                <p style="margin: 5px 0 0 0; font-size: 0.9em; font-weight: normal;">
+                    Verifica tus datos antes de continuar.
+                </p>
+            `;
+            
+            document.body.appendChild(notificacion);
+            
+            setTimeout(() => {
+                notificacion.style.animation = 'slideOut 0.5s ease';
+                setTimeout(() => notificacion.remove(), 500);
+            }, 5000);
+            
+            // Agregar estilos de animación
+            if (!document.querySelector('#animacion-estilos')) {
+                const estilos = document.createElement('style');
+                estilos.id = 'animacion-estilos';
+                estilos.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(estilos);
+            }
+        }
+
+        // ================= FUNCIÓN PRINCIPAL DE PAGO =================
+        function confirmarPago() {
+            // Chequeo inmediato por si el usuario toca “Atrás” desde Confirmacion
+            if (localStorage.getItem('paymentLocked') === 'true') {
+                alert('El pago ya fue realizado. Redirigiendo...');
+                window.location.replace('/PagoRealizado.html');
+                return;
+            }
+
+            // Obtener datos del formulario
+            const nombreTitular = document.getElementById('nombreTitular').value.trim();
+            const numeroTarjeta = document.getElementById('numeroTarjeta').value.trim();
+            const fechaExpiracion = document.getElementById('fechaExpiracion').value.trim();
+            const cvv = document.getElementById('cvv').value.trim();
+            
+            // Validaciones básicas
+            if (!nombreTitular || !numeroTarjeta || !fechaExpiracion || !cvv) {
+                alert('Por favor completa todos los campos.');
+                return;
+            }
+            
+            // Validar formato de número de tarjeta (al menos 13 dígitos)
+            const numeroLimpio = numeroTarjeta.replace(/\s/g, '');
+            if (numeroLimpio.length < 13 || numeroLimpio.length > 16) {
+                alert('El número de tarjeta debe tener entre 13 y 16 dígitos.');
+                return;
+            }
+            
+            // Validar formato de fecha (al menos 5 caracteres: MM/AA)
+            const fechaRegex = /^(0[1-9]|1[0-2])\/([0-9]{2})$/;
+            if (!fechaRegex.test(fechaExpiracion)) {
+                alert('Formato de fecha inválido. Usa MM/AA (ej: 12/25).');
+                return;
+            }
+            
+            // Validar CVV (exactamente 3 dígitos)
+            if (!/^\d{3}$/.test(cvv)) {
+                alert('El CVV debe tener exactamente 3 dígitos.');
+                return;
+            }
+            
+            // Obtener monto
+            const total = actualizarMonto();
+            const spinner = mostrarSpinnerProcesamiento(
+                "💳 Procesando pago con tarjeta..."
+            );
+            
+            // Simular procesamiento con posibilidad de fallo
+            const resultadoSimulacion = simularProcesamientoPago('tarjeta', total);
+            
+            setTimeout(() => {
+                // Eliminar spinner
+                spinner.eliminar();
+                
+                if (resultadoSimulacion.exito) {
+                    // Segundo chequeo ANTES de registrar pedido (doble verificación)
+                    if (localStorage.getItem('paymentLocked') === 'true') {
+                        alert('El pago ya fue realizado. Redirigiendo...');
+                        window.location.replace('/PagoRealizado.html');
+                        return;
+                    }
+
+                    // Crear y registrar pedido SOLO en éxito
+                    const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+                    const datosPagoTemp = JSON.parse(localStorage.getItem('datosPagoTemp') || '{}');
+
+                    const pedido = {
+                        id: 'PED-' + Date.now(),
+                        fecha: new Date().toISOString(),
+                        items: carrito.map(it => ({
+                            nombre: it.nombre,
+                            precio: parseFloat(it.precio) || 0,
+                            cantidad: parseInt(it.cantidad) || 1
+                        })),
+                        total: total,
+                        metodoPago: 'tarjeta',
+                        contacto: datosPagoTemp,
+                        estado: 'Pagado',
+                        transaccionId: resultadoSimulacion.transaccionId,
+                        fechaPago: new Date().toISOString(),
+                        detallesPago: {
+                            metodo: 'tarjeta',
+                            ultimosDigitos: numeroTarjeta.replace(/\s/g, '').slice(-4),
+                            referencia: resultadoSimulacion.referencia
+                        },
+                        historial: [
+                            { estado: 'Registrado', fecha: new Date().toISOString() },
+                            { estado: 'Pagado', fecha: new Date().toISOString() }
+                        ]
+                    };
+
+                    const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+                    pedidos.push(pedido);
+                    localStorage.setItem('pedidos', JSON.stringify(pedidos));
+                    localStorage.setItem('lastPedidoId', pedido.id);
+
+                    // Limpiar datos de intento
+                    localStorage.removeItem('carrito');
+                    localStorage.removeItem('reintentoPago');
+                    localStorage.removeItem('datosErrorPago');
+                    localStorage.removeItem('ultimoErrorPago');
+
+                    // Bloquear pagos posteriores
+                    localStorage.setItem('paymentLocked', 'true');
+                    localStorage.setItem('paymentCompleted', 'true');
+
+                    window.location.href = 'Confirmacion.html';
+                } else {
+                    // Pago fallido
+                    const datosError = {
+                        motivo: resultadoSimulacion.error,
+                        codigo: resultadoSimulacion.codigoError,
+                        recomendacion: resultadoSimulacion.recomendacion,
+                        metodo: 'tarjeta',
+                        monto: total,
+                        fecha: new Date().toISOString(),
+                        ultimosDigitos: numeroLimpio.slice(-4)
+                    };
+                    
+                    // Guardar datos del error
+                    localStorage.setItem('ultimoErrorPago', JSON.stringify(datosError));
+                    localStorage.setItem('codigoErrorPago', resultadoSimulacion.codigoError);
+                    localStorage.setItem('recomendacionErrorPago', resultadoSimulacion.recomendacion);
+                    localStorage.setItem('metodoPagoError', 'tarjeta');
+                    localStorage.setItem('montoPagoError', total.toString());
+                    localStorage.setItem('datosErrorPago', JSON.stringify(datosError));
+                    
+                    // Redirigir a página de error
+                    const params = new URLSearchParams({
+                        error: JSON.stringify(datosError),
+                        codigo: resultadoSimulacion.codigoError,
+                        recomendacion: resultadoSimulacion.recomendacion,
+                        metodo: 'tarjeta',
+                        monto: total
+                    });
+                    
+                    window.location.href = `/Error-Pago.html?${params.toString()}`;
+                }
+            }, resultadoSimulacion.tiempoSimulado);
+        }
+
+        // Claves para persistencia
+        const TARJETA_FORM_KEY = 'formTarjetaData';
+
+        function guardarFormularioTarjeta() {
+          const data = {
+            nombreTitular: document.getElementById('nombreTitular').value || '',
+            numeroTarjeta: document.getElementById('numeroTarjeta').value || '',
+            fechaExpiracion: document.getElementById('fechaExpiracion').value || '',
+            cvv: document.getElementById('cvv').value || ''
+          };
+          localStorage.setItem(TARJETA_FORM_KEY, JSON.stringify(data));
+        }
+
+        function restaurarFormularioTarjeta() {
+          const raw = localStorage.getItem(TARJETA_FORM_KEY);
+          if (!raw) return;
+          try {
+            const data = JSON.parse(raw);
+            if (data.nombreTitular) document.getElementById('nombreTitular').value = data.nombreTitular;
+            if (data.numeroTarjeta) document.getElementById('numeroTarjeta').value = data.numeroTarjeta;
+            if (data.fechaExpiracion) document.getElementById('fechaExpiracion').value = data.fechaExpiracion;
+            if (data.cvv) document.getElementById('cvv').value = data.cvv;
+          } catch(e){}
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+          // Bloqueo fuerte: si ya se pagó, redirigir inmediatamente
+          if (localStorage.getItem('paymentLocked') === 'true') {
+            try { document.getElementById('btnPagar').disabled = true; } catch(e){}
+            window.location.replace('/PagoRealizado.html');
+            return;
+          }
+          
+          // Obtener monto a pagar
+          actualizarMonto();
+          
+          // Forzar texto del botón a "Pagar" incluso en reintentos
+          document.getElementById('btnPagar').textContent = 'Pagar';
+
+          // Restaurar si hay reintento o datos persistidos
+          const esReintento = new URLSearchParams(location.search).get('reintento') === 'true' || localStorage.getItem('reintentoPago') === 'true';
+          if (esReintento) restaurarFormularioTarjeta();
+          else restaurarFormularioTarjeta(); // también restaura si quedaron datos
+
+          // Escuchar cambios para persistir
+          ['nombreTitular','numeroTarjeta','fechaExpiracion','cvv'].forEach(id => {
+            const el = document.getElementById(id);
+            el && el.addEventListener('input', guardarFormularioTarjeta);
+          });
+        });
+
+    </script>
+</body>
+</html>
