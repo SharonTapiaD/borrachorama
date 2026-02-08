@@ -21,7 +21,8 @@ SELECT
     u.correo,
     u.rol,
     p.telefono,
-    p.direccion
+    p.direccion,
+    p.foto
 FROM usuarios u
 LEFT JOIN perfiles p ON u.id = p.usuario_id
 WHERE u.id = ?
@@ -41,7 +42,8 @@ if ($result->num_rows === 1) {
         "correo"    => $user['correo'],
         "rol"       => $user['rol'],
         "telefono"  => $user['telefono'],
-        "direccion" => $user['direccion']
+        "direccion" => $user['direccion'],
+        "foto"      => $user['foto'] 
     ]);
 } else {
     echo json_encode([
