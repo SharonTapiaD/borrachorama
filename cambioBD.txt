@@ -1,0 +1,20 @@
+Holi!
+
+Olvidé poner la tabla de forma de pago, por lo tanto ya lo agregué, pero ustedes también agreguenlo:
+
+CREATE TABLE formas_pago (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL
+);
+
+INSERT INTO formas_pago (nombre) VALUES
+('Tarjeta'),
+('Efectivo'),
+('PayPal'),
+('Transferencia');
+
+En la tabla perfiles:
+
+ALTER TABLE perfiles
+ADD forma_pago_id INT,
+ADD FOREIGN KEY (forma_pago_id) REFERENCES formas_pago(id);
