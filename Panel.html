@@ -193,6 +193,10 @@
 
         if (data.status === "ok") {
           alert("✅ " + data.msg);
+          // Guardar datos en sessionStorage
+          sessionStorage.setItem('nombre', data.nombre || 'Usuario');
+          sessionStorage.setItem('rol', data.rol);
+          sessionStorage.setItem('usuario_id', data.usuario_id);
           window.location.href = data.redirect;
         } else {
           alert("❌ " + data.msg);

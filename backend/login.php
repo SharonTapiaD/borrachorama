@@ -39,13 +39,26 @@ if ($result->num_rows == 1) {
                 "status" => "ok",
                 "msg" => "Bienvenido, " . $user['nombre'],
                 "rol" => "admin",
+                "nombre" => $user['nombre'],
+                "usuario_id" => $user['id'],
                 "redirect" => "Administrador.html"
+            ]);
+        } elseif ($user['rol'] === 'gerente') {
+            echo json_encode([
+                "status" => "ok",
+                "msg" => "Bienvenido, " . $user['nombre'],
+                "rol" => "gerente",
+                "nombre" => $user['nombre'],
+                "usuario_id" => $user['id'],
+                "redirect" => "GerenciaPanel.html"
             ]);
         } else {
             echo json_encode([
                 "status" => "ok",
                 "msg" => "Bienvenido, " . $user['nombre'],
                 "rol" => "usuario",
+                "nombre" => $user['nombre'],
+                "usuario_id" => $user['id'],
                 "redirect" => "User.html"
             ]);
         }
