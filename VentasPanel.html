@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrachorama - Inicio</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fffceb;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: url('img/fondocerveza.jpg') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        header img {
+            max-width: 220px;
+        }
+
+        .navbar-custom {
+            background-color: #ffc107;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            /* Permite que el dropdown se muestre fuera del contenedor */
+            overflow: visible;
+        }
+
+        .navbar-custom.sticky {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 10px 20px;
+            /* Asegura que el dropdown se renderice sobre otros elementos */
+            overflow: visible;
+        }
+
+        .navbar-custom .logo-small {
+            display: none;
+            max-width: 80px;
+            margin-right: 20px;
+        }
+
+        .navbar-custom.sticky .logo-small {
+            display: inline-block;
+        }
+
+        .navbar-custom .btn {
+            margin: 0 5px;
+        }
+
+        /* Botón Cuenta fijo a la izquierda del menú */
+        .btn-cuenta {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%)
+        }
+
+        .navbar-placeholder {
+            height: 0;
+        }
+
+        .navbar-placeholder.active {
+            height: 66px;
+        }
+
+        footer {
+            background-color: #222;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: #ffc107;
+            text-decoration: none;
+        }
+
+        .social-links {
+            margin: 20px 0;
+        }
+
+        .social-links a {
+            display: inline-block;
+            margin: 0 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .social-links img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .social-links a:hover {
+            transform: scale(1.2);
+        }
+
+        /* Estilos para notificaciones personalizadas */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease-out;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+            border-left-color: #b71c1c;
+        }
+
+        .notification.warning {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            border-left-color: #e65100;
+        }
+
+        .notification.info {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            border-left-color: #0d47a1;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        .notification.removing {
+            animation: slideOut 0.3s ease-out;
+        }
+
+        .welcome-section {
+            padding: 60px 20px;
+        }
+
+        .welcome-section h1 {
+            color: #d4a017;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .welcome-section p {
+            font-size: 1.1rem;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            padding: 0 20px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-card img {
+            width: 100%;
+            max-width: 180px;
+            height: 200px;
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+
+        .product-card h3 {
+            color: #d4a017;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .product-card .category {
+            display: inline-block;
+            background-color: #ffc107;
+            color: #222;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .product-card .price {
+            font-size: 1.8rem;
+            color: #28a745;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .product-card .description {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            min-height: 60px;
+        }
+
+        .product-card .btn {
+            width: 100%;
+            padding: 10px;
+            font-weight: bold;
+        }
+
+        .social-section {
+            background-color: #ffc107;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .social-section h2 {
+            color: #222;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header con logo -->
+    <header class="text-center">
+        <img src="img/Borrachoramalogo.png" alt="Borrachorama Logo">
+    </header>
+
+    <!-- Placeholder para cuando el navbar se vuelve sticky -->
+    <div class="navbar-placeholder"></div>
+
+    <!-- Barra de Navegación Amarilla -->
+    <nav class="navbar-custom text-center" id="navbar" style="position: sticky; top:0; z-index:1000;">
+        <!-- Botón Cuenta (izquierda) -->
+        <a href="Panel.html" class="btn btn-dark text-white btn-cuenta">Cuenta</a>
+        <a href="carrito.html" class="btn btn-dark text-white">🛒 Carrito</a>
+        <button class="btn btn-dark text-white" data-bs-toggle="modal" data-bs-target="#nosotrosModal">Acerca de
+            Nosotros</button>
+        <div class="dropdown d-inline">
+            <button id="docsDropdown" class="btn btn-dark dropdown-toggle text-white" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Documentación
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/borrachorama/src/html/catalog.html">Catálogo</a></li>
+                <li><a class="dropdown-item" href="/borrachorama/src/html/infraestructura.html">Infraestructura</a></li>
+                <li><a class="dropdown-item" href="/borrachorama/src/html/Disponibilidad.html">Disponibilidad</a></li>
+                <li><a class="dropdown-item" href="/borrachorama/src/html/Tecnologia.html">Tecnología</a></li>
+                <li><a class="dropdown-item" href="/borrachorama/src/html/Status.html">Status</a></li>
+                <li><a class="dropdown-item" href="/borrachorama/src/html/Pedidos_Especiales.html">Pedidos
+                        Especiales</a></li>
+                <li><a class="dropdown-item" href="/borrachorama/Metricas.html">Métricas</a></li>
+                <li><a class="dropdown-item" href="/borrachorama/Metodos_Pago.html">Métodos de Pago</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+
+        <!-- Formulario Alta/Edición de Cliente -->
+        <h3>Gestión de Clientes</h3>
+        <form id="clienteForm" class="mb-4">
+            <input type="hidden" id="clienteId" name="id">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Nombre completo</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Correo</label>
+                    <input type="email" class="form-control" id="correo" name="correo" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Teléfono</label>
+                    <input type="text" class="form-control" id="telefono" name="telefono">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Empresa</label>
+                    <input type="text" class="form-control" id="empresa" name="empresa">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Estado</label>
+                    <select class="form-select" id="estado" name="estado">
+                        <option value="activo">Activo</option>
+                        <option value="inactivo">Inactivo</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Etapa CRM</label>
+                    <select class="form-select" id="etapa_crm" name="etapa_crm">
+                        <option value="Prospecto">Prospecto</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Frecuente">Frecuente</option>
+                        <option value="Inactivo">Inactivo</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-3 text-end">
+                <button type="submit" class="btn btn-success">Guardar Cliente</button>
+                <button type="reset" class="btn btn-secondary">Limpiar</button>
+            </div>
+        </form>
+
+        <!-- Tabla de Clientes con búsqueda y filtro -->
+        <h3>Listado de Clientes</h3>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <input type="text" id="busqueda" class="form-control" placeholder="Buscar por nombre o correo">
+            </div>
+            <div class="col-md-6">
+                <select id="filtroEstado" class="form-select">
+                    <option value="">Todos</option>
+                    <option value="activo">Activos</option>
+                    <option value="inactivo">Inactivos</option>
+                </select>
+            </div>
+            <div class="col-md-2"> <button class="btn btn-warning w-100" onclick="cargarClientes()">Buscar</button> </div>
+        </div>
+
+        <table id="tablaClientes" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Empresa</th>
+                    <th>Estado</th>
+                    <th>Etapa CRM</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se cargan los clientes desde la BD -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="admin-container mt-5">
+        <h3>Historial del Cliente</h3>
+
+        <!-- Selector de cliente -->
+        <div class="mb-3">
+            <label class="form-label">Seleccionar cliente</label>
+            <select id="clienteSelect" class="form-select">
+                <!-- Se cargan clientes desde la BD -->
+            </select>
+        </div>
+
+        <!-- Formulario para registrar interacción -->
+        <form id="interaccionForm" class="mb-4">
+            <input type="hidden" id="cliente_id" name="cliente_id">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Tipo de interacción</label>
+                    <select class="form-select" id="tipo" name="tipo" required>
+                        <option value="llamada">Llamada</option>
+                        <option value="correo">Correo</option>
+                        <option value="reunion">Reunión</option>
+                    </select>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-control" id="descripcion" name="descripcion" rows="2" required></textarea>
+                </div>
+            </div>
+            <div class="mt-3 text-end">
+                <button type="submit" class="btn btn-success">Registrar Interacción</button>
+            </div>
+        </form>
+
+        <!-- Línea de tiempo de interacciones -->
+        <h4>Línea de tiempo</h4>
+        <ul id="timeline" class="list-group">
+            <!-- Aquí se cargan las interacciones -->
+        </ul>
+    </div>
+
+    <div class="admin-container mt-5">
+        <h3>Etapas CRM</h3>
+
+        <!-- Filtro por etapa -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <select id="filtroEtapa" class="form-select">
+                    <option value="">Todas las etapas</option>
+                    <option value="Prospecto">Prospecto</option>
+                    <option value="Activo">Activo</option>
+                    <option value="Frecuente">Frecuente</option>
+                    <option value="Inactivo">Inactivo</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Tabla de clientes por etapa -->
+        <table id="tablaEtapas" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Empresa</th>
+                    <th>Estado</th>
+                    <th>Etapa CRM</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Se cargan clientes filtrados -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="admin-container mt-5">
+        <h3>Dashboard CRM</h3>
+
+        <!-- Contadores -->
+        <div class="row text-center mb-4">
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <h5>Total Clientes</h5>
+                    <span id="totalClientes" class="fs-4 fw-bold">0</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <h5>Activos</h5>
+                    <span id="clientesActivos" class="fs-4 fw-bold text-success">0</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <h5>Inactivos</h5>
+                    <span id="clientesInactivos" class="fs-4 fw-bold text-danger">0</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <h5>Sin interacción reciente</h5>
+                    <span id="clientesSinInteraccion" class="fs-4 fw-bold text-warning">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfica simple -->
+        <div class="mb-4">
+            <canvas id="graficaClientes" height="120"></canvas>
+        </div>
+
+        <!-- Lista de clientes en riesgo -->
+        <h4>Clientes en riesgo</h4>
+        
+<div id="clientesRiesgo"></div>
+
+<div id="productosPedido"></div>
+
+    </div>
+
+
+
+    <script>
+        async function eliminarCliente(id) {
+            if (!confirm("⚠️ ¿Seguro que deseas eliminar este cliente?")) return;
+
+            try {
+                const formData = new FormData();
+                formData.append("id", id);
+
+                const res = await fetch("backend/deleteCliente.php", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await res.json();
+
+                if (data.status === "ok") {
+                    alert("🗑️ " + data.msg);
+                    // Recargar la tabla de clientes
+                    cargarClientes();
+                } else {
+                    alert("❌ " + data.msg);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("💥 Error al eliminar cliente");
+            }
+        }
+
+        async function editarCliente(id) {
+            try {
+                // Pedimos los datos del cliente al backend
+                const res = await fetch(`backend/getClienteById.php?id=${id}`);
+                const cliente = await res.json();
+
+                if (cliente) {
+                    // Llenar el formulario con los datos del cliente
+                    document.getElementById('clienteId').value = cliente.id;
+                    document.getElementById('nombre').value = cliente.nombre;
+                    document.getElementById('correo').value = cliente.correo;
+                    document.getElementById('telefono').value = cliente.telefono;
+                    document.getElementById('empresa').value = cliente.empresa;
+                    document.getElementById('estado').value = cliente.estado;
+                    document.getElementById('etapa_crm').value = cliente.etapa_crm;
+
+                    // Opcional: hacer scroll al formulario
+                    document.getElementById('clienteForm').scrollIntoView({ behavior: 'smooth' });
+
+                    alert("✏️ Editando cliente: " + cliente.nombre);
+                } else {
+                    alert("❌ No se encontró el cliente");
+                }
+            } catch (error) {
+                console.error(error);
+                alert("💥 Error al cargar cliente");
+            }
+        }
+
+        // Ejemplo de carga de clientes desde backend
+        async function cargarClientes() {
+            const res = await fetch('backend/getClientes.php');
+            const clientes = await res.json();
+
+            const tbody = document.querySelector('#tablaClientes tbody');
+            tbody.innerHTML = '';
+
+            clientes.forEach(c => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+          <td>${c.nombre}</td>
+          <td>${c.correo}</td>
+          <td>${c.telefono}</td>
+          <td>${c.empresa}</td>
+          <td>${c.estado}</td>
+          <td>${c.etapa_crm}</td>
+          <td>
+            <button class="btn btn-sm btn-primary" onclick="editarCliente(${c.id})">Editar</button>
+            <button class="btn btn-sm btn-danger" onclick="eliminarCliente(${c.id})">Eliminar</button>
+          </td>
+        `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        cargarClientes();
+
+        // Filtros y búsqueda
+        document.getElementById('busqueda').addEventListener('input', cargarClientes);
+        document.getElementById('filtroEstado').addEventListener('change', cargarClientes);
+
+        // Guardar cliente
+        document.getElementById('clienteForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const res = await fetch('backend/saveCliente.php', { method: 'POST', body: formData });
+            const data = await res.json();
+            alert(data.msg);
+            cargarClientes();
+            e.target.reset();
+        });
+
+        // Cargar clientes en el selector
+        async function cargarClientesSelect() {
+            const res = await fetch('backend/getClientes.php');
+            const clientes = await res.json();
+            const select = document.getElementById('clienteSelect');
+            select.innerHTML = '';
+            clientes.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.id;
+                opt.textContent = `${c.nombre} (${c.correo})`;
+                select.appendChild(opt);
+            });
+            if (clientes.length > 0) {
+                select.value = clientes[0].id;
+                cargarInteracciones(clientes[0].id);
+            }
+        }
+
+        // Cargar interacciones de un cliente
+        async function cargarInteracciones(cliente_id) {
+            const res = await fetch(`backend/getInteracciones.php?cliente_id=${cliente_id}`);
+            const interacciones = await res.json();
+            const timeline = document.getElementById('timeline');
+            timeline.innerHTML = '';
+            interacciones.forEach(i => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.innerHTML = `
+      <strong>${i.tipo}</strong> - ${i.descripcion}
+      <span class="text-muted float-end">${i.fecha}</span>
+    `;
+                timeline.appendChild(li);
+            });
+        }
+
+        // Cambio de cliente en el selector
+        document.getElementById('clienteSelect').addEventListener('change', e => {
+            const cliente_id = e.target.value;
+            document.getElementById('cliente_id').value = cliente_id;
+            cargarInteracciones(cliente_id);
+        });
+
+        // Registrar interacción
+        document.getElementById('interaccionForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const res = await fetch('backend/saveInteraccion.php', { method: 'POST', body: formData });
+            const data = await res.json();
+            alert(data.msg);
+            cargarInteracciones(formData.get('cliente_id'));
+            e.target.reset();
+        });
+
+        // Inicializar
+        cargarClientesSelect();
+
+        async function cargarClientesEtapas() {
+            const etapa = document.getElementById('filtroEtapa').value;
+            const res = await fetch('backend/getClientes.php?etapa=' + etapa);
+            const clientes = await res.json();
+
+            const tbody = document.querySelector('#tablaEtapas tbody');
+            tbody.innerHTML = '';
+
+            clientes.forEach(c => {
+                const tr = document.createElement('tr');
+                let colorClass = '';
+                switch (c.etapa_crm) {
+                    case 'Prospecto': colorClass = 'table-info'; break;
+                    case 'Activo': colorClass = 'table-success'; break;
+                    case 'Frecuente': colorClass = 'table-warning'; break;
+                    case 'Inactivo': colorClass = 'table-danger'; break;
+                }
+                tr.className = colorClass;
+                tr.innerHTML = `
+      <td>${c.nombre}</td>
+      <td>${c.correo}</td>
+      <td>${c.telefono}</td>
+      <td>${c.empresa}</td>
+      <td>${c.estado}</td>
+      <td>${c.etapa_crm}</td>
+    `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('filtroEtapa').addEventListener('change', cargarClientesEtapas);
+        cargarClientesEtapas();
+
+
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        async function cargarDashboard() {
+            const res = await fetch('backend/getDashboard.php');
+            const data = await res.json();
+
+            // Contadores
+            document.getElementById('totalClientes').textContent = data.total;
+            document.getElementById('clientesActivos').textContent = data.activos;
+            document.getElementById('clientesInactivos').textContent = data.inactivos;
+            document.getElementById('clientesSinInteraccion').textContent = data.sinInteraccion;
+
+            // Gráfica
+            const ctx = document.getElementById('graficaClientes').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Prospecto', 'Activo', 'Frecuente', 'Inactivo'],
+                    datasets: [{
+                        data: [
+                            data.etapas.Prospecto,
+                            data.etapas.Activo,
+                            data.etapas.Frecuente,
+                            data.etapas.Inactivo
+                        ],
+                        backgroundColor: ['#17a2b8', '#28a745', '#ffc107', '#dc3545']
+                    }]
+                }
+            });
+
+            // Clientes en riesgo
+            // Clientes en riesgo en formato tabla
+const contenedor = document.getElementById('clientesRiesgo');
+contenedor.innerHTML = `
+  <table class="table table-bordered table-striped">
+    <thead class="table-warning">
+      <tr>
+        <th>ID Cliente</th>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>ID Pedido</th>
+        <th>ID Carrito</th>
+        <th>Total Comprado</th>
+        <th>Última Interacción</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${data.riesgo.map(c => `
+        <tr>
+          <td>${c.cliente_id}</td>
+          <td>${c.nombre}</td>
+          <td>${c.correo}</td>
+          <td>${c.pedido_id ?? '-'}</td>
+          <td>${c.carrito_id ?? '-'}</td>
+          <td>$${c.total.toFixed(2)}</td>
+          <td>${c.ultima_interaccion ?? 'Sin interacción'}</td>
+        </tr>
+      `).join('')}
+    </tbody>
+  </table>
+`;
+
+        }
+
+        cargarDashboard();
+
+        // Tabla de clientes en riesgo
+const contenedor = document.getElementById('clientesRiesgo');
+contenedor.innerHTML = `
+  <table class="table table-bordered table-striped">
+    <thead class="table-warning">
+      <tr>
+        <th>ID Cliente</th>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>ID Pedido</th>
+        <th>ID Carrito</th>
+        <th>Total Comprado</th>
+        <th>Última Interacción</th>
+        <th>Ver Productos</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${data.riesgo.map(c => `
+        <tr>
+          <td>${c.cliente_id}</td>
+          <td>${c.nombre}</td>
+          <td>${c.correo}</td>
+          <td>${c.pedido_id ?? '-'}</td>
+          <td>${c.carrito_id ?? '-'}</td>
+          <td>$${c.total.toFixed(2)}</td>
+          <td>${c.ultima_interaccion ?? 'Sin interacción'}</td>
+          <td>
+            ${c.pedido_id ? `<button class="btn btn-sm btn-info" onclick="verProductos(${c.cliente_id}, ${c.pedido_id}, ${c.carrito_id})">Ver</button>` : '-'}
+          </td>
+        </tr>
+      `).join('')}
+    </tbody>
+  </table>
+  <div id="productosPedido" class="mt-4"></div>
+`;
+
+// Función para ver productos de un pedido
+async function verProductos(cliente_id, pedido_id, carrito_id) {
+  try {
+    const res = await fetch(`backend/getProductosPedido.php?cliente_id=${cliente_id}&pedido_id=${pedido_id}&carrito_id=${carrito_id}`);
+    const productos = await res.json();
+
+    const contenedor = document.getElementById('productosPedido');
+    contenedor.innerHTML = `
+      <h5>Productos del pedido ${pedido_id}</h5>
+      <table class="table table-sm table-bordered">
+        <thead>
+          <tr>
+            <th>ID Producto</th>
+            <th>Nombre</th>
+            <th>Cantidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${productos.map(p => `
+            <tr>
+              <td>${p.producto_id}</td>
+              <td>${p.producto}</td>
+              <td>${p.cantidad}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  } catch (error) {
+    console.error(error);
+    alert("💥 Error al cargar productos del pedido");
+  }
+}
+
+    </script>
+
+
+
+
+</body>
+
+</html>

@@ -155,7 +155,8 @@
             <input type="password" class="form-control" id="regPassword2" required>
           </div>
 
-          <button type="button" id="btnLogin" class="btn btn-warning w-100">
+          <!-- 🔴 Botón corregido -->
+          <button type="button" id="btnRegister" class="btn btn-warning w-100">
             Crear cuenta
           </button>
 
@@ -184,7 +185,7 @@
         formData.append("correo", correo);
         formData.append("password", password);
 
-        const res = await fetch("backend/login.php", {
+        const res = await fetch("/backend/login.php", {
           method: "POST",
           body: formData
         });
@@ -211,7 +212,8 @@
     });
 
     /* ================= REGISTRO ================= */
-    document.getElementById('registerForm').addEventListener('submit', function (e) {
+
+    document.getElementById('btnRegister').addEventListener('click', async function (e) {
       e.preventDefault();
 
       const nombre = document.getElementById('regNombre').value.trim();
@@ -219,51 +221,43 @@
       const password = document.getElementById('regPassword').value;
       const password2 = document.getElementById('regPassword2').value;
 
-      // Validar que las contraseñas coincidan
       if (password !== password2) {
         alert("⚠️ Las contraseñas no coinciden");
         return;
       }
 
-      // Validar longitud de contraseña
       if (password.length < 6) {
         alert("⚠️ La contraseña debe tener al menos 6 caracteres");
         return;
       }
-
-      console.log("📤 Enviando datos:", { nombre, correo });
 
       const formData = new FormData();
       formData.append('nombre', nombre);
       formData.append('correo', correo);
       formData.append('password', password);
 
-      fetch('backend/registro.php', {
-        method: 'POST',
-        body: formData
-      })
-        .then(res => {
-          console.log("📥 Respuesta recibida:", res);
-          return res.json();
-        })
-        .then(data => {
-          console.log("📦 Datos parseados:", data);
-
-          if (data.status === "ok") {
-            alert("✅ " + data.msg);
-            // Limpiar formulario
-            document.getElementById('registerForm').reset();
-            // Cambiar a la pestaña de login
-            document.querySelector('[data-bs-target="#loginTab"]').click();
-          } else {
-            alert("❌ " + data.msg);
-          }
-        })
-        .catch(error => {
-          console.error("💥 Error:", error);
-          alert("Error al conectar con el servidor. Revisa la consola (F12).");
+      try {
+        const res = await fetch('backend/registro.php', {
+          method: 'POST',
+          body: formData
         });
+
+        const data = await res.json();
+
+        if (data.status === "ok") {
+          alert("✅ " + data.msg);
+          document.getElementById('registerForm').reset();
+          // Cambiar a la pestaña de login
+          document.querySelector('[data-bs-target="#loginTab"]').click();
+        } else {
+          alert("❌ " + data.msg);
+        }
+      } catch (error) {
+        console.error("💥 Error:", error);
+        alert("Error al conectar con el servidor.");
+      }
     });
+
   </script>
 
   <!-- Modal Acerca de Nosotros -->

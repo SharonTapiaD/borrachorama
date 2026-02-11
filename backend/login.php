@@ -43,14 +43,14 @@ if ($result->num_rows == 1) {
                 "usuario_id" => $user['id'],
                 "redirect" => "Administrador.html"
             ]);
-        } elseif ($user['rol'] === 'gerente') {
+        } elseif ($user['rol'] === 'ventas') {
             echo json_encode([
                 "status" => "ok",
                 "msg" => "Bienvenido, " . $user['nombre'],
-                "rol" => "gerente",
+                "rol" => "ventas",
                 "nombre" => $user['nombre'],
                 "usuario_id" => $user['id'],
-                "redirect" => "GerenciaPanel.html"
+                "redirect" => "VentasPanel.html"
             ]);
         } else {
             echo json_encode([
