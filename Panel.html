@@ -185,7 +185,7 @@
         formData.append("correo", correo);
         formData.append("password", password);
 
-        const res = await fetch("/backend/login.php", {
+        const res = await fetch("backend/login.php", {
           method: "POST",
           body: formData
         });
