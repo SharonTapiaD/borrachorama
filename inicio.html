@@ -16,7 +16,7 @@
     }
 
     header {
-      background: url('img/fondocerveza.jpg') no-repeat center center;
+      background: url('imagenes/fondocerveza.jpg') no-repeat center center;
       background-size: cover;
       color: white;
       padding: 40px 20px;
@@ -275,7 +275,7 @@
 
   <!-- Header con logo -->
   <header class="text-center">
-    <img src="img/Borrachoramalogo.png" alt="Borrachorama Logo">
+    <img src="imagenes/Borrachoramalogo.png" alt="Borrachorama Logo">
   </header>
 
   <!-- Placeholder para cuando el navbar se vuelve sticky -->
@@ -319,7 +319,7 @@
 
       <script>
         // Cargar productos desde la BD
-        fetch('/borrachorama/backend/getProducts.php')
+        fetch('backend/getProducts.php')
           .then(response => response.json())
           .then(products => {
             const container = document.getElementById('products-container');
@@ -355,7 +355,7 @@
                 formData.append("usuario_id", usuario_id);
                 formData.append("producto_id", producto_id);
 
-                fetch('/borrachorama/backend/agregar_carrito.php', {
+                fetch('backend/agregar_carrito.php', {
                   method: 'POST',
                   body: formData
                 })
