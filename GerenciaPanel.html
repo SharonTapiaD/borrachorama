@@ -579,12 +579,6 @@
                 </a>
             </li>
             <li>
-                <a href="#" onclick="cambiarSeccion(event, 'pedidos')">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Pedidos</span>
-                </a>
-            </li>
-            <li>
                 <a href="#" onclick="cambiarSeccion(event, 'reportes')">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reportes</span>
@@ -610,12 +604,7 @@
             </li>
         </ul>
 
-        <!-- BOTÓN CERRAR SESIÓN -->
-        <div style="padding: 15px; margin-top: auto; margin-bottom: 20px;">
-            <button class="btn btn-danger w-100" onclick="cerrarSesion()" style="font-weight: bold; font-size: 14px; padding: 12px; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 8px; border: none; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-            </button>
-        </div>
+
     </aside>
 
     <!-- CONTENEDOR PRINCIPAL -->
@@ -681,69 +670,6 @@
             </div>
             <div class="info-card">
                 <strong>✓ Verificar inventario</strong> - 2 productos conagotándose
-            </div>
-        </div>
-
-        <!-- SECCIÓN: PEDIDOS -->
-        <div id="pedidos" class="section">
-            <h2><i class="fas fa-shopping-cart"></i> Gestión de Pedidos</h2>
-
-            <div style="margin-bottom: 20px;">
-                <button class="btn-gerencia" onclick="filtrarPedidos('todos')">Todos</button>
-                <button class="btn-gerencia" onclick="filtrarPedidos('pendiente')">Pendientes</button>
-                <button class="btn-gerencia" onclick="filtrarPedidos('procesado')">Procesados</button>
-                <button class="btn-gerencia" onclick="filtrarPedidos('entregado')">Entregados</button>
-            </div>
-
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID Pedido</th>
-                            <th>Cliente</th>
-                            <th>Producto</th>
-                            <th>Monto</th>
-                            <th>Estado</th>
-                            <th>Fecha</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla-pedidos">
-                        <tr>
-                            <td>#001</td>
-                            <td>Juan García</td>
-                            <td>Cerveza Premium x12</td>
-                            <td>$45.99</td>
-                            <td><span class="badge-warning">En Proceso</span></td>
-                            <td>2026-02-08</td>
-                            <td>
-                                <button class="btn-gerencia" style="padding: 5px 10px; font-size: 12px;">Ver</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#002</td>
-                            <td>María López</td>
-                            <td>Vino Tinto x6</td>
-                            <td>$52.50</td>
-                            <td><span class="badge-success">Entregado</span></td>
-                            <td>2026-02-07</td>
-                            <td>
-                                <button class="btn-gerencia" style="padding: 5px 10px; font-size: 12px;">Ver</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#003</td>
-                            <td>Carlos Rodríguez</td>
-                            <td>Ron Especial x3</td>
-                            <td>$78.00</td>
-                            <td><span class="badge-danger">Pendiente</span></td>
-                            <td>2026-02-08</td>
-                            <td>
-                                <button class="btn-gerencia" style="padding: 5px 10px; font-size: 12px;">Ver</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
 
