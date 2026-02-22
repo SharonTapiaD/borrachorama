@@ -67,6 +67,18 @@ if(!$stmt->execute()){
 $usuario_id = $stmt->insert_id;
 
 /* =========================
+   CREAR CLIENTE AUTOMÁTICO
+========================= */
+
+$sqlCliente = "INSERT INTO clientes 
+(nombre, correo, fecha_registro, estado, etapa_crm, usuario_id)
+VALUES (?, ?, CURDATE(), 'activo', 'Prospecto', ?)";
+
+$stmtCliente = $conn->prepare($sqlCliente);
+$stmtCliente->bind_param("ssi", $nombre, $correo, $usuario_id);
+$stmtCliente->execute();
+
+/* =========================
    CREAR PERFIL VACÍO AUTOMÁTICO
 ========================= */
 
