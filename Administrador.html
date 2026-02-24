@@ -312,15 +312,126 @@
                     
                     <!-- Submenú de proveedores -->
                     <div class="nav nav-pills mb-4" id="pills-tab" role="tablist">
-                        <button class="nav-link active me-2" data-bs-toggle="pill" type="button">1. Lista de Proveedores</button>
-                        <button class="nav-link me-2" data-bs-toggle="pill" type="button">2. Pedidos Realizados</button>
-                        <button class="nav-link" data-bs-toggle="pill" type="button">3. Realizar Pedido</button>
+                        <button class="nav-link active me-2" id="tab-proveedores-list" data-bs-toggle="pill" data-bs-target="#pane-proveedores-list" type="button">1. Lista de Proveedores</button>
+                        <button class="nav-link me-2" id="tab-pedidos-prov" data-bs-toggle="pill" data-bs-target="#pane-pedidos-prov" type="button">2. Pedidos Realizados</button>
+                        <button class="nav-link" id="tab-realizar-pedido" data-bs-toggle="pill" data-bs-target="#pane-realizar-pedido" type="button">3. Realizar Pedido</button>
                     </div>
 
-                    <div class="placeholder-box">
-                        <h5>Espacio para Gestión SCM (Supply Chain Management)</h5>
-                        <p>Esta sección permitirá administrar la relación con los proveedores de Borrachorama.</p>
-                        <button class="btn btn-success mt-3">➕ Agregar Nuevo Proveedor</button>
+                    <div class="tab-content">
+                        <!-- Listado de proveedores -->
+                        <div class="tab-pane fade show active" id="pane-proveedores-list">
+                            <button class="btn btn-success mb-3" onclick="abrirFormProveedor()">➕ Agregar Nuevo Proveedor</button>
+                            <table class="table table-striped" id="tabla-proveedores">
+                                <thead>
+                                    <tr>
+                                        <!-- ID oculto -->
+                                        <th class="d-none">#</th>
+                                        <th>Nombre</th>
+                                        <th>Contacto</th>
+                                        <th>Teléfono</th>
+                                        <th>Correo</th>
+                                        <th>Dirección</th>
+                                        <th>Estatus</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pedidos realizados -->
+                        <div class="tab-pane fade" id="pane-pedidos-prov">
+                            <table class="table table-striped" id="tabla-pedidos-prov">
+                                <thead>
+                                    <tr>
+                                        <!-- columna id oculta -->
+                                        <th class="d-none">#</th>
+                                        <th>Proveedor</th>
+                                        <th>Producto</th>
+                                        <th>Fecha pedido</th>
+                                        <th>Entrega estimada</th>
+                                        <th>Estado</th>
+                                        <th>Tipo</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                        <!-- Formulario pedido -->
+                        <div class="tab-pane fade" id="pane-realizar-pedido">
+                            <form id="pedidoProveedorForm">
+                                <input type="hidden" id="pedido-prov-id">
+                                <div class="mb-2">
+                                    <label>Proveedor</label>
+                                    <select id="pedido-prov-proveedor" class="form-select" required></select>
+                                </div>
+                                <div class="mb-2">
+                                    <label>Producto</label>
+                                    <select id="pedido-prov-producto" class="form-select" required></select>
+                                </div>
+                                <div class="mb-2">
+                                    <label>Fecha pedido</label>
+                                    <input type="date" id="pedido-prov-fecha" class="form-control" required>
+                                </div>
+                                <div class="mb-2">
+                                    <label>Fecha entrega estimada</label>
+                                    <input type="date" id="pedido-prov-entrega" class="form-control">
+                                </div>
+                                <div class="mb-2">
+                                    <label>Tipo</label>
+                                    <select id="pedido-prov-tipo" class="form-select">
+                                        <option value="reposicion">Reposición</option>
+                                        <option value="venta">Venta</option>
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <label>Estado</label>
+                                    <select id="pedido-prov-estado" class="form-select">
+                                        <option value="pendiente">Pendiente</option>
+                                        <option value="enviado">Enviado</option>
+                                        <option value="recibido">Recibido</option>
+                                        <option value="cancelado">Cancelado</option>
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <label>Total</label>
+                                    <input type="number" step="0.01" id="pedido-prov-total" class="form-control" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Guardar Pedido</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Modal proveedor -->
+                    <div class="modal fade" id="formProveedorModal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 id="formProveedorTitle" class="modal-title">Agregar Proveedor</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="proveedorForm">
+                                        <input type="hidden" id="proveedor-id" name="id">
+                                        <input type="text" id="proveedor-nombre" name="nombre" class="form-control mb-2" placeholder="Nombre" required>
+                                        <input type="text" id="proveedor-contacto" name="contacto" class="form-control mb-2" placeholder="Contacto">
+                                        <input type="text" id="proveedor-telefono" name="telefono" class="form-control mb-2" placeholder="Teléfono">
+                                        <input type="email" id="proveedor-correo" name="correo" class="form-control mb-2" placeholder="Correo">
+                                        <textarea id="proveedor-direccion" name="direccion" class="form-control mb-2" placeholder="Dirección"></textarea>
+                                        <select id="proveedor-estatus" name="estatus" class="form-select mb-2">
+                                            <option value="activo">Activo</option>
+                                            <option value="inactivo">Inactivo</option>
+                                        </select>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" form="proveedorForm" class="btn btn-primary">Guardar</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -429,6 +540,12 @@
             // Cargar datos específicos si es necesario
             if(seccionId === 'inventario') cargarProductos();
             if(seccionId === 'pedidos') renderPedidosAdmin();
+            if(seccionId === 'proveedores') {
+                cargarProveedores();
+                cargarPedidosProveedor();
+                llenarSelectProveedores();
+                llenarSelectProductos();
+            }
         }
 
         // --- LÓGICA DE PRODUCTOS ---
@@ -461,8 +578,163 @@
         // Inicialización
         document.addEventListener('DOMContentLoaded', () => {
             cargarProductos();
+            cargarProveedores();
+            cargarPedidosProveedor();
+            llenarSelectProveedores();
+            llenarSelectProductos();
             // Iniciar estadísticas de cookies
             if(typeof rastrearPreferenciasCookies === 'function') rastrearPreferenciasCookies();
+        });
+
+        // gestión de proveedores
+        function cargarProveedores() {
+            fetch('backend/getProveedores.php')
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.querySelector('#tabla-proveedores tbody');
+                    tbody.innerHTML = '';
+                    data.forEach(p => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td class="d-none">${p.id}</td>
+                                <td>${p.nombre}</td>
+                                <td>${p.contacto}</td>
+                                <td>${p.telefono}</td>
+                                <td>${p.correo}</td>
+                                <td>${p.direccion}</td>
+                                <td>${p.estatus}</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm" onclick="editarProveedor(${p.id})">✏️</button>
+                                    <button class="btn btn-danger btn-sm" onclick="eliminarProveedor(${p.id})">🗑️</button>
+                                </td>
+                            </tr>`;
+                    });
+                });
+        }
+
+        function abrirFormProveedor() {
+            document.getElementById('formProveedorTitle').textContent = 'Agregar Proveedor';
+            document.getElementById('proveedorForm').reset();
+            new bootstrap.Modal(document.getElementById('formProveedorModal')).show();
+        }
+
+        function editarProveedor(id) {
+            fetch('backend/getProveedores.php')
+                .then(res => res.json())
+                .then(data => {
+                    const prov = data.find(p => p.id === id);
+                    if (prov) {
+                        document.getElementById('proveedor-id').value = prov.id;
+                        document.getElementById('proveedor-nombre').value = prov.nombre;
+                        document.getElementById('proveedor-contacto').value = prov.contacto;
+                        document.getElementById('proveedor-telefono').value = prov.telefono;
+                        document.getElementById('proveedor-correo').value = prov.correo;
+                        document.getElementById('proveedor-direccion').value = prov.direccion;
+                        document.getElementById('proveedor-estatus').value = prov.estatus;
+                        document.getElementById('formProveedorTitle').textContent = 'Editar Proveedor';
+                        new bootstrap.Modal(document.getElementById('formProveedorModal')).show();
+                    }
+                });
+        }
+
+        document.getElementById('proveedorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch('backend/saveProveedor.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(resp => {
+                console.log('respuesta saveProveedor', resp);
+                mostrarNotificacion(resp.msg, resp.status === 'ok' ? 'success' : 'error');
+                if (resp.status === 'ok') {
+                    cargarProveedores();
+                    bootstrap.Modal.getInstance(document.getElementById('formProveedorModal')).hide();
+                }
+            })
+            .catch(err => {
+                console.error('error en fetch saveProveedor', err);
+                mostrarNotificacion('Hubo un error en la petición', 'error');
+            });
+        });
+
+        function eliminarProveedor(id) {
+            if (!confirm('¿Eliminar proveedor?')) return;
+            fetch('backend/deleteProveedor.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'id=' + id
+            })
+            .then(res => res.json())
+            .then(resp => {
+                mostrarNotificacion(resp.msg, resp.status === 'ok' ? 'success' : 'error');
+                if (resp.status === 'ok') cargarProveedores();
+            });
+        }
+
+        // pedidos proveedor
+        function cargarPedidosProveedor() {
+            fetch('backend/getPedidosProveedor.php')
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.querySelector('#tabla-pedidos-prov tbody');
+                    tbody.innerHTML = '';
+                    data.forEach(p => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td class="d-none">${p.id}</td>
+                                <td>${p.proveedor_nombre}</td>
+                                <td>${p.producto_nombre || ''}</td>
+                                <td>${p.fecha_pedido}</td>
+                                <td>${p.fecha_entrega_estimada || ''}</td>
+                                <td>${p.estado}</td>
+                                <td>${p.tipo}</td>
+                                <td>$${p.total.toFixed(2)}</td>
+                            </tr>`;
+                    });
+                });
+        }
+
+        function llenarSelectProveedores() {
+            fetch('backend/getProveedores.php')
+                .then(res => res.json())
+                .then(data => {
+                    const sel = document.getElementById('pedido-prov-proveedor');
+                    sel.innerHTML = '<option value="">(elija)</option>';
+                    data.forEach(p => {
+                        sel.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
+                    });
+                });
+        }
+
+        function llenarSelectProductos() {
+            fetch('backend/getProducts.php')
+                .then(res => res.json())
+                .then(data => {
+                    const sel = document.getElementById('pedido-prov-producto');
+                    sel.innerHTML = '<option value="">(elija)</option>';
+                    data.forEach(p => {
+                        sel.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+                    });
+                });
+        }
+
+        document.getElementById('pedidoProveedorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch('backend/savePedidoProveedor.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(resp => {
+                mostrarNotificacion(resp.msg, resp.status === 'ok' ? 'success' : 'error');
+                if (resp.status === 'ok') {
+                    cargarPedidosProveedor();
+                    this.reset();
+                }
+            });
         });
 
         // (Mantén tus funciones de SweetAlert o Notificaciones personalizadas aquí abajo)
