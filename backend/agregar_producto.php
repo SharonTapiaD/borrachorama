@@ -39,10 +39,10 @@ if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
 
     // Nombre único para la imagen
     $nuevoNombre = uniqid("prod_", true) . "." . $ext;
-    $destino = __DIR__ . "/../img/" . $nuevoNombre; // ajusta ruta según tu estructura
+    $destino = __DIR__ . "/../imagenes/" . $nuevoNombre; // ajusta ruta según tu estructura
 
     if (move_uploaded_file($_FILES['imagen']['tmp_name'], $destino)) {
-        $imagenRuta = "img/" . $nuevoNombre;
+        $imagenRuta = "imagenes/" . $nuevoNombre;
     } else {
         echo json_encode([
             "status" => "error",
