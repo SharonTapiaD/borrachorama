@@ -957,7 +957,7 @@
                 });
         }
 
-        // Guardado Manual
+     
         document.getElementById('pedidoProveedorForm').addEventListener('submit', function (e) {
             e.preventDefault();
             const formData = new FormData(this);
@@ -968,14 +968,21 @@
                     if (resp.status === 'ok') {
                         cargarPedidosProveedor();
                         this.reset();
+                        
+                        if(resp.whatsapp_url) {
+                            window.open(resp.whatsapp_url, '_blank');
+                        }
                     }
                 });
         });
 
-       
         function generarPedidoAutomatico() {
-            if(!confirm("Esto revisará el stock y enviará correos automáticos a los proveedores. ¿Continuar?")) return;
+            if(!confirm("El sistema revisará el stock y generará los pedidos. ¿Continuar?")) return;
             
+          
+            const contenedorBotones = document.getElementById('botones-wa-container');
+            if(contenedorBotones) contenedorBotones.innerHTML = '';
+
             fetch('backend/generar_pedido_automatico.php')
                 .then(res => res.json())
                 .then(resp => {
@@ -983,6 +990,32 @@
                     if(resp.status === 'ok') {
                         cargarPedidosProveedor();
                         cargarProductos(); 
+                        
+                       
+                        if(resp.whatsapp_links && resp.whatsapp_links.length > 0) {
+                            
+                            let alertaInfo = document.querySelector('.alert-info');
+                            
+                            
+                            if(!document.getElementById('botones-wa-container')) {
+                                let divBotones = document.createElement('div');
+                                divBotones.id = 'botones-wa-container';
+                                divBotones.className = 'mt-3';
+                                alertaInfo.appendChild(divBotones);
+                            }
+                            
+                            const divContenedor = document.getElementById('botones-wa-container');
+                            divContenedor.innerHTML = '<hr><p class="mb-2"><strong>📲 Enviar notificaciones a proveedores:</strong></p>';
+                            
+                            
+                            resp.whatsapp_links.forEach(link => {
+                                divContenedor.innerHTML += `
+                                    <a href="${link.url}" target="_blank" class="btn btn-success btn-sm me-2 mb-2">
+                                        Enviar WA a ${link.nombre_proveedor}
+                                    </a>
+                                `;
+                            });
+                        }
                     }
                 })
                 .catch(err => {
