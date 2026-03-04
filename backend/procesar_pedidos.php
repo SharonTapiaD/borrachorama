@@ -21,7 +21,6 @@ function enviarCorreoProveedor($pedido_id, $conn) {
     return true;
 }
 
-// LOGICA PARA PEDIDO AUTOMÁTICO (Se puede llamar vía Cron Job o al entrar al Admin)
 if (isset($_GET['check_auto'])) {
     try {
         $sql = "SELECT id, nombre, stock, stock_minimo, precio, proveedor_id FROM productos WHERE stock <= stock_minimo";
@@ -34,7 +33,7 @@ if (isset($_GET['check_auto'])) {
             $prod_id = intval($prod['id']);
             $stock_min = isset($prod['stock_minimo']) ? intval($prod['stock_minimo']) : 0;
 
-            // Verificar si ya hay un pedido pendiente para este producto
+         
             $checkSql = "SELECT id FROM pedidos_proveedor WHERE producto_id = ? AND estado = 'pendiente'";
             $chk = $conn->prepare($checkSql);
             if (!$chk) throw new Exception('Prepare check pedido error: ' . $conn->error);
@@ -44,7 +43,7 @@ if (isset($_GET['check_auto'])) {
             if ($chkRes && $chkRes->num_rows == 0) {
                 $cantidad_a_pedir = max(1, intval($stock_min * 2));
                 $precio = isset($prod['precio']) ? floatval($prod['precio']) : 0.0;
-                $total = $cantidad_a_pedir * ($precio * 0.7); // Precio proveedor estimado
+                $total = $cantidad_a_pedir * ($precio * 0.7); 
 
                 $prov_id = isset($prod['proveedor_id']) && intval($prod['proveedor_id'])>0 ? intval($prod['proveedor_id']) : 1;
 
@@ -58,7 +57,7 @@ if (isset($_GET['check_auto'])) {
                     enviarCorreoProveedor($newId, $conn);
                     $pedidos_generados++;
                 } else {
-                    // Continue but log error
+                    
                     error_log('Insert pedido failed: ' . $ins->error);
                 }
             }

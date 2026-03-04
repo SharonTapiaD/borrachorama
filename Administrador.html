@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrador - Borrachorama</title>
@@ -297,20 +298,26 @@
                         <button class="btn btn-warning btn-sm text-dark" onclick="filtrarRotacion('baja_rotacion')">⚠️ Baja Rotación</button>
                         <button class="btn btn-dark btn-sm" onclick="renderPedidosAdmin()">📋 Ver Todos los Pedidos</button>
                     </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <table class="table table-striped border">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Análisis</th>
+                                        <th>Nombre del Producto</th>
+                                        <th>Métrica</th>
+                                        <th>Stock Actual</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pedidos-tbody"></tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-center justify-content-center">
+                            <canvas id="graficaAnalisis" style="max-width: 100%;"></canvas>
+                        </div>
+                    </div>
 
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>ID / Análisis</th>
-                                <th>Detalle / Nombre</th>
-                                <th>Métrica 1</th>
-                                <th>Métrica 2</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="pedidos-tbody"></tbody>
-                    </table>
+                    
                 </div>
 
                 <div id="ventas" class="content-section">
@@ -650,55 +657,178 @@
         }
 
        
-        function renderPedidosAdmin() {
+       function renderPedidosAdmin() {
             fetch('backend/getPedidos.php')
                 .then(res => res.json())
                 .then(data => {
+                   
+                    const thead = document.querySelector('#pedidos table thead');
+                    thead.innerHTML = `
+                        <tr class="table-dark">
+                            <th>ID Pedido</th>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                        </tr>
+                    `;
+
                     const tbody = document.querySelector('#pedidos-tbody');
                     tbody.innerHTML = '';
+                    
                     if(!data || data.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="6" class="text-center">No hay pedidos registrados</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay pedidos registrados</td></tr>';
+                        if (chartAnalisis) chartAnalisis.destroy();
                         return;
                     }
+
+              
                     data.forEach(p => {
                         tbody.innerHTML += `
                             <tr>
-                                <td>${p.id}</td>
+                                <td>#${p.id}</td>
                                 <td>${p.fecha}</td>
                                 <td>${p.cliente_nombre || 'Cliente Genérico'}</td>
-                                <td>$${p.total.toFixed(2)}</td>
+                                <td>$${parseFloat(p.total).toFixed(2)}</td>
                                 <td><span class="badge bg-info text-dark">${p.estatus}</span></td>
-                                <td><button class="btn btn-sm btn-secondary">Detalle</button></td>
                             </tr>`;
                     });
+
+                    
+                    const conteoEstados = {};
+                    data.forEach(p => {
+                        const estado = p.estatus ? p.estatus.toUpperCase() : 'DESCONOCIDO';
+                        conteoEstados[estado] = (conteoEstados[estado] || 0) + 1;
+                    });
+
+                   
+                    const labels = Object.keys(conteoEstados);
+                    const values = Object.values(conteoEstados);
+
+            
+                    const ctx = document.getElementById('graficaAnalisis').getContext('2d');
+                    if (chartAnalisis) chartAnalisis.destroy(); 
+
+                    chartAnalisis = new Chart(ctx, {
+                        type: 'doughnut', 
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Cantidad de Pedidos',
+                                data: values,
+                                backgroundColor: ['#FFCE56', '#36A2EB', '#4BC0C0', '#FF6384', '#9966FF'],
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { position: 'bottom' },
+                                title: {
+                                    display: true,
+                                    text: 'Estado General de Pedidos',
+                                    font: { size: 16 }
+                                }
+                            }
+                        }
+                    });
+
                 }).catch(e => console.error("Error cargando pedidos:", e));
         }
+
+        let chartAnalisis = null;
 
         function filtrarRotacion(tipo) {
             fetch(`backend/getAnalisisVentas.php?filtro=${tipo}`)
                 .then(res => res.json())
                 .then(data => {
+                   
+                    const thead = document.querySelector('#pedidos table thead');
+                    thead.innerHTML = `
+                        <tr class="table-dark">
+                            <th>Análisis</th>
+                            <th>Nombre del Producto</th>
+                            <th>Métrica</th>
+                            <th>Stock Actual</th>
+                        </tr>
+                    `;
+
                     const tbody = document.querySelector('#pedidos-tbody');
                     tbody.innerHTML = '';
+                    
                     if(data.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="6" class="text-center">No hay datos para este filtro</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="4" class="text-center">No hay datos para este filtro</td></tr>';
+                        if(chartAnalisis) chartAnalisis.destroy(); 
                         return;
                     }
+
+                  
                     data.forEach(p => {
                         tbody.innerHTML += `
                             <tr>
                                 <td><span class="badge bg-dark">${tipo.replace('_', ' ').toUpperCase()}</span></td>
                                 <td><strong>${p.nombre}</strong></td>
-                                <td>Ventas Totales: <span class="badge bg-primary">${p.total_vendido || 0}</span></td>
-                                <td>Stock Actual: <strong>${p.stock}</strong></td>
-                                <td>-</td>
-                                <td>-</td>
+                                <td>Ventas/Cantidad: <span class="badge bg-primary">${p.total_vendido || 0}</span></td>
+                                <td>Stock: <strong>${p.stock}</strong></td>
                             </tr>`;
                     });
+
+                
+                    actualizarGraficaPastel(data, tipo);
                 });
         }
 
-        // Inicialización
+      
+        function actualizarGraficaPastel(data, tipo) {
+            const ctx = document.getElementById('graficaAnalisis').getContext('2d');
+            
+            if (chartAnalisis) {
+                chartAnalisis.destroy();
+            }
+
+          
+            const labels = data.map(p => p.nombre);
+            let values = [];
+            let tituloGrafica = '';
+
+        
+            if (tipo === 'baja_rotacion') {
+                tituloGrafica = 'Stock Estancado en Almacén';
+                values = data.map(p => p.stock);
+            } else {
+                tituloGrafica = 'Unidades Vendidas';
+                values = data.map(p => p.total_vendido || 0);
+            }
+
+      
+            const colores = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
+
+            chartAnalisis = new Chart(ctx, {
+                type: 'pie', 
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: tituloGrafica,
+                        data: values,
+                        backgroundColor: colores.slice(0, data.length),
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        title: {
+                            display: true,
+                            text: tituloGrafica,
+                            font: { size: 16 }
+                        }
+                    }
+                }
+            });
+        }
+
+    
         document.addEventListener('DOMContentLoaded', () => {
             cargarProductos();
             cargarProveedores();
@@ -708,7 +838,7 @@
             renderPedidosAdmin();
         });
 
-        // --- LÓGICA DE PROVEEDORES Y AUTOMATIZACIÓN ---
+      
         function cargarProveedores() {
             fetch('backend/getProveedores.php')
                 .then(res => res.json())
@@ -842,7 +972,7 @@
                 });
         });
 
-        // Generación Automática
+       
         function generarPedidoAutomatico() {
             if(!confirm("Esto revisará el stock y enviará correos automáticos a los proveedores. ¿Continuar?")) return;
             
@@ -852,7 +982,7 @@
                     mostrarNotificacion(resp.msg, resp.status === 'ok' ? 'success' : 'error');
                     if(resp.status === 'ok') {
                         cargarPedidosProveedor();
-                        cargarProductos(); // Refrescar semáforo
+                        cargarProductos(); 
                     }
                 })
                 .catch(err => {
@@ -860,7 +990,7 @@
                 });
         }
 
-        // Notificaciones globales
+       
         window.mostrarNotificacion = function (mensaje, tipo = 'success') {
             const notif = document.createElement('div');
             notif.className = `notification ${tipo}`;
