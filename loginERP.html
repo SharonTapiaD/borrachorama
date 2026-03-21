@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Borrachorama ERP — Acceso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:     #ffc107;
+      --gold-dark:#d4a017;
+      --amber:    #FF6F00;
+      --cream:    #fffceb;
+      --charcoal: #1a1208;
+      --dark:     #222;
+      --smoke:    rgba(255,255,255,0.07);
+    }
+
+    /* ── FONDO ── */
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--charcoal);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* burbujas decorativas de fondo */
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.06;
+      background: var(--gold);
+      animation: float linear infinite;
+      pointer-events: none;
+    }
+    .bubble:nth-child(1)  { width:340px; height:340px; top:-80px;  left:-60px;  animation-duration:18s; }
+    .bubble:nth-child(2)  { width:200px; height:200px; bottom:40px; right:-50px; animation-duration:14s; animation-delay:-6s; }
+    .bubble:nth-child(3)  { width:120px; height:120px; bottom:200px;left:80px;   animation-duration:20s; animation-delay:-3s; }
+    .bubble:nth-child(4)  { width:80px;  height:80px;  top:60%;    right:12%;   animation-duration:11s; animation-delay:-9s; }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0) scale(1); }
+      50%      { transform: translateY(-30px) scale(1.05); }
+    }
+
+    /* líneas diagonales de fondo */
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -55deg,
+        transparent,
+        transparent 40px,
+        rgba(255,193,7,0.025) 40px,
+        rgba(255,193,7,0.025) 41px
+      );
+      pointer-events: none;
+    }
+
+    /* ── CARD PRINCIPAL ── */
+    .card {
+      position: relative;
+      z-index: 10;
+      width: min(460px, 94vw);
+      background: #1e1608;
+      border: 1px solid rgba(255,193,7,0.18);
+      border-radius: 24px;
+      padding: 48px 44px 44px;
+      box-shadow:
+        0 0 0 1px rgba(255,193,7,0.06),
+        0 32px 80px rgba(0,0,0,0.6),
+        0 0 60px rgba(255,193,7,0.04);
+      animation: slideUp .55s cubic-bezier(.22,1,.36,1) both;
+    }
+    @keyframes slideUp {
+      from { opacity:0; transform:translateY(40px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* acento dorado superior */
+    .card::before {
+      content:'';
+      position:absolute;
+      top:0; left:50%;
+      transform:translateX(-50%);
+      width:60%;
+      height:3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      border-radius:0 0 8px 8px;
+    }
+
+    /* ── LOGO ── */
+    .logo-wrap {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .logo-icon {
+      font-size: 2.6rem;
+      line-height: 1;
+      margin-bottom: 10px;
+      display: block;
+      animation: bobble 3s ease-in-out infinite;
+    }
+    @keyframes bobble {
+      0%,100%{ transform: rotate(-4deg); }
+      50%    { transform: rotate(4deg); }
+    }
+    .logo-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem;
+      letter-spacing: 3px;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .logo-sub {
+      font-size: 0.7rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: rgba(255,193,7,0.45);
+      margin-top: 4px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .divider::before, .divider::after {
+      content:'';
+      flex:1;
+      height:1px;
+      background: rgba(255,193,7,0.15);
+    }
+    .divider span {
+      font-size: 0.72rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,193,7,0.4);
+      white-space: nowrap;
+    }
+
+    /* ── LABEL ── */
+    .field-label {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,193,7,0.55);
+      margin-bottom: 14px;
+    }
+
+    /* ── TARJETAS DE ROL ── */
+    .roles {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    .role-card {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 16px 20px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(255,193,7,0.12);
+      background: rgba(255,255,255,0.03);
+      cursor: pointer;
+      transition: all .22s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .role-card::after {
+      content:'';
+      position:absolute;
+      inset:0;
+      background: linear-gradient(135deg, rgba(255,193,7,0.07), transparent);
+      opacity:0;
+      transition: opacity .22s;
+    }
+    .role-card:hover {
+      border-color: rgba(255,193,7,0.35);
+      transform: translateX(4px);
+    }
+    .role-card:hover::after { opacity:1; }
+
+    .role-card.selected {
+      border-color: var(--gold);
+      background: rgba(255,193,7,0.08);
+      box-shadow: 0 0 0 1px rgba(255,193,7,0.3), inset 0 0 20px rgba(255,193,7,0.04);
+    }
+    .role-card.selected::after { opacity:1; }
+
+    /* radio oculto */
+    .role-card input[type="radio"] { display:none; }
+
+    .role-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items:center; justify-content:center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      background: rgba(255,193,7,0.1);
+      border: 1px solid rgba(255,193,7,0.15);
+      transition: background .22s, transform .22s;
+    }
+    .role-card.selected .role-icon {
+      background: rgba(255,193,7,0.2);
+      transform: scale(1.08);
+    }
+
+    .role-info { flex:1; }
+    .role-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.25rem;
+      letter-spacing: 2px;
+      color: var(--cream);
+      line-height: 1;
+    }
+    .role-desc {
+      font-size: 0.75rem;
+      color: rgba(255,255,220,0.35);
+      margin-top: 3px;
+    }
+
+    .role-check {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,193,7,0.25);
+      display: flex; align-items:center; justify-content:center;
+      transition: all .2s;
+      flex-shrink:0;
+    }
+    .role-card.selected .role-check {
+      background: var(--gold);
+      border-color: var(--gold);
+      box-shadow: 0 0 10px rgba(255,193,7,0.5);
+    }
+    .role-check svg {
+      opacity:0; transform:scale(0);
+      transition: all .18s;
+    }
+    .role-card.selected .role-check svg {
+      opacity:1; transform:scale(1);
+    }
+
+    /* ── BOTÓN ── */
+    .btn-enter {
+      width: 100%;
+      padding: 17px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold) 60%, var(--amber));
+      color: var(--charcoal);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.15rem;
+      letter-spacing: 4px;
+      cursor: pointer;
+      transition: all .22s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 6px 24px rgba(255,193,7,0.25);
+    }
+    .btn-enter:disabled {
+      background: rgba(255,193,7,0.15);
+      color: rgba(255,255,255,0.2);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .btn-enter:not(:disabled):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(255,193,7,0.4);
+    }
+    .btn-enter:not(:disabled):active {
+      transform: translateY(1px);
+    }
+    /* shimmer */
+    .btn-enter::after {
+      content:'';
+      position:absolute;
+      top:0; left:-100%;
+      width:60%; height:100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+      transform: skewX(-20deg);
+      transition: left .5s;
+    }
+    .btn-enter:not(:disabled):hover::after { left:160%; }
+
+    /* ── FOOTER ── */
+    .card-footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.72rem;
+      color: rgba(255,255,200,0.2);
+      letter-spacing: 1px;
+    }
+    .card-footer strong { color: rgba(255,193,7,0.4); }
+
+    /* ── OVERLAY DE BIENVENIDA ── */
+    .welcome-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--charcoal);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .4s;
+    }
+    .welcome-overlay.show { opacity:1; pointer-events:all; }
+    .welcome-overlay .wl-icon { font-size: 3.5rem; animation: pulse 1s infinite alternate; }
+    @keyframes pulse { from{transform:scale(1);} to{transform:scale(1.15);} }
+    .welcome-overlay .wl-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 4px;
+      color: var(--gold);
+    }
+    .welcome-overlay .wl-sub {
+      font-size: 0.8rem;
+      color: rgba(255,255,200,0.4);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    .wl-bar-wrap {
+      width: 200px;
+      height: 3px;
+      background: rgba(255,193,7,0.15);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .wl-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+      border-radius: 99px;
+      transition: width 1.4s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Bubbles -->
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+
+  <!-- Welcome overlay -->
+  <div class="welcome-overlay" id="welcomeOverlay">
+    <div class="wl-icon" id="wlIcon">🍺</div>
+    <div class="wl-text" id="wlText">Bienvenido</div>
+    <div class="wl-sub" id="wlSub">Cargando panel...</div>
+    <div class="wl-bar-wrap"><div class="wl-bar" id="wlBar"></div></div>
+  </div>
+
+  <!-- Card -->
+  <div class="card">
+
+    <!-- Logo -->
+    <div class="logo-wrap">
+      <span class="logo-icon">🍺</span>
+      <div class="logo-name">Borrachorama</div>
+      <div class="logo-sub">Sistema ERP Interno</div>
+    </div>
+
+    <div class="divider"><span>Selecciona tu acceso</span></div>
+
+    <label class="field-label">¿Quién eres hoy?</label>
+
+    <!-- Roles -->
+    <div class="roles" id="rolesContainer">
+
+      <label class="role-card" id="card-admin">
+        <input type="radio" name="rol" value="admin" onchange="selectRole(this)">
+        <div class="role-icon">🛡️</div>
+        <div class="role-info">
+          <div class="role-name">Administrador</div>
+          <div class="role-desc">Acceso completo · Reportes · Configuración</div>
+        </div>
+        <div class="role-check">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
+            <path d="M1 5L4.5 8.5L11 1.5" stroke="#1a1208" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </label>
+
+      <label class="role-card" id="card-ventas">
+        <input type="radio" name="rol" value="ventas" onchange="selectRole(this)">
+        <div class="role-icon">💰</div>
+        <div class="role-info">
+          <div class="role-name">Ventas</div>
+          <div class="role-desc">Pedidos · Clientes · Punto de venta</div>
+        </div>
+        <div class="role-check">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
+            <path d="M1 5L4.5 8.5L11 1.5" stroke="#1a1208" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </label>
+
+      <label class="role-card" id="card-logistica">
+        <input type="radio" name="rol" value="logistica" onchange="selectRole(this)">
+        <div class="role-icon">📦</div>
+        <div class="role-info">
+          <div class="role-name">Logística</div>
+          <div class="role-desc">Inventario · Proveedores · Entregas</div>
+        </div>
+        <div class="role-check">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
+            <path d="M1 5L4.5 8.5L11 1.5" stroke="#1a1208" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </label>
+
+    </div>
+
+    <!-- Botón -->
+    <button class="btn-enter" id="btnEnter" disabled onclick="entrar()">
+      Ingresar al Sistema
+    </button>
+
+    <div class="card-footer">
+      <strong>Borrachorama</strong> · ERP v1.0 · Negocios Electrónicos II
+    </div>
+
+  </div>
+
+  <script>
+    let rolSeleccionado = null;
+
+    const destinos = {
+      admin:    'dashboard_admin.html',
+      ventas:   'dashboard_ventas.html',
+      logistica:'dashboard_logistica.html'
+    };
+
+    const nombres = {
+      admin:    'Administrador',
+      ventas:   'Ventas',
+      logistica:'Logística'
+    };
+
+    const iconos = {
+      admin:    '🛡️',
+      ventas:   '💰',
+      logistica:'📦'
+    };
+
+    function selectRole(radio) {
+      rolSeleccionado = radio.value;
+
+      // quitar selected de todas las cards
+      document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+      // agregar al padre del radio
+      radio.closest('.role-card').classList.add('selected');
+
+      document.getElementById('btnEnter').disabled = false;
+    }
+
+    function entrar() {
+      if (!rolSeleccionado) return;
+
+      const overlay = document.getElementById('welcomeOverlay');
+      document.getElementById('wlIcon').textContent  = iconos[rolSeleccionado];
+      document.getElementById('wlText').textContent  = '¡Hola, ' + nombres[rolSeleccionado] + '!';
+      document.getElementById('wlSub').textContent   = 'Cargando tu panel...';
+
+      overlay.classList.add('show');
+
+      // animación barra
+      setTimeout(() => {
+        document.getElementById('wlBar').style.width = '100%';
+      }, 100);
+
+      // redirigir después de 1.8s
+      setTimeout(() => {
+        // Guardamos el rol en sessionStorage para que el dash lo use
+        sessionStorage.setItem('borrachoramaRol', rolSeleccionado);
+        // Redirigir (cambia la URL según tu proyecto)
+        window.location.href = destinos[rolSeleccionado];
+      }, 1900);
+    }
+  </script>
+</body>
+</html>
