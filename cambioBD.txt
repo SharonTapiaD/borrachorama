@@ -54,3 +54,7 @@ ALTER TABLE pedidos_proveedor
 ADD CONSTRAINT fk_pedido_producto 
 FOREIGN KEY (producto_id) REFERENCES productos(id);
 
+INSERT INTO clientes (nombre, correo, fecha_registro, estado, etapa_crm, usuario_id)
+SELECT nombre, correo, CURDATE(), 'activo', 'Prospecto', id
+FROM usuarios
+WHERE correo = 'danna@gmail.com';

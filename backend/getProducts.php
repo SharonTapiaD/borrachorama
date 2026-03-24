@@ -13,6 +13,7 @@ SELECT
     p.imagen,
     p.precio,
     p.stock,
+    p.stock_minimo,
     p.estatus,
     c.nombre AS categoria_nombre
 FROM productos p
@@ -33,6 +34,7 @@ if ($result && $result->num_rows > 0) {
             "image"       => $row["imagen"],
             "price"       => (float)$row["precio"],
             "stock"       => (int)$row["stock"],
+            "min_stock"   => isset($row["stock_minimo"]) ? (int)$row["stock_minimo"] : 0,
             "status"      => (int)$row["estatus"]
         ];
     }
