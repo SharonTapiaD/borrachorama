@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrachorama ERP — Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --gold: #ffc107;
+            --gold-dark: #d4a017;
+            --amber: #FF6F00;
+            --cream: #fffceb;
+            --charcoal: #13100a;
+            --surface: #1c1710;
+            --surface2: #241e13;
+            --border: rgba(255, 193, 7, 0.13);
+            --text: #e8dfc0;
+            --muted: rgba(232, 223, 192, 0.4);
+            --sidebar-w: 230px;
+            --topbar-h: 64px;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--charcoal);
+            color: var(--text);
+            display: flex;
+        }
+
+        .sidebar {
+            width: var(--sidebar-w);
+            height: 100vh;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 20;
+        }
+
+        .sidebar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, var(--gold) 40%, transparent);
+            opacity: .3;
+        }
+
+        .sidebar-brand {
+            padding: 22px 20px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.6rem;
+            letter-spacing: 3px;
+            color: var(--gold);
+            line-height: 1;
+        }
+
+        .brand-sub {
+            font-size: 0.63rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 14px 10px;
+            overflow-y: auto;
+        }
+
+        .nav-section-label {
+            font-size: 0.6rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(255, 193, 7, 0.3);
+            padding: 10px 10px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all .18s;
+            margin-bottom: 2px;
+            position: relative;
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 193, 7, 0.07);
+            border-color: rgba(255, 193, 7, 0.1);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 193, 7, 0.12);
+            border-color: rgba(255, 193, 7, 0.25);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20%;
+            height: 60%;
+            width: 3px;
+            background: var(--gold);
+            border-radius: 0 3px 3px 0;
+        }
+
+        .nav-icon {
+            font-size: 1.1rem;
+            width: 22px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .nav-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .nav-item.active .nav-label {
+            color: var(--gold);
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--amber);
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 99px;
+        }
+
+        .sidebar-user {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--gold-dark), var(--amber));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .user-name {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--cream);
+            line-height: 1;
+        }
+
+        .user-role {
+            font-size: 0.68rem;
+            color: var(--gold);
+            margin-top: 2px;
+            letter-spacing: 1px;
+        }
+
+        .logout-btn {
+            margin-left: auto;
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 8px;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 0.9rem;
+            transition: all .18s;
+        }
+
+        .logout-btn:hover {
+            border-color: #f44336;
+            color: #f44336;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .topbar {
+            height: var(--topbar-h);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 28px;
+            gap: 16px;
+            flex-shrink: 0;
+        }
+
+        .topbar-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 3px;
+            color: var(--cream);
+        }
+
+        .topbar-bread {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .topbar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .topbar-chip {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid var(--border);
+            border-radius: 99px;
+            padding: 5px 14px;
+            font-size: 0.72rem;
+            letter-spacing: 1px;
+            color: var(--gold);
+        }
+
+        .topbar-time {
+            font-size: 0.78rem;
+            color: var(--muted);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn .3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, .4);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            opacity: .5;
+        }
+
+        .kpi-icon {
+            font-size: 1.6rem;
+            margin-bottom: 12px;
+        }
+
+        .kpi-val {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            color: var(--gold);
+            letter-spacing: 2px;
+            line-height: 1;
+        }
+
+        .kpi-label {
+            font-size: 0.72rem;
+            color: var(--muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .kpi-sub {
+            font-size: 0.72rem;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .panel {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 16px;
+        }
+
+        .panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .panel-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.05rem;
+            letter-spacing: 2px;
+            color: var(--cream);
+        }
+
+        .panel-action {
+            font-size: 0.72rem;
+            color: var(--gold);
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
+        .panel-action:hover {
+            text-decoration: underline;
+        }
+
+        .chart-wrap {
+            position: relative;
+            height: 220px;
+        }
+
+        .erp-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+
+        .erp-table th {
+            text-align: left;
+            padding: 8px 12px;
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255, 193, 7, 0.4);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .erp-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255, 193, 7, 0.05);
+            color: var(--text);
+        }
+
+        .erp-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .erp-table tr:hover td {
+            background: rgba(255, 193, 7, 0.04);
+        }
+
+        .pill {
+            padding: 3px 10px;
+            border-radius: 99px;
+            font-size: 0.68rem;
+            font-weight: 600;
+        }
+
+        .pill-ok {
+            background: rgba(76, 175, 80, .15);
+            color: #66bb6a;
+        }
+
+        .pill-warn {
+            background: rgba(255, 193, 7, .15);
+            color: #ffc107;
+        }
+
+        .pill-err {
+            background: rgba(244, 67, 54, .15);
+            color: #ef5350;
+        }
+
+        .pill-info {
+            background: rgba(33, 150, 243, .15);
+            color: #42a5f5;
+        }
+
+        .erp-status-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .erp-status-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .dot-green {
+            background: #66bb6a;
+            box-shadow: 0 0 6px #66bb6a;
+        }
+
+        .dot-yellow {
+            background: #ffc107;
+            box-shadow: 0 0 6px #ffc107;
+        }
+
+        .dot-red {
+            background: #ef5350;
+            box-shadow: 0 0 6px #ef5350;
+        }
+
+        .status-name {
+            font-size: 0.8rem;
+            color: var(--text);
+            flex: 1;
+        }
+
+        .status-val {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .row2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--muted);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 193, 7, .2);
+            border-radius: 99px;
+        }
+
+        /* ══ PROCESS CARDS ══ */
+        .prc-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .prc-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, .4);
+        }
+
+        .prc-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .prc-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 99px;
+            letter-spacing: 1px;
+            text-transform: lowercase;
+        }
+
+        .badge-activo {
+            background: rgba(66, 165, 245, .15);
+            color: #42a5f5;
+            border: 1px solid rgba(66, 165, 245, .3);
+        }
+
+        .badge-pausado {
+            background: rgba(255, 193, 7, .15);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, .3);
+        }
+
+        .badge-completado {
+            background: rgba(76, 175, 80, .15);
+            color: #66bb6a;
+            border: 1px solid rgba(76, 175, 80, .3);
+        }
+
+        .prc-id {
+            font-size: 0.7rem;
+            color: var(--muted);
+            letter-spacing: 2px;
+        }
+
+        .prc-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--cream);
+            margin-bottom: 6px;
+        }
+
+        .prc-desc {
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-bottom: 14px;
+            line-height: 1.4;
+        }
+
+        .prc-prog-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        .prc-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .prc-bar-fill {
+            height: 100%;
+            border-radius: 99px;
+            transition: width .6s ease;
+        }
+
+        .prc-meta {
+            font-size: 0.7rem;
+            color: rgba(255, 193, 7, 0.35);
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-logo">🍺 Borrachorama</div>
+            <div class="brand-sub">ERP · Panel Admin</div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Principal</div>
+            <div class="nav-item active" onclick="goTo('dashboard',this)"><span class="nav-icon">📊</span><span
+                    class="nav-label">Dashboard</span></div>
+            <div class="nav-item" onclick="goTo('ordenes',this)"><span class="nav-icon">📋</span><span
+                    class="nav-label">Órdenes</span><span class="nav-badge" id="badge-ordenes">—</span></div>
+            
+            <div class="nav-section-label">Operaciones</div>
+            <div class="nav-item" onclick="goTo('inventario',this)"><span class="nav-icon">📦</span><span
+                    class="nav-label">Inventario</span></div>
+            <div class="nav-item" onclick="goTo('procesos',this)"><span class="nav-icon">⚙️</span><span
+                    class="nav-label">Procesos</span></div>
+            <div class="nav-item" onclick="goTo('recursos',this)"><span class="nav-icon">👷</span><span
+                    class="nav-label">Recursos</span></div>
+            
+        </nav>
+        <div class="sidebar-user">
+            <div class="user-avatar">🛡️</div>
+            <div>
+                <div class="user-name">Admin Principal</div>
+                <div class="user-role">Administrador</div>
+            </div>
+            <button class="logout-btn" onclick="cerrarSesion()" title="Cerrar sesión">⏻</button>
+        </div>
+    </aside>
+
+    <di class="main">
+        <div class="topbar">
+            <div>
+                <div class="topbar-title" id="topbarTitle">Dashboard</div>
+                <div class="topbar-bread">Borrachorama ERP · Vista general del sistema</div>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-chip">🍺 Sistema Activo</div>
+                <div class="topbar-time" id="clock">--:--:--</div>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <!-- DASHBOARD -->
+            <div class="section active" id="sec-dashboard">
+                <div class="kpi-grid" id="kpi-grid">
+                    <div class="loading" style="grid-column:1/-1">Conectando con la base de datos... 🍺</div>
+                </div>
+                <div class="charts-row">
+                    <div class="panel">
+                        <div class="panel-head">
+                            <div class="panel-title">Ventas Mensuales</div>
+                        </div>
+                        <div class="chart-wrap"><canvas id="chartBarras"></canvas></div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-head">
+                            <div class="panel-title">Ventas por Categoría</div>
+                        </div>
+                        <div class="chart-wrap"><canvas id="chartDona"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ÓRDENES -->
+            <div class="section" id="sec-ordenes">
+                <div class="panel">
+                    <div class="panel-head">
+                        <div class="panel-title">Gestión de Órdenes</div>
+                        <div class="panel-action" onclick="abrirModal()">+ Nueva Orden</div>
+                    </div>
+                    <table class="erp-table">
+                        <thead>
+                            <tr>
+                                <th>#Orden</th>
+                                <th>Cliente</th>
+                                <th>Producto</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-ordenes"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- MODAL NUEVA ORDEN -->
+            <div id="modalOrden"
+                style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:999; align-items:center; justify-content:center;">
+                <div
+                    style="background:#1c1710; border:1px solid rgba(255,193,7,0.25); border-radius:20px; padding:32px; width:min(460px,92vw); position:relative;">
+
+                    <!-- Header -->
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
+                        <div
+                            style="font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:3px; color:#ffc107;">
+                            Nueva Orden</div>
+                        <button onclick="cerrarModal()"
+                            style="background:none; border:none; color:rgba(232,223,192,0.4); font-size:1.4rem; cursor:pointer;">✕</button>
+                    </div>
+
+                    <!-- Cliente -->
+                    <div style="margin-bottom:16px;">
+                        <label
+                            style="font-size:0.7rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,193,7,0.5); display:block; margin-bottom:6px;">Cliente</label>
+                        <select id="modal-cliente"
+                            style="width:100%; background:#241e13; border:1px solid rgba(255,193,7,0.2); border-radius:10px; padding:10px 14px; color:#e8dfc0; font-family:'DM Sans',sans-serif; font-size:0.9rem;">
+                            <option value="">Selecciona un cliente...</option>
+                        </select>
+                    </div>
+
+                    <!-- Producto -->
+                    <div style="margin-bottom:16px;">
+                        <label
+                            style="font-size:0.7rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,193,7,0.5); display:block; margin-bottom:6px;">Producto</label>
+                        <select id="modal-producto" onchange="calcularTotal()"
+                            style="width:100%; background:#241e13; border:1px solid rgba(255,193,7,0.2); border-radius:10px; padding:10px 14px; color:#e8dfc0; font-family:'DM Sans',sans-serif; font-size:0.9rem;">
+                            <option value="">Selecciona un producto...</option>
+                        </select>
+                    </div>
+
+                    <!-- Cantidad -->
+                    <div style="margin-bottom:16px;">
+                        <label
+                            style="font-size:0.7rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,193,7,0.5); display:block; margin-bottom:6px;">Cantidad</label>
+                        <input id="modal-cantidad" type="number" min="1" value="1" oninput="calcularTotal()"
+                            style="width:100%; background:#241e13; border:1px solid rgba(255,193,7,0.2); border-radius:10px; padding:10px 14px; color:#e8dfc0; font-family:'DM Sans',sans-serif; font-size:0.9rem;">
+                    </div>
+
+                    <!-- Total -->
+                    <div
+                        style="margin-bottom:28px; background:#241e13; border:1px solid rgba(255,193,7,0.15); border-radius:10px; padding:14px 16px; display:flex; justify-content:space-between; align-items:center;">
+                        <span
+                            style="font-size:0.7rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,193,7,0.5);">Total</span>
+                        <span id="modal-total"
+                            style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#ffc107; letter-spacing:2px;">$0.00</span>
+                    </div>
+
+                    <!-- Botón -->
+                    <button onclick="guardarOrden()"
+                        style="width:100%; padding:14px; background:linear-gradient(135deg,#d4a017,#ffc107); border:none; border-radius:12px; font-family:'Bebas Neue',sans-serif; font-size:1.1rem; letter-spacing:3px; color:#13100a; cursor:pointer;">
+                        Guardar Orden
+                    </button>
+
+                    <!-- Mensaje error/éxito -->
+                    <div id="modal-msg" style="margin-top:12px; text-align:center; font-size:0.8rem; min-height:20px;">
+                    </div>
+                </div>
+            </div>
+
+            
+            <!-- INVENTARIO -->
+            <div class="section" id="sec-inventario">
+                <div class="panel">
+                    <div class="panel-head">
+                        <div class="panel-title">Control de Inventario</div>
+                    </div>
+                    <table class="erp-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Producto</th>
+                                <th>Categoría</th>
+                                <th>Stock</th>
+                                <th>Mínimo</th>
+                                <th>Precio</th>
+                                <th>Alerta</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-inventario"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PROCESOS -->
+            <div class="section" id="sec-procesos">
+
+                <div style="margin-bottom:24px;">
+                    <div
+                        style="font-size:0.72rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,193,7,0.4);">
+                        Automatización y seguimiento de operaciones</div>
+                </div>
+
+                <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px;">
+
+                    <!-- PRC-001 -->
+                    <div class="prc-card">
+                        <div class="prc-top">
+                            <span class="prc-badge badge-activo">activo</span>
+                            <span class="prc-id">PRC-001</span>
+                        </div>
+                        <div class="prc-title">Procesamiento de Órdenes</div>
+                        <div class="prc-desc">Verificación de stock, empaque y despacho de pedidos</div>
+                        <div class="prc-prog-label"><span>Progreso</span><span>75%</span></div>
+                        <div class="prc-bar">
+                            <div class="prc-bar-fill" style="width:75%; background:#42a5f5;"></div>
+                        </div>
+                        <div class="prc-meta">Inicio: 2026-03-01</div>
+                    </div>
+
+                    <!-- PRC-002 -->
+                    <div class="prc-card">
+                        <div class="prc-top">
+                            <span class="prc-badge badge-activo">activo</span>
+                            <span class="prc-id">PRC-002</span>
+                        </div>
+                        <div class="prc-title">Reabastecimiento de Inventario</div>
+                        <div class="prc-desc">Stock bajo detectado, orden de compra generada al proveedor</div>
+                        <div class="prc-prog-label"><span>Progreso</span><span>30%</span></div>
+                        <div class="prc-bar">
+                            <div class="prc-bar-fill" style="width:30%; background:#ffc107;"></div>
+                        </div>
+                        <div class="prc-meta">Inicio: 2026-03-05</div>
+                    </div>
+
+                    <!-- PRC-003 -->
+                    <div class="prc-card">
+                        <div class="prc-top">
+                            <span class="prc-badge badge-pausado">pausado</span>
+                            <span class="prc-id">PRC-003</span>
+                        </div>
+                        <div class="prc-title">Auditoría de Inventario</div>
+                        <div class="prc-desc">Revisión trimestral de inventario físico vs sistema</div>
+                        <div class="prc-prog-label"><span>Progreso</span><span>15%</span></div>
+                        <div class="prc-bar">
+                            <div class="prc-bar-fill" style="width:15%; background:#ffc107;"></div>
+                        </div>
+                        <div class="prc-meta">Inicio: 2026-03-08</div>
+                    </div>
+
+                    <!-- PRC-004 -->
+                    <div class="prc-card">
+                        <div class="prc-top">
+                            <span class="prc-badge badge-activo">activo</span>
+                            <span class="prc-id">PRC-004</span>
+                        </div>
+                        <div class="prc-title">Notificaciones WhatsApp</div>
+                        <div class="prc-desc">Envío automático de confirmaciones y alertas a clientes</div>
+                        <div class="prc-prog-label"><span>Progreso</span><span>90%</span></div>
+                        <div class="prc-bar">
+                            <div class="prc-bar-fill" style="width:90%; background:#42a5f5;"></div>
+                        </div>
+                        <div class="prc-meta">Inicio: 2026-02-15</div>
+                    </div>
+
+                    <!-- PRC-005 -->
+                    <div class="prc-card">
+                        <div class="prc-top">
+                            <span class="prc-badge badge-completado">completado</span>
+                            <span class="prc-id">PRC-005</span>
+                        </div>
+                        <div class="prc-title">Integración CRM — Clientes</div>
+                        <div class="prc-desc">Sincronización mensual de datos entre módulos del sistema</div>
+                        <div class="prc-prog-label"><span>Progreso</span><span>100%</span></div>
+                        <div class="prc-bar">
+                            <div class="prc-bar-fill" style="width:100%; background:#66bb6a;"></div>
+                        </div>
+                        <div class="prc-meta">Inicio: 2026-02-01</div>
+                    </div>
+
+                    <!-- PRC-006 -->
+                    <div class="prc-card">
+                        <div class="prc-top">
+                            <span class="prc-badge badge-activo">activo</span>
+                            <span class="prc-id">PRC-006</span>
+                        </div>
+                        <div class="prc-title">Backup Automático BD</div>
+                        <div class="prc-desc">Respaldo diario de la base de datos a las 02:00 AM</div>
+                        <div class="prc-prog-label"><span>Progreso</span><span>100%</span></div>
+                        <div class="prc-bar">
+                            <div class="prc-bar-fill" style="width:100%; background:#66bb6a;"></div>
+                        </div>
+                        <div class="prc-meta">Inicio: 2026-02-03 · Diario</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- RECURSOS -->
+            <div class="section" id="sec-recursos">
+                <div class="panel">
+                    <div class="panel-head">
+                        <div class="panel-title">Recursos Humanos</div>
+                    </div>
+                    <table class="erp-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Rol</th>
+                                <th>Registro</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>U001</td>
+                                <td>Sharon Tapia Díaz</td>
+                                <td>sharonsingui1501@gmail.com</td>
+                                <td>Admin</td>
+                                <td>03/02/26</td>
+                                <td><span class="pill pill-ok">Activo</span></td>
+                            </tr>
+                            <tr>
+                                <td>U002</td>
+                                <td>María Ruíz Parra</td>
+                                <td>danna@gmail.com</td>
+                                <td>Usuario</td>
+                                <td>04/02/26</td>
+                                <td><span class="pill pill-ok">Activo</span></td>
+                            </tr>
+                            <tr>
+                                <td>U003</td>
+                                <td>Alejandro Díaz</td>
+                                <td>alejandrod@gmail.com</td>
+                                <td>Gerente</td>
+                                <td>09/02/26</td>
+                                <td><span class="pill pill-ok">Activo</span></td>
+                            </tr>
+                            <tr>
+                                <td>U004</td>
+                                <td>Diego Noriega</td>
+                                <td>diegoN@gmail.com</td>
+                                <td>Ventas</td>
+                                <td>17/02/26</td>
+                                <td><span class="pill pill-ok">Activo</span></td>
+                            </tr>
+                            <tr>
+                                <td>U005</td>
+                                <td>Israel</td>
+                                <td>israel@gmail.com</td>
+                                <td>Usuario</td>
+                                <td>03/03/26</td>
+                                <td><span class="pill pill-ok">Activo</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ESTADO ERP -->
+            <div class="section" id="sec-estado">
+
+                <div style="margin-bottom:24px;">
+                    <div
+                        style="font-size:0.72rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,193,7,0.4);">
+                        Nivel de madurez digital y adopción del sistema</div>
+                </div>
+
+                <!-- Nivel de Implementación -->
+                <div class="panel" style="margin-bottom:16px;">
+                    <div class="panel-title" style="margin-bottom:20px;">Nivel de Implementación ERP</div>
+
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                        <span style="font-size:0.75rem; color:var(--muted);">Básico</span>
+                        <span style="font-size:0.75rem; color:#42a5f5; font-weight:600;">Integrado</span>
+                        <span style="font-size:0.75rem; color:var(--muted);">Automatizado</span>
+                        <span style="font-size:0.75rem; color:var(--muted);">Optimizado</span>
+                    </div>
+                    <div
+                        style="height:10px; background:rgba(255,255,255,0.07); border-radius:99px; overflow:hidden; margin-bottom:12px;">
+                        <div
+                            style="width:60%; height:100%; background:linear-gradient(90deg,#ffc107,#42a5f5); border-radius:99px;">
+                        </div>
+                    </div>
+                    <div style="font-size:0.78rem; color:var(--muted);">
+                        Nivel actual: <span style="color:#42a5f5; font-weight:600;">Integrado</span> · Última
+                        actualización: 2026-03-02
+                    </div>
+                </div>
+
+                <!-- 3 métricas -->
+                <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:16px;">
+
+                    <div class="panel" style="margin-bottom:0;">
+                        <div style="font-size:0.75rem; color:var(--muted); margin-bottom:8px; font-weight:600;">
+                            Integración CRM</div>
+                        <div
+                            style="font-family:'Bebas Neue',sans-serif; font-size:2.4rem; color:#66bb6a; letter-spacing:2px; line-height:1; margin-bottom:12px;">
+                            85%</div>
+                        <div
+                            style="height:6px; background:rgba(255,255,255,0.07); border-radius:99px; overflow:hidden;">
+                            <div style="width:85%; height:100%; background:#66bb6a; border-radius:99px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="panel" style="margin-bottom:0;">
+                        <div style="font-size:0.75rem; color:var(--muted); margin-bottom:8px; font-weight:600;">
+                            Integración SCM</div>
+                        <div
+                            style="font-family:'Bebas Neue',sans-serif; font-size:2.4rem; color:#42a5f5; letter-spacing:2px; line-height:1; margin-bottom:12px;">
+                            72%</div>
+                        <div
+                            style="height:6px; background:rgba(255,255,255,0.07); border-radius:99px; overflow:hidden;">
+                            <div style="width:72%; height:100%; background:#42a5f5; border-radius:99px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="panel" style="margin-bottom:0;">
+                        <div style="font-size:0.75rem; color:var(--muted); margin-bottom:8px; font-weight:600;">Procesos
+                            Automatizados</div>
+                        <div
+                            style="font-family:'Bebas Neue',sans-serif; font-size:2.4rem; color:#ffc107; letter-spacing:2px; line-height:1; margin-bottom:12px;">
+                            60%</div>
+                        <div
+                            style="height:6px; background:rgba(255,255,255,0.07); border-radius:99px; overflow:hidden;">
+                            <div style="width:60%; height:100%; background:#ffc107; border-radius:99px;"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Módulos Activos -->
+                <div class="panel" style="margin-bottom:0;">
+                    <div class="panel-title" style="margin-bottom:16px;">Módulos Activos</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                        <span
+                            style="background:rgba(255,193,7,0.12); border:1px solid rgba(255,193,7,0.3); color:#ffc107; padding:6px 16px; border-radius:99px; font-size:0.78rem; font-weight:600; letter-spacing:1px;">CRM</span>
+                        <span
+                            style="background:rgba(255,193,7,0.12); border:1px solid rgba(255,193,7,0.3); color:#ffc107; padding:6px 16px; border-radius:99px; font-size:0.78rem; font-weight:600; letter-spacing:1px;">SCM</span>
+                        <span
+                            style="background:rgba(255,193,7,0.12); border:1px solid rgba(255,193,7,0.3); color:#ffc107; padding:6px 16px; border-radius:99px; font-size:0.78rem; font-weight:600; letter-spacing:1px;">Órdenes</span>
+                        <span
+                            style="background:rgba(255,193,7,0.12); border:1px solid rgba(255,193,7,0.3); color:#ffc107; padding:6px 16px; border-radius:99px; font-size:0.78rem; font-weight:600; letter-spacing:1px;">Inventario</span>
+                        <span
+                            style="background:rgba(255,193,7,0.12); border:1px solid rgba(255,193,7,0.3); color:#ffc107; padding:6px 16px; border-radius:99px; font-size:0.78rem; font-weight:600; letter-spacing:1px;">WhatsApp</span>
+                        <span
+                            style="background:rgba(255,193,7,0.12); border:1px solid rgba(255,193,7,0.3); color:#ffc107; padding:6px 16px; border-radius:99px; font-size:0.78rem; font-weight:600; letter-spacing:1px;">Reportes</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function tick() { document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-MX'); }
+        tick(); setInterval(tick, 1000);
+
+        const titles = { dashboard: 'Dashboard', ordenes: 'Órdenes', clientes: 'Clientes', inventario: 'Inventario', procesos: 'Procesos', recursos: 'Recursos', estado: 'Estado ERP' };
+        function goTo(id, el) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('sec-' + id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if (el) el.classList.add('active');
+            document.getElementById('topbarTitle').textContent = titles[id] || id;
+        }
+        function cerrarSesion() {
+            if (confirm('¿Cerrar sesión?')) { sessionStorage.removeItem('borrachoramaRol'); window.location.href = 'loginERP.html'; }
+        }
+
+        const COLORS = ['#ffc107', '#FF6F00', '#d4a017', '#ffca28', '#ff8f00', '#ffe082'];
+        let chartBarras = null, chartDona = null;
+
+        async function cargarDashboard() {
+            try {
+                const res = await fetch('backend/api_dashboard.php');
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+
+                renderKPIs(data);
+                renderBarras(data.ventas_mensuales);
+                renderDona(data.ventas_categoria);
+
+                const badge = document.getElementById('badge-ordenes');
+                if (badge) badge.textContent = data.ordenes.pendientes;
+
+            } catch (err) {
+                document.getElementById('kpi-grid').innerHTML =
+                    `<div class="loading" style="grid-column:1/-1;color:#ef5350;">
+                        ⚠️ No se pudo conectar con la BD.<br>
+                        <small style="opacity:.7">Verifica que el servidor PHP esté corriendo y <strong>api_dashboard.php</strong> esté en la misma carpeta.<br>Error: ${err.message}</small>
+                      </div>`;
+            }
+        }
+
+        async function cargarOrdenes() {
+            try {
+                const res = await fetch('backend/api_ordenes.php');
+                const data = await res.json();
+
+                document.getElementById('tbody-ordenes').innerHTML = data.map(p => {
+                    const pill = p.estatus === 'pagado' ? ['pill-ok', 'Pagado']
+                        : p.estatus === 'completada' ? ['pill-ok', 'Completada']
+                            : p.estatus === 'procesada' ? ['pill-info', 'Procesada']
+                                : p.estatus === 'pendiente' ? ['pill-warn', 'Pendiente']
+                                    : ['pill-err', 'Cancelado'];
+                    return `
+              <tr>
+                <td>#${String(p.id).padStart(3, '0')}</td>
+                <td>${p.cliente ?? '—'}</td>
+                <td>$${parseFloat(p.total).toFixed(2)}</td>
+                <td>${p.fecha ?? '—'}</td>
+                <td><span class="pill ${pill[0]}">${pill[1]}</span></td>
+                <td>
+                  <select onchange="cambiarEstado(${p.id}, this.value)"
+                    style="background:#241e13; border:1px solid #241e13; border-radius:8px; 
+                           padding:4px 8px; color:#ffff; font-size:0.75rem; cursor:pointer;">
+                    <option value="">✏️ Cambiar</option>
+                    <option value="completada">✅ Completada</option>
+                    <option value="procesada">⚙️ Procesada</option>
+                    <option value="cancelado">❌ Cancelada</option>
+                  </select>
+                </td>
+              </tr>`;
+                }).join('');
+
+            } catch (err) {
+                document.getElementById('tbody-ordenes').innerHTML =
+                    `<tr><td colspan="5" style="color:#ef5350;text-align:center">⚠️ Error: ${err.message}</td></tr>`;
+            }
+        }
+
+        // ── productos en memoria para calcular total
+        let productosModal = [];
+
+        async function abrirModal() {
+            document.getElementById('modalOrden').style.display = 'flex';
+            document.getElementById('modal-msg').textContent = '';
+
+            const res = await fetch('backend/api_nueva_orden.php');
+            const data = await res.json();
+            productosModal = data.productos;
+
+            // Llenar clientes
+            document.getElementById('modal-cliente').innerHTML =
+                '<option value="">Selecciona un cliente...</option>' +
+                data.clientes.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
+
+            // Llenar productos
+            document.getElementById('modal-producto').innerHTML =
+                '<option value="">Selecciona un producto...</option>' +
+                data.productos.map(p => `<option value="${p.id}" data-precio="${p.precio}">${p.nombre} — $${p.precio} (stock: ${p.stock})</option>`).join('');
+
+            calcularTotal();
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalOrden').style.display = 'none';
+        }
+
+        function calcularTotal() {
+            const select = document.getElementById('modal-producto');
+            const cantidad = parseInt(document.getElementById('modal-cantidad').value) || 0;
+            const precio = parseFloat(select.selectedOptions[0]?.dataset.precio) || 0;
+            const total = (precio * cantidad).toFixed(2);
+            document.getElementById('modal-total').textContent = '$' + parseFloat(total).toLocaleString('es-MX', { minimumFractionDigits: 2 });
+        }
+
+        async function guardarOrden() {
+            const cliente_id = document.getElementById('modal-cliente').value;
+            const producto_id = document.getElementById('modal-producto').value;
+            const cantidad = parseInt(document.getElementById('modal-cantidad').value);
+            const precio = parseFloat(document.getElementById('modal-producto').selectedOptions[0]?.dataset.precio) || 0;
+            const total = precio * cantidad;
+            const msg = document.getElementById('modal-msg');
+
+            if (!cliente_id || !producto_id || !cantidad) {
+                msg.style.color = '#ef5350';
+                msg.textContent = '⚠️ Completa todos los campos';
+                return;
+            }
+
+            const res = await fetch('backend/api_nueva_orden.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cliente_id, producto_id, cantidad, total })
+            });
+            const data = await res.json();
+
+            if (data.error) {
+                msg.style.color = '#ef5350';
+                msg.textContent = '⚠️ ' + data.error;
+            } else {
+                msg.style.color = '#66bb6a';
+                msg.textContent = '✅ Orden #' + String(data.pedido_id).padStart(3, '0') + ' creada!';
+                setTimeout(() => {
+                    cerrarModal();
+                    cargarOrdenes();    // refresca la tabla
+                    cargarDashboard();  // refresca los KPIs
+                }, 1200);
+            }
+        }
+
+        async function cambiarEstado(id, estatus) {
+            if (!estatus) return;
+
+            alert('Enviando → id: ' + id + ' | estatus: ' + estatus);
+
+            try {
+                const formData = new FormData();
+                formData.append('id', id);
+                formData.append('estatus', estatus);
+
+                const res = await fetch('backend/api_estado_orden.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const text = await res.text();
+                const data = JSON.parse(text);
+
+                if (data.success) {
+                    cargarOrdenes();
+                    cargarDashboard();
+                } else {
+                    alert('⚠️ ' + data.error);
+                }
+            } catch (err) {
+                alert('⚠️ Error: ' + err.message);
+            }
+        }
+
+        async function cargarClientes() {
+            try {
+                const res = await fetch('backend/api_clientes.php');
+                const data = await res.json();
+                console.log('Clientes:', data); // ← agrega esto
+
+                document.getElementById('tbody-clientes').innerHTML = data.map(c => `
+                      <tr>
+                        <td>C${String(c.id).padStart(3, '0')}</td>
+                        <td>${c.nombre ?? '—'}</td>
+                        <td>${c.correo ?? '—'}</td>
+                        <td>${c.telefono ?? '—'}</td>
+                        <td>${c.empresa ?? '—'}</td>
+                        <td>${c.etapa_crm}</td>
+                        <td><span class="pill ${c.estado === 'activo' ? 'pill-ok' : 'pill-warn'}">
+                          ${c.estado.charAt(0).toUpperCase() + c.estado.slice(1)}
+                        </span></td>
+                      </tr>
+                    `).join('');
+
+            } catch (err) {
+                // ← y esto
+                document.getElementById('tbody-clientes').innerHTML =
+                    `<tr><td colspan="7" style="color:#ef5350;text-align:center">⚠️ Error: ${err.message}</td></tr>`;
+            }
+        }
+
+        async function cargarInventario() {
+            try {
+                const res = await fetch('backend/api_inventario.php');
+                const data = await res.json();
+
+                document.getElementById('tbody-inventario').innerHTML = data.map(p => {
+                    const alerta = p.stock <= 0 ? ['pill-err', 'Sin stock']
+                        : p.stock < p.stock_minimo ? ['pill-err', 'Bajo']
+                            : p.stock < p.stock_minimo * 1.5 ? ['pill-warn', 'Medio']
+                                : ['pill-ok', 'OK'];
+                    return `
+                        <tr>
+                          <td>P${String(p.id).padStart(3, '0')}</td>
+                          <td>${p.nombre ?? '—'}</td>
+                          <td>${p.descripcion ?? '—'}</td>
+                          <td>${p.stock}</td>
+                          <td>${p.stock_minimo}</td>
+                          <td>$${parseFloat(p.precio).toFixed(2)}</td>
+                          <td><span class="pill ${alerta[0]}">${alerta[1]}</span></td>
+                        </tr>`;
+                }).join('');
+
+            } catch (err) {
+                document.getElementById('tbody-inventario').innerHTML =
+                    `<tr><td colspan="7" style="color:#ef5350;text-align:center">⚠️ Error: ${err.message}</td></tr>`;
+            }
+        }
+
+        function renderKPIs(data) {
+            const fmt = n => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(n);
+            document.getElementById('kpi-grid').innerHTML = `
+                    <div class="kpi-card">
+                      <div class="kpi-icon">💰</div>
+                      <div class="kpi-val">${fmt(data.ventas_totales)}</div>
+                      <div class="kpi-label">Ventas Totales</div>
+                      <div class="kpi-sub">Órdenes completadas</div>
+                    </div>
+                    <div class="kpi-card">
+                      <div class="kpi-icon">📋</div>
+                      <div class="kpi-val">${data.ordenes.total}</div>
+                      <div class="kpi-label">Órdenes</div>
+                      <div class="kpi-sub">${data.ordenes.pendientes} pendientes · ${data.ordenes.completadas} completadas</div>
+                    </div>
+                    <div class="kpi-card">
+                      <div class="kpi-icon">👥</div>
+                      <div class="kpi-val">${data.clientes.activos}</div>
+                      <div class="kpi-label">Clientes Activos</div>
+                      <div class="kpi-sub">de ${data.clientes.total} totales</div>
+                    </div>
+                    <div class="kpi-card">
+                      <div class="kpi-icon">📦</div>
+                      <div class="kpi-val">${data.inventario.total_unidades}</div>
+                      <div class="kpi-label">Inventario</div>
+                      <div class="kpi-sub" style="${data.inventario.productos_stock_bajo > 0 ? 'color:#ef5350' : ''}">
+                        ${data.inventario.productos_stock_bajo} producto(s) con stock bajo
+                      </div>
+                    </div>`;
+        }
+
+        function renderBarras(rows) {
+            if (chartBarras) chartBarras.destroy();
+            chartBarras = new Chart(document.getElementById('chartBarras').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: rows.map(r => r.mes),
+                    datasets: [{
+                        label: 'Ventas ($)', data: rows.map(r => parseFloat(r.total_ventas)),
+                        backgroundColor: 'rgba(255,193,7,0.7)', borderColor: '#ffc107', borderWidth: 1, borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#e8dfc0', font: { family: 'DM Sans' } } },
+                        tooltip: { callbacks: { label: c => ' $' + c.raw.toLocaleString('es-MX') } }
+                    },
+                    scales: {
+                        x: { ticks: { color: 'rgba(232,223,192,0.5)' }, grid: { color: 'rgba(255,193,7,0.05)' } },
+                        y: { ticks: { color: 'rgba(232,223,192,0.5)', callback: v => '$' + v.toLocaleString('es-MX') }, grid: { color: 'rgba(255,193,7,0.07)' } }
+                    }
+                }
+            });
+        }
+
+        function renderDona(rows) {
+            if (chartDona) chartDona.destroy();
+            chartDona = new Chart(document.getElementById('chartDona').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: rows.map(r => r.categoria),
+                    datasets: [{
+                        data: rows.map(r => parseFloat(r.total_ventas)),
+                        backgroundColor: COLORS.slice(0, rows.length), borderColor: '#1c1710', borderWidth: 3, hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '65%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#e8dfc0', font: { family: 'DM Sans', size: 11 }, padding: 16 } },
+                        tooltip: { callbacks: { label: c => ' $' + c.raw.toLocaleString('es-MX') } }
+                    }
+                }
+            });
+        }
+
+        cargarDashboard();
+        cargarOrdenes();
+        cargarClientes();
+        cargarInventario();
+    </script>
+</body>
+</html>
