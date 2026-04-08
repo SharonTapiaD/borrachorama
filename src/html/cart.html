@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,44 +8,67 @@
   <link rel="stylesheet" href="../css/cart.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    .navbar-custom{
-      background-color:#ffc107;padding:15px 20px;box-shadow:0 2px 5px rgba(0,0,0,.1);
-      position: sticky; top: 0; z-index: 1000; /* ← hace sticky el menú */
+    .navbar-custom {
+      background-color: #ffc107;
+      padding: 15px 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, .1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      /* ← hace sticky el menú */
     }
-    .navbar-custom .btn{margin:0 5px}
+
+    .navbar-custom .btn {
+      margin: 0 5px
+    }
+
     /* Hero header (imagen + logo) */
-    .hero-header{
-      background:url('/img/fondocerveza.jpg') no-repeat center center;
-      background-size:cover; padding:40px 20px; text-align:center;
+    .hero-header {
+      background: url('/img/fondocerveza.jpg') no-repeat center center;
+      background-size: cover;
+      padding: 40px 20px;
+      text-align: center;
     }
-    .hero-header img{max-width:200px}
+
+    .hero-header img {
+      max-width: 200px
+    }
+
     /* Botón Cuenta fijo a la izquierda del menú */
-    .btn-cuenta{position:absolute; left:20px; top:50%; transform:translateY(-50%)}
+    .btn-cuenta {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%)
+    }
   </style>
 </head>
+
 <body>
   <!-- Hero header con imagen -->
   <header class="hero-header">
-    <img src="/img/Borrachoramalogo.png" alt="Borrachorama Logo">
+    <img src="../../imagenes/Borrachoramalogo.png" alt="Borrachorama Logo">
   </header>
 
   <!-- Navbar global -->
   <nav class="navbar-custom" id="navbar">
     <!-- Botón Cuenta (izquierda) -->
-    <a href="/Panel.html" class="btn btn-dark text-white btn-cuenta">Cuenta</a>
+    <a href="../../Panel.html" class="btn btn-dark text-white btn-cuenta">Cuenta</a>
     <div class="container-fluid d-flex justify-content-center align-items-center gap-2">
-      <a href="/inicio.html" class="btn btn-dark text-white">Inicio</a>
-     
-      <button class="btn btn-dark text-white" data-bs-toggle="modal" data-bs-target="#nosotrosModal">Acerca de Nosotros</button>
+      <a href="../../inicio.html" class="btn btn-dark text-white">Inicio</a>
+
+      <button class="btn btn-dark text-white" data-bs-toggle="modal" data-bs-target="#nosotrosModal">Acerca de
+        Nosotros</button>
       <div class="dropdown">
-        <button class="btn btn-dark dropdown-toggle text-white" type="button" data-bs-toggle="dropdown">📂 Documentación</button>
+        <button class="btn btn-dark dropdown-toggle text-white" type="button" data-bs-toggle="dropdown">📂
+          Documentación</button>
         <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/src/html/catalog.html">Catálogo</a></li>
-            <li><a class="dropdown-item" href="/src/infraestructura.html">Infraestructura</a></li>
-            <li><a class="dropdown-item" href="/Disponibilidad.html">Disponibilidad</a></li>
-            <li><a class="dropdown-item" href="/Tecnologia.html">Tecnología</a></li>
-            <li><a class="dropdown-item" href="/Status.html">Status</a></li>
-            <li><a class="dropdown-item" href="/Metodos_Pago.html">Métodos de Pago</a></li>
+          <li><a class="dropdown-item" href="catalog.html">Catálogo</a></li>
+          <li><a class="dropdown-item" href="../infraestructura.html">Infraestructura</a></li>
+          <li><a class="dropdown-item" href="../../Disponibilidad.html">Disponibilidad</a></li>
+          <li><a class="dropdown-item" href="../../Tecnologia.html">Tecnología</a></li>
+          <li><a class="dropdown-item" href="../../Status.html">Status</a></li>
+          <li><a class="dropdown-item" href="../../Metodos_Pago.html">Métodos de Pago</a></li>
         </ul>
       </div>
     </div>
@@ -71,9 +95,26 @@
         </tbody>
       </table>
 
-      <div class="cart-summary">
-        <h2>Total: $<span id="cart-total">0.00</span> MXN</h2>
-        <button id="buy-btn" class="btn btn-success" disabled>Comprar</button>
+      <div class="cart-summary"
+        style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; margin-left: auto;">
+        <div class="d-flex justify-content-between mb-2">
+          <span>Subtotal:</span>
+          <span>$<span id="cart-subtotal">0.00</span></span>
+        </div>
+        <div class="d-flex justify-content-between mb-2 text-muted">
+          <span>IVA (16%):</span>
+          <span>$<span id="cart-iva">0.00</span></span>
+        </div>
+        <div class="d-flex justify-content-between mb-2 text-muted">
+          <span>Costo de Envío:</span>
+          <span>$<span id="cart-envio">0.00</span></span>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between mb-3">
+          <strong style="font-size: 1.4rem;">Total Final:</strong>
+          <strong style="font-size: 1.4rem; color: #28a745;">$<span id="cart-total">0.00</span> MXN</strong>
+        </div>
+        <button id="buy-btn" class="btn btn-success w-100 fw-bold" disabled>Proceder al Pago</button>
       </div>
     </section>
   </main>
@@ -87,7 +128,8 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <p><strong>Borrachorama</strong> nació en Aguascalientes con el objetivo de ofrecer las mejores cervezas nacionales e internacionales en un ambiente único. 🍺</p>
+          <p><strong>Borrachorama</strong> nació en Aguascalientes con el objetivo de ofrecer las mejores cervezas
+            nacionales e internacionales en un ambiente único. 🍺</p>
           <p>Nos esforzamos por brindar calidad, seguridad y atención al cliente en cada experiencia de compra.</p>
         </div>
         <div class="modal-footer">
@@ -97,185 +139,202 @@
     </div>
   </div>
 
-        <!-- Modal de Checkout -->
-        <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="checkoutModalLabel">Checkout - Confirmar Compra</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+  <!-- Modal de Checkout -->
+  <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="checkoutModalLabel">Checkout - Confirmar Compra</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p>Antes de completar la compra, selecciona el método de pago y confirma tu edad.</p>
+
+          <div class="mb-3">
+            <label for="payment-method" class="form-label">Método de pago</label>
+            <select id="payment-method" class="form-select">
+              <option value="">-- Selecciona --</option>
+              <option value="tarjeta">Tarjeta</option>
+              <option value="paypal">PayPal</option>
+              <option value="efectivo">Efectivo (pago en entrega)</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">¿Eres mayor de edad?</label>
+            <div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="edad" id="edad-mayor" value="mayor">
+                <label class="form-check-label" for="edad-mayor">Mayor (18+)</label>
               </div>
-              <div class="modal-body">
-                <p>Antes de completar la compra, selecciona el método de pago y confirma tu edad.</p>
-
-                <div class="mb-3">
-                  <label for="payment-method" class="form-label">Método de pago</label>
-                  <select id="payment-method" class="form-select">
-                    <option value="">-- Selecciona --</option>
-                    <option value="tarjeta">Tarjeta</option>
-                    <option value="paypal">PayPal</option>
-                    <option value="efectivo">Efectivo (pago en entrega)</option>
-                  </select>
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label">¿Eres mayor de edad?</label>
-                  <div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="edad" id="edad-mayor" value="mayor">
-                      <label class="form-check-label" for="edad-mayor">Mayor (18+)</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="edad" id="edad-menor" value="menor">
-                      <label class="form-check-label" for="edad-menor">Menor</label>
-                    </div>
-                  </div>
-                </div>
-
-                <hr>
-
-                <h6>Datos de envío</h6>
-                <div class="mb-2">
-                  <input id="ship-name" class="form-control" placeholder="Nombre completo" />
-                </div>
-                <div class="mb-2">
-                  <input id="ship-address" class="form-control" placeholder="Dirección de envío" />
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" id="confirm-purchase-btn" class="btn btn-primary">Confirmar compra</button>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="edad" id="edad-menor" value="menor">
+                <label class="form-check-label" for="edad-menor">Menor</label>
               </div>
             </div>
           </div>
+
+          <hr>
+
+          <h6>Datos de envío</h6>
+          <div class="mb-2">
+            <input id="ship-name" class="form-control" placeholder="Nombre completo" />
+          </div>
+          <div class="mb-2">
+            <input id="ship-address" class="form-control" placeholder="Dirección de envío" />
+          </div>
         </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" id="confirm-purchase-btn" class="btn btn-primary">Confirmar compra</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Script del carrito -->
+  <!-- Script del carrito (Sincronizado con Base de Datos) -->
   <script>
-    // Cargar carrito desde localStorage o vacío
-    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    // 1. Al cargar la página, traer los datos del servidor
+    document.addEventListener("DOMContentLoaded", cargarCarrito);
 
-    // Guardar carrito en localStorage
-    function guardarCarrito() {
-      localStorage.setItem('carrito', JSON.stringify(carrito));
+    async function cargarCarrito() {
+      try {
+        // La ruta debe ser correcta desde /src/html/
+        const response = await fetch('../../backend/getCarrito.php');
+        const data = await response.json();
+
+        if (data.status === "error") {
+          console.log("No hay sesión activa");
+          return;
+        }
+
+        renderCarrito(data);
+      } catch (error) {
+        console.error("Error al obtener el carrito:", error);
+      }
     }
 
-    // Renderizar carrito
-    function renderCarrito() {
+    // 2. Función para dibujar la tabla con los datos de la BD
+    function renderCarrito(items) {
       const tbody = document.getElementById("cart-body");
+      const subtotalEl = document.getElementById("cart-subtotal");
+      const ivaEl = document.getElementById("cart-iva");
+      const envioEl = document.getElementById("cart-envio");
       const totalEl = document.getElementById("cart-total");
       const buyBtn = document.getElementById("buy-btn");
 
       tbody.innerHTML = "";
-      let total = 0;
+      let subtotal = 0;
+      const COSTO_ENVIO = items.length > 0 ? 80.00 : 0.00; // Si hay items, cobramos 80
 
-      carrito.forEach((item, index) => {
-        const subtotal = item.precio * item.cantidad;
-        total += subtotal;
+      items.forEach((item) => {
+        const filaSubtotal = parseFloat(item.precio) * parseInt(item.cantidad);
+        subtotal += filaSubtotal;
 
-        const row = `
-          <tr>
-            <td>${item.nombre}</td>
-            <td>$${item.precio.toFixed(2)}</td>
-            <td>
-              <input type="number" min="1" value="${item.cantidad}" data-index="${index}" class="qty-input">
-            </td>
-            <td>$${subtotal.toFixed(2)}</td>
-            <td><button class="remove-btn" data-index="${index}">Eliminar</button></td>
-          </tr>
-        `;
-        tbody.insertAdjacentHTML("beforeend", row);
+        tbody.innerHTML += `
+            <tr>
+              <td>${item.nombre}</td>
+              <td>$${parseFloat(item.precio).toFixed(2)}</td>
+              <td>${item.cantidad}</td>
+              <td>$${filaSubtotal.toFixed(2)}</td>
+              <td><button class="btn btn-danger btn-sm" onclick="eliminarItem(${item.producto_id})">Eliminar</button></td>
+            </tr>
+          `;
       });
 
-      totalEl.textContent = total.toFixed(2);
-      buyBtn.disabled = carrito.length === 0;
+      // Cálculos de impuestos
+      const iva = subtotal * 0.16;
+      const totalFinal = subtotal + iva + COSTO_ENVIO;
 
-      guardarCarrito();
+      // Pintar en pantalla
+      subtotalEl.textContent = subtotal.toFixed(2);
+      ivaEl.textContent = iva.toFixed(2);
+      envioEl.textContent = COSTO_ENVIO.toFixed(2);
+      totalEl.textContent = totalFinal.toFixed(2);
+
+      buyBtn.disabled = items.length === 0;
     }
 
-    // Cambiar cantidad
-    document.addEventListener("input", e => {
-      if (e.target.classList.contains("qty-input")) {
-        const index = e.target.dataset.index;
-        carrito[index].cantidad = parseInt(e.target.value) || 1;
-        renderCarrito();
-      }
+    // 3. Función para cambiar la cantidad en la BD
+    async function actualizarCantidad(producto_id, nueva_cantidad) {
+      const formData = new FormData();
+      formData.append("producto_id", producto_id);
+      formData.append("cantidad", nueva_cantidad);
+
+      await fetch('../../backend/actualizar_carrito.php', {
+        method: 'POST',
+        body: formData
+      });
+      cargarCarrito(); // Recargar para actualizar totales
+    }
+
+    // 4. Función para borrar un producto de la BD
+    async function eliminarItem(producto_id) {
+      if (!confirm("¿Seguro que quieres quitar este producto?")) return;
+
+      const formData = new FormData();
+      formData.append("producto_id", producto_id);
+
+      await fetch('../../backend/eliminar_carrito.php', {
+        method: 'POST',
+        body: formData
+      });
+      cargarCarrito(); // Recargar la tabla
+    }
+
+    // 5. Botón "Comprar" abre el modal de Checkout
+    document.getElementById("buy-btn").addEventListener("click", () => {
+      const checkoutModal = new bootstrap.Modal(document.getElementById('checkoutModal'));
+      checkoutModal.show();
     });
 
-    // Eliminar producto
-    document.addEventListener("click", e => {
-      if (e.target.classList.contains("remove-btn")) {
-        const index = e.target.dataset.index;
-        carrito.splice(index, 1);
-        renderCarrito();
+    // 6. Botón final de "Confirmar Compra" en el Modal
+    document.getElementById('confirm-purchase-btn').addEventListener('click', async () => {
+      const edad = document.querySelector('input[name="edad"]:checked');
+      const metodo = document.getElementById('payment-method').value;
+      const nombre = document.getElementById('ship-name').value;
+      const direccion = document.getElementById('ship-address').value;
+
+      // Validaciones básicas
+      if (!edad || edad.value === 'menor') {
+        alert("Debes ser mayor de edad para comprar alcohol 🔞");
+        return;
       }
-    });
-
-    // Botón Comprar: abrir modal de checkout
-    document.addEventListener("DOMContentLoaded", () => {
-      renderCarrito();
-
-      const buyBtn = document.getElementById("buy-btn");
-      const checkoutModalEl = document.getElementById('checkoutModal');
-      const checkoutModal = checkoutModalEl ? new bootstrap.Modal(checkoutModalEl) : null;
-
-      if (buyBtn) {
-        buyBtn.addEventListener("click", () => {
-          if (carrito.length === 0) return;
-          const total = carrito.reduce((s,i)=>s + (i.precio * i.cantidad), 0);
-          localStorage.setItem('montoPagoIntento', String(total));
-          // Iniciar flujo limpio: desbloquear pagos previos
-          localStorage.setItem('paymentLocked', 'false');
-          localStorage.setItem('paymentCompleted', 'false');
-          localStorage.removeItem('lastPedidoId');
-          window.location.href = '/Pago.html?monto=' + encodeURIComponent(total.toFixed(2));
-        });
+      if (!metodo || !nombre || !direccion) {
+        alert("Por favor, completa todos los campos de envío y pago.");
+        return;
       }
 
-      const confirmBtn = document.getElementById('confirm-purchase-btn');
-      if (confirmBtn) {
-        confirmBtn.addEventListener('click', () => {
-          // Validaciones
-          const edad = document.querySelector('input[name="edad"]:checked');
-          if (!edad) { alert('Por favor selecciona si eres mayor o menor de edad.'); return; }
-          if (edad.value === 'menor') { alert('Lo siento, debes ser mayor de edad para comprar este producto.'); return; }
+      // Preparar los datos para enviar al PHP
+      const formData = new FormData();
+      formData.append("nombre", nombre);
+      formData.append("direccion", direccion);
+      formData.append("metodo", metodo);
 
-          const metodo = document.getElementById('payment-method').value;
-          if (!metodo) { alert('Selecciona un método de pago.'); return; }
-
-          const nombreEnv = document.getElementById('ship-name').value.trim();
-          const direccionEnv = document.getElementById('ship-address').value.trim();
-          if (!nombreEnv || !direccionEnv) { alert('Por favor completa los datos de envío.'); return; }
-
-          // Guardar datos temporales (NO crear pedido aquí)
-          const total = carrito.reduce((s,i)=>s + (i.precio * i.cantidad), 0);
-          localStorage.setItem('montoPagoIntento', String(total));
-          localStorage.setItem('datosEnvioTemp', JSON.stringify({ nombre: nombreEnv, direccion: direccionEnv }));
-          const datosPagoTemp = JSON.parse(localStorage.getItem('datosPagoTemp') || '{}');
-          localStorage.setItem('datosPagoTemp', JSON.stringify({ ...datosPagoTemp, metodo }));
-
-          // Desbloquear pagos previos para nuevo flujo
-          localStorage.setItem('paymentLocked', 'false');
-          localStorage.setItem('paymentCompleted', 'false');
-          localStorage.removeItem('lastPedidoId');
-
-          // Redirigir al módulo de pago
-          const rutas = {
-            tarjeta: '/Pago-Tarjeta.html',
-            paypal: '/Pago-Monadero.html',
-            efectivo: '/Pago-Cajero.html',
-            transferencia: '/Pago-Cheque.html'
-          };
-          const destino = rutas[metodo] || '/Pago.html';
-          window.location.href = destino + '?monto=' + encodeURIComponent(total.toFixed(2));
+      try {
+        const response = await fetch('../../backend/finalizar_compra.php', {
+          method: 'POST',
+          body: formData
         });
+        const resp = await response.json();
+
+        if (resp.status === "ok") {
+          alert("✅ " + resp.msg);
+          window.location.href = "../../inicio.html"; // Redirigir al inicio tras la compra
+        } else {
+          alert("❌ Error: " + resp.msg);
+        }
+      } catch (error) {
+        console.error("Error en la compra:", error);
+        alert("Hubo un error al conectar con el servidor.");
       }
     });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
-    <!-- Sección de Contacto -->
+<!-- Sección de Contacto -->
 <section id="contacto" class="text-center p-5" style="background: linear-gradient(135deg, #FFF8E1 0%, #FFE0B2 100%);">
   <div class="container">
     <h2 style="color: #FF6F00; font-weight: bold; margin-bottom: 20px;">📍 Contáctanos</h2>
@@ -348,13 +407,15 @@
             </a>
           </li>
           <li style="margin-bottom: 10px;">
-            <a href="src/html/catalog.html" style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+            <a href="src/html/catalog.html"
+              style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
               onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
               🍺 Catálogo
             </a>
           </li>
           <li style="margin-bottom: 10px;">
-            <a href="Pedidos_Especiales.html" style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+            <a href="Pedidos_Especiales.html"
+              style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
               onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
               🎉 Pedidos Especiales
             </a>
@@ -655,5 +716,4 @@
     }
   });
 </script>
-
 </html>

@@ -14,7 +14,7 @@
       margin: 0;
       padding: 0;
     }
-
+  
     header {
       background: url('imagenes/fondocerveza.jpg') no-repeat center center;
       background-size: cover;
@@ -22,11 +22,11 @@
       padding: 40px 20px;
       position: relative;
     }
-
+  
     header img {
       max-width: 220px;
     }
-
+  
     .navbar-custom {
       background-color: #ffc107;
       padding: 15px 20px;
@@ -35,7 +35,7 @@
       /* Permite que el dropdown se muestre fuera del contenedor */
       overflow: visible;
     }
-
+  
     .navbar-custom.sticky {
       position: fixed;
       top: 0;
@@ -46,21 +46,21 @@
       /* Asegura que el dropdown se renderice sobre otros elementos */
       overflow: visible;
     }
-
+  
     .navbar-custom .logo-small {
       display: none;
       max-width: 80px;
       margin-right: 20px;
     }
-
+  
     .navbar-custom.sticky .logo-small {
       display: inline-block;
     }
-
+  
     .navbar-custom .btn {
       margin: 0 5px;
     }
-
+  
     /* Botón Cuenta fijo a la izquierda del menú */
     .btn-cuenta {
       position: absolute;
@@ -68,15 +68,15 @@
       top: 50%;
       transform: translateY(-50%)
     }
-
+  
     .navbar-placeholder {
       height: 0;
     }
-
+  
     .navbar-placeholder.active {
       height: 66px;
     }
-
+  
     footer {
       background-color: #222;
       color: #fff;
@@ -84,31 +84,31 @@
       text-align: center;
       font-size: 0.9rem;
     }
-
+  
     footer a {
       color: #ffc107;
       text-decoration: none;
     }
-
+  
     .social-links {
       margin: 20px 0;
     }
-
+  
     .social-links a {
       display: inline-block;
       margin: 0 15px;
       transition: transform 0.3s ease;
     }
-
+  
     .social-links img {
       width: 40px;
       height: 40px;
     }
-
+  
     .social-links a:hover {
       transform: scale(1.2);
     }
-
+  
     /* Estilos para notificaciones personalizadas */
     .notification {
       position: fixed;
@@ -128,67 +128,67 @@
       animation: slideIn 0.3s ease-out;
       border-left: 4px solid #2e7d32;
     }
-
+  
     .notification.error {
       background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
       border-left-color: #b71c1c;
     }
-
+  
     .notification.warning {
       background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
       border-left-color: #e65100;
     }
-
+  
     .notification.info {
       background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
       border-left-color: #0d47a1;
     }
-
+  
     @keyframes slideIn {
       from {
         transform: translateX(400px);
         opacity: 0;
       }
-
+  
       to {
         transform: translateX(0);
         opacity: 1;
       }
     }
-
+  
     @keyframes slideOut {
       from {
         transform: translateX(0);
         opacity: 1;
       }
-
+  
       to {
         transform: translateX(400px);
         opacity: 0;
       }
     }
-
+  
     .notification.removing {
       animation: slideOut 0.3s ease-out;
     }
-
+  
     .welcome-section {
       padding: 60px 20px;
     }
-
+  
     .welcome-section h1 {
       color: #d4a017;
       font-weight: bold;
       margin-bottom: 20px;
     }
-
+  
     .welcome-section p {
       font-size: 1.1rem;
       color: #333;
       max-width: 800px;
       margin: 0 auto 30px;
     }
-
+  
     .products-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -196,7 +196,7 @@
       margin-top: 40px;
       padding: 0 20px;
     }
-
+  
     .product-card {
       background: white;
       border-radius: 15px;
@@ -205,12 +205,12 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       text-align: center;
     }
-
+  
     .product-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
-
+  
     .product-card img {
       width: 100%;
       max-width: 180px;
@@ -218,14 +218,14 @@
       object-fit: contain;
       margin-bottom: 15px;
     }
-
+  
     .product-card h3 {
       color: #d4a017;
       font-size: 1.3rem;
       font-weight: bold;
       margin-bottom: 10px;
     }
-
+  
     .product-card .category {
       display: inline-block;
       background-color: #ffc107;
@@ -236,37 +236,78 @@
       font-weight: bold;
       margin-bottom: 15px;
     }
-
+  
     .product-card .price {
       font-size: 1.8rem;
       color: #28a745;
       font-weight: bold;
       margin: 15px 0;
     }
-
+  
     .product-card .description {
       color: #666;
       font-size: 0.95rem;
       margin-bottom: 20px;
       min-height: 60px;
     }
-
+  
     .product-card .btn {
       width: 100%;
       padding: 10px;
       font-weight: bold;
     }
-
+  
     .social-section {
       background-color: #ffc107;
       padding: 40px 20px;
       text-align: center;
     }
-
+  
     .social-section h2 {
       color: #222;
       font-weight: bold;
       margin-bottom: 20px;
+    }
+  
+    /* Botón Usuario fijo a la derecha del menú */
+    .btn-user {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-weight: bold;
+      border-radius: 20px;
+      background-color: rgba(255, 255, 255, 0.2);
+      /* Un toque sutil */
+    }
+  
+    /* Ajuste para que no se amontone en celulares */
+    @media (max-width: 768px) {
+      .btn-user {
+        position: static;
+        transform: none;
+        margin-top: 10px;
+        display: block;
+      }
+    }
+  
+    /* Botón Perfil fijo a la derecha del menú */
+    .btn-perfil {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-weight: bold;
+    }
+  
+    /* Para que en móviles no se encime */
+    @media (max-width: 768px) {
+      .btn-perfil {
+        position: static;
+        transform: none;
+        margin-top: 5px;
+        display: block;
+      }
     }
   </style>
 </head>
@@ -285,7 +326,7 @@
   <nav class="navbar-custom text-center" id="navbar" style="position: sticky; top:0; z-index:1000;">
     <!-- Botón Cuenta (izquierda) -->
     <a href="Panel.html" class="btn btn-dark text-white btn-cuenta">Cuenta</a>
-    <a href="carrito.html" class="btn btn-dark text-white">🛒 Carrito</a>
+    <a href="src/html/cart.html" class="btn btn-dark text-white">🛒 Carrito</a>
     <button class="btn btn-dark text-white" data-bs-toggle="modal" data-bs-target="#nosotrosModal">Acerca de
       Nosotros</button>
     <div class="dropdown d-inline">
@@ -294,16 +335,21 @@
         Documentación
       </button>
       <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="/borrachorama/src/html/catalog.html">Catálogo</a></li>
-        <li><a class="dropdown-item" href="/borrachorama/src/html/infraestructura.html">Infraestructura</a></li>
-        <li><a class="dropdown-item" href="/borrachorama/src/html/Disponibilidad.html">Disponibilidad</a></li>
-        <li><a class="dropdown-item" href="/borrachorama/src/html/Tecnologia.html">Tecnología</a></li>
-        <li><a class="dropdown-item" href="/borrachorama/src/html/Status.html">Status</a></li>
-        <li><a class="dropdown-item" href="/borrachorama/src/html/Pedidos_Especiales.html">Pedidos Especiales</a></li>
-        <li><a class="dropdown-item" href="/borrachorama/Metricas.html">Métricas</a></li>
-        <li><a class="dropdown-item" href="/borrachorama/Metodos_Pago.html">Métodos de Pago</a></li>
+        <li><a class="dropdown-item" href="src/html/catalog.html">Catálogo</a></li>
+        <li><a class="dropdown-item" href="src/infraestructura.html">Infraestructura</a></li>
+        <li><a class="dropdown-item" href="Disponibilidad.html">Disponibilidad</a></li>
+        <li><a class="dropdown-item" href="Tecnologia.html">Tecnología</a></li>
+        <li><a class="dropdown-item" href="Status.html">Status</a></li>
+        <li><a class="dropdown-item" href="Pedidos_Especiales.html">Pedidos Especiales</a></li>
+        <li><a class="dropdown-item" href="Metricas.html">Métricas</a></li>
+        <li><a class="dropdown-item" href="Metodos_Pago.html">Métodos de Pago</a></li>
       </ul>
     </div>
+
+     <!-- NUEVO: Botón de Usuario (derecha) -->
+    <a href="User.html" id="btn-perfil" class="btn btn-dark text-white btn-perfil" style="display: none;">
+      👤 <span id="nombre-user"></span>
+    </a>
   </nav>
 
   <main>
@@ -327,18 +373,18 @@
               const card = document.createElement('div');
               card.className = 'product-card';
               card.innerHTML = `
-        <img src="${product.image}" alt="${product.name}">
-        <h3>${product.name}</h3>
-        <span class="category">${product.category}</span>
-        <p class="description">${product.description}</p>
-        <div class="price">$${parseFloat(product.price).toFixed(2)}</div>
-        <button class="btn btn-warning text-dark agregar" 
-                data-id="${product.id}" 
-                data-nombre="${product.name}" 
-                data-precio="${product.price}">
-          Agregar al Carrito
-        </button>
-      `;
+                    <img src="${product.image}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <span class="category">${product.category}</span>
+                    <p class="description">${product.description}</p>
+                    <div class="price">$${parseFloat(product.price).toFixed(2)}</div>
+                    <button class="btn btn-warning text-dark agregar" 
+                            data-id="${product.id}" 
+                            data-nombre="${product.name}" 
+                            data-precio="${product.price}">
+                      Agregar al Carrito
+                    </button>
+                  `;
               container.appendChild(card);
             });
 
@@ -348,12 +394,9 @@
               boton.addEventListener('click', () => {
                 const producto_id = boton.getAttribute('data-id');
                 const nombre = boton.getAttribute('data-nombre');
-                const precio = parseFloat(boton.getAttribute('data-precio'));
-                const usuario_id = 1; // aquí pon el id del usuario logueado
 
                 const formData = new FormData();
-                formData.append("usuario_id", usuario_id);
-                formData.append("producto_id", producto_id);
+                formData.append("producto_id", producto_id); // Solo enviamos el ID del producto
 
                 fetch('backend/agregar_carrito.php', {
                   method: 'POST',
@@ -364,12 +407,9 @@
                     if (resp.status === "ok") {
                       mostrarNotificacion(`${nombre} se agregó al carrito 🛒`);
                     } else {
+                      // Si el error es "Inicia sesión", podrías redirigir al login
                       mostrarNotificacion(resp.msg, "error");
                     }
-                  })
-                  .catch(error => {
-                    console.error('Error al agregar al carrito:', error);
-                    mostrarNotificacion('Error al agregar al carrito', 'error');
                   });
               });
             });
@@ -386,9 +426,9 @@
           const notif = document.createElement('div');
           notif.className = `notification ${tipo}`;
           notif.innerHTML = `
-    <span>${tipo === 'success' ? '✓' : tipo === 'error' ? '✕' : 'ℹ'}</span>
-    <span>${mensaje}</span>
-  `;
+                <span>${tipo === 'success' ? '✓' : tipo === 'error' ? '✕' : 'ℹ'}</span>
+                <span>${mensaje}</span>
+              `;
           document.body.appendChild(notif);
 
           setTimeout(() => {
@@ -962,6 +1002,27 @@
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <!-- Inicialización explícita del dropdown para mayor compatibilidad -->
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Verificamos si hay un usuario logueado
+      fetch('backend/getUserName.php')
+        .then(response => response.json())
+        .then(data => {
+          if (data.logged) {
+            const btnPerfil = document.getElementById('btn-perfil');
+            const spanNombre = document.getElementById('nombre-user');
+
+            // Ponemos el nombre que viene de la sesión
+            spanNombre.textContent = data.nombre;
+            // Hacemos visible el botón
+            btnPerfil.style.display = 'inline-block';
+          }
+        })
+        .catch(err => console.error("Error al obtener el nombre:", err));
+    });
+  </script>
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var el = document.getElementById('docsDropdown');
@@ -996,7 +1057,5 @@
   </div>
   <script>
   </script>
-
 </body>
-
 </html>
