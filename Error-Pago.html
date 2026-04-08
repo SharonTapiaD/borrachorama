@@ -19,7 +19,7 @@
         }
 
         header {
-            background: url('img/fondocerveza.jpg') no-repeat center center;
+            background: url('imagenes/fondocerveza.jpg') no-repeat center center;
             background-size: cover;
             color: white;
             padding: 40px 20px;
@@ -226,7 +226,7 @@
 <body>
     <header>
         <div class="header-content">
-            <img src="img/Borrachoramalogo.png" alt="Borrachorama Logo">
+            <img src="imagenes/Borrachoramalogo.png" alt="Borrachorama Logo">
         </div>
     </header>
 
@@ -260,7 +260,7 @@
                 <button class="btn btn-contacto" onclick="contactarSoporte()">
                     📞 Contactar Soporte
                 </button>
-                <a href="/inicio.html" class="btn btn-volver">
+                <a href="inicio.html" class="btn btn-volver">
                     🏠 Volver al Inicio
                 </a>
             </div>
@@ -325,7 +325,7 @@
 
             // Si ya se cerró un pago, no permitir reintentos desde error
             if (localStorage.getItem('paymentLocked') === 'true') {
-                window.location.replace('/PagoRealizado.html');
+                window.location.replace('PagoRealizado.html');
                 return;
             }
         });
@@ -334,7 +334,7 @@
             // Bloqueo extra en el botón por si el estado cambia
             if (localStorage.getItem('paymentLocked') === 'true') {
                 alert('El pago ya fue realizado. Redirigiendo...');
-                window.location.replace('/PagoRealizado.html');
+                window.location.replace('PagoRealizado.html');
                 return;
             }
 
@@ -351,22 +351,22 @@
 
             // Mapear rutas de reintento
             const rutas = {
-                tarjeta: '/Pago-Tarjeta.html?reintento=true',
-                paypal: '/Pago-Monadero.html?reintento=true&metodo=paypal',
-                stripe: '/Pago-Monadero.html?reintento=true&metodo=stripe',
-                mercado: '/Pago-Monadero.html?reintento=true&metodo=mercado',
-                efectivo: '/Pago-Cajero.html?reintento=true',
-                transferencia: '/Pago-Cheque.html?reintento=true',
-                monedero: '/Pago-Monadero.html?reintento=true'
+                tarjeta: 'Pago-Tarjeta.html?reintento=true',
+                paypal: 'Pago-Monadero.html?reintento=true&metodo=paypal',
+                stripe: 'Pago-Monadero.html?reintento=true&metodo=stripe',
+                mercado: 'Pago-Monadero.html?reintento=true&metodo=mercado',
+                efectivo: 'Pago-Cajero.html?reintento=true',
+                transferencia: 'Pago-Cheque.html?reintento=true',
+                monedero: 'Pago-Monadero.html?reintento=true'
             };
             
-            const ruta = rutas[metodo] || '/Pago.html?reintento=true';
+            const ruta = rutas[metodo] || 'Pago.html?reintento=true';
             window.location.href = ruta;
         }
         
         function cambiarMetodoPago() {
             localStorage.removeItem('reintentoPago');
-            window.location.href = '/Pago.html?cambioMetodo=true';
+            window.location.href = 'Pago.html?cambioMetodo=true';
         }
         
         function contactarSoporte() {

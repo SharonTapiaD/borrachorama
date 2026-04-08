@@ -17,7 +17,7 @@
         }
 
         header {
-            background: url('img/fondocerveza.jpg') center/cover no-repeat;
+            background: url('imagenes/fondocerveza.jpg') center/cover no-repeat;
             color: white;
             text-align: center;
             padding: 40px 20px;
@@ -206,29 +206,31 @@
 
 <body>
     <header>
-        <img src="img/Borrachoramalogo.png" alt="Logo">
+        <img src="imagenes/Borrachoramalogo.png" alt="Logo">
         <h2>Cheque / Transferencia (simulado)</h2>
     </header>
     <!-- Navbar: reemplaza el texto por el menú, conservando el fondo -->
     <nav class="navbar-custom" id="navbar">
-        <a href="/Panel.html" class="btn btn-dark text-white btn-cuenta">Cuenta</a>
+        <a href="Panel.html" class="btn btn-dark text-white btn-cuenta">Cuenta</a>
         <div class="menu-row">
-            <a href="/inicio.html" class="btn btn-dark text-white">Inicio</a>
-            <a href="/src/html/cart.html" class="btn btn-dark text-white">🛒 Carrito</a>
-            <button type="button" class="btn btn-dark text-white btn-acerca" data-bs-toggle="modal" data-bs-target="#nosotrosModal">Acerca de Nosotros</button>
+            <a href="inicio.html" class="btn btn-dark text-white">Inicio</a>
+            <a href="src/html/cart.html" class="btn btn-dark text-white">🛒 Carrito</a>
+            <button type="button" class="btn btn-dark text-white btn-acerca" data-bs-toggle="modal"
+                data-bs-target="#nosotrosModal">Acerca de Nosotros</button>
             <div class="dropdown d-inline">
-                <button id="docsDropdownCheque" type="button" class="btn btn-dark dropdown-toggle text-white" data-bs-toggle="dropdown" aria-expanded="false">
+                <button id="docsDropdownCheque" type="button" class="btn btn-dark dropdown-toggle text-white"
+                    data-bs-toggle="dropdown" aria-expanded="false">
                     📂 Documentación
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="/src/html/catalog.html">Catálogo</a></li>
-                    <li><a class="dropdown-item" href="/src/infraestructura.html">Infraestructura</a></li>
-                    <li><a class="dropdown-item" href="/Disponibilidad.html">Disponibilidad</a></li>
-                    <li><a class="dropdown-item" href="/Tecnologia.html">Tecnología</a></li>
-                    <li><a class="dropdown-item" href="/Status.html">Status</a></li>
-                    <li><a class="dropdown-item" href="/Pedidos_Especiales.html">Pedidos Especiales</a></li>
-                    <li><a class="dropdown-item" href="/Metricas.html">Métricas</a></li>
-                    <li><a class="dropdown-item" href="/Metodos_Pago.html">Métodos de Pago</a></li>
+                    <li><a class="dropdown-item" href="src/html/catalog.html">Catálogo</a></li>
+                    <li><a class="dropdown-item" href="src/infraestructura.html">Infraestructura</a></li>
+                    <li><a class="dropdown-item" href="Disponibilidad.html">Disponibilidad</a></li>
+                    <li><a class="dropdown-item" href="Tecnologia.html">Tecnología</a></li>
+                    <li><a class="dropdown-item" href="Status.html">Status</a></li>
+                    <li><a class="dropdown-item" href="Pedidos_Especiales.html">Pedidos Especiales</a></li>
+                    <li><a class="dropdown-item" href="Metricas.html">Métricas</a></li>
+                    <li><a class="dropdown-item" href="Metodos_Pago.html">Métodos de Pago</a></li>
                 </ul>
             </div>
         </div>
@@ -243,8 +245,10 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p><strong>Borrachorama</strong> nació en Aguascalientes con el objetivo de ofrecer las mejores cervezas nacionales e internacionales en un ambiente único. 🍺</p>
-                    <p>Nos esforzamos por brindar calidad, seguridad y atención al cliente en cada experiencia de compra.</p>
+                    <p><strong>Borrachorama</strong> nació en Aguascalientes con el objetivo de ofrecer las mejores
+                        cervezas nacionales e internacionales en un ambiente único. 🍺</p>
+                    <p>Nos esforzamos por brindar calidad, seguridad y atención al cliente en cada experiencia de
+                        compra.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cerrar</button>
@@ -277,7 +281,8 @@
                 <button type="button" id="btnPagar">Confirmar pago</button>
 
                 <p class="simulacion-nota">
-                    ⚠️ Simulación educativa. 50% de probabilidad de fallo. Solo se registra el pedido si el pago es exitoso.
+                    ⚠️ Simulación educativa. 50% de probabilidad de fallo. Solo se registra el pedido si el pago es
+                    exitoso.
                 </p>
             </form>
         </div>
@@ -301,7 +306,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('paymentLocked') === 'true') {
-                try { document.getElementById('btnPagar').disabled = true; } catch(e){}
+                try { document.getElementById('btnPagar').disabled = true; } catch (e) { }
                 window.location.replace('/PagoRealizado.html');
                 return;
             }
@@ -313,7 +318,7 @@
             else restaurarFormularioCheque(); // también restaura si quedaron datos
 
             // Escuchar cambios para persistir
-            ['numeroCheque','fechaEmision'].forEach(id => {
+            ['numeroCheque', 'fechaEmision'].forEach(id => {
                 const el = document.getElementById(id);
                 el && el.addEventListener('input', guardarFormularioCheque);
             });
@@ -321,30 +326,22 @@
 
         function calcularYMostrarMonto() {
             let total = 0;
-            const params = new URLSearchParams(location.search);
-            const montoQS = parseFloat(params.get('monto') || '0');
-            if (!isNaN(montoQS) && montoQS > 0) total = montoQS;
 
-            if (total === 0) {
-                const montoIntento = parseFloat(localStorage.getItem('montoPagoIntento') || '0');
-                if (!isNaN(montoIntento) && montoIntento > 0) total = montoIntento;
-            }
-            if (total === 0) {
+            // 1. Intentar desde lo que guardamos en el carrito
+            const montoGuardado = localStorage.getItem('montoPagoIntento');
+
+            if (montoGuardado) {
+                total = parseFloat(montoGuardado);
+            } else {
+                // Fallback
                 const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
                 total = carrito.reduce((s, it) => s + (parseFloat(it.precio) || 0) * (parseInt(it.cantidad) || 1), 0);
             }
-            if (total === 0) {
-                const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
-                const ultimo = pedidos[pedidos.length - 1];
-                if (ultimo && ultimo.total) total = ultimo.total;
-            }
-            if (total === 0) {
-                total = parseFloat(localStorage.getItem('pagoTotal') || '0') || 0;
-            }
-            if (total === 0) total = 199.90; // fallback visual
 
+            // Actualizar el texto y el valor del input (Cheque usa ambos)
             document.getElementById('montoTotal').textContent = '$' + total.toFixed(2);
             document.getElementById('monto').value = '$' + total.toFixed(2);
+
             return total;
         }
 
@@ -402,13 +399,13 @@
                 const data = JSON.parse(raw);
                 if (data.numeroCheque) document.getElementById('numeroCheque').value = data.numeroCheque;
                 if (data.fechaEmision) document.getElementById('fechaEmision').value = data.fechaEmision;
-            } catch(e){}
+            } catch (e) { }
         }
 
         function confirmarPagoCheque(total) {
             if (localStorage.getItem('paymentLocked') === 'true') {
                 alert('El pago ya fue realizado. Redirigiendo...');
-                window.location.replace('/PagoRealizado.html');
+                window.location.replace('PagoRealizado.html');
                 return;
             }
 
@@ -430,7 +427,7 @@
                 if (resultado.exito) {
                     if (localStorage.getItem('paymentLocked') === 'true') {
                         alert('El pago ya fue realizado. Redirigiendo...');
-                        window.location.replace('/PagoRealizado.html');
+                        window.location.replace('PagoRealizado.html');
                         return;
                     }
 
@@ -514,5 +511,4 @@
     <!-- Bootstrap JS bundle para dropdowns y modal + init explícita -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

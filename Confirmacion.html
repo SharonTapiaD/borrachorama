@@ -17,7 +17,7 @@
         }
 
         header {
-            background: url('/img/fondocerveza.jpg') no-repeat center center;
+            background: url('imagenes/fondocerveza.jpg') no-repeat center center;
             background-size: cover;
             color: white;
             padding: 40px 20px;
@@ -170,17 +170,21 @@
             body * {
                 visibility: hidden;
             }
+
             .ticket-container,
             .ticket-container * {
                 visibility: visible;
             }
+
             .ticket-container {
                 position: absolute;
                 left: 0;
                 top: 0;
                 width: 100%;
             }
-            .ticket-button, .ticket-print {
+
+            .ticket-button,
+            .ticket-print {
                 display: none;
             }
         }
@@ -189,29 +193,29 @@
 
 <body>
     <header>
-        <img src="/img/Borrachoramalogo.png" alt="Borrachorama Logo">
+        <img src="imagenes/Borrachoramalogo.png" alt="Borrachorama Logo">
     </header>
-    
+
     <!-- Navbar global (igual al de Disponibilidad.html) -->
     <nav class="navbar-custom" id="navbar">
-        <a href="/Panel.html" class="btn btn-dark text-white btn-cuenta">Cuenta</a>
+        <a href="Panel.html" class="btn btn-dark text-white btn-cuenta">Cuenta</a>
         <div class="container-fluid d-flex justify-content-center align-items-center gap-2">
-            <a href="/inicio.html" class="btn btn-dark text-white">Inicio</a>
-            <a href="/src/html/cart.html" class="btn btn-dark text-white">🛒 Carrito</a>
+            <a href="inicio.html" class="btn btn-dark text-white">Inicio</a>
+            <a href="src/html/cart.html" class="btn btn-dark text-white">🛒 Carrito</a>
             <button class="btn btn-dark text-white" data-bs-toggle="modal" data-bs-target="#nosotrosModal">Acerca de
                 Nosotros</button>
             <div class="dropdown">
                 <button class="btn btn-dark dropdown-toggle text-white" type="button" data-bs-toggle="dropdown">📂
                     Documentación</button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="/src/html/catalog.html">Catálogo</a></li>
-                    <li><a class="dropdown-item" href="/src/infraestructura.html">Infraestructura</a></li>
-                    <li><a class="dropdown-item" href="/Disponibilidad.html">Disponibilidad</a></li>
-                    <li><a class="dropdown-item" href="/Tecnologia.html">Tecnología</a></li>
-                    <li><a class="dropdown-item" href="/Status.html">Status</a></li>
-                    <li><a class="dropdown-item" href="/Pedidos_Especiales.html">Pedidos Especiales</a></li>
-                    <li><a class="dropdown-item" href="/Metricas.html">Métricas</a></li>
-                    <li><a class="dropdown-item" href="/Metodos_Pago.html">Métodos de Pago</a></li>
+                    <li><a class="dropdown-item" href="src/html/catalog.html">Catálogo</a></li>
+                    <li><a class="dropdown-item" href="src/infraestructura.html">Infraestructura</a></li>
+                    <li><a class="dropdown-item" href="Disponibilidad.html">Disponibilidad</a></li>
+                    <li><a class="dropdown-item" href="Tecnologia.html">Tecnología</a></li>
+                    <li><a class="dropdown-item" href="Status.html">Status</a></li>
+                    <li><a class="dropdown-item" href="Pedidos_Especiales.html">Pedidos Especiales</a></li>
+                    <li><a class="dropdown-item" href="Metricas.html">Métricas</a></li>
+                    <li><a class="dropdown-item" href="Metodos_Pago.html">Métodos de Pago</a></li>
                 </ul>
             </div>
         </div>
@@ -259,9 +263,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p><strong>Borrachorama</strong> nació en Aguascalientes con el objetivo de ofrecer las mejores cervezas
+                    <p><strong>Borrachorama</strong> nació en Aguascalientes con el objetivo de ofrecer las mejores
+                        cervezas
                         nacionales e internacionales en un ambiente único. 🍺</p>
-                    <p>Nos esforzamos por brindar calidad, seguridad y atención al cliente en cada experiencia de compra.
+                    <p>Nos esforzamos por brindar calidad, seguridad y atención al cliente en cada experiencia de
+                        compra.
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -275,182 +281,102 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        function irAFactura() {
-            // Botón verde: va a factura
-            window.location.href = '/factura.html';
-        }
-
-        function finalizarCompra() {
-            // Botón rojo: genera ticket
-            renderTicket();
-        }
+        function irAFactura() { window.location.href = 'formFactura.html'; }
+        function finalizarCompra() { renderTicket(); }
 
         function renderTicket() {
-            // Obtener el pedido actual
             const lastId = localStorage.getItem('lastPedidoId');
             const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
             const pedido = (lastId && pedidos.find(p => p.id === lastId)) || pedidos[pedidos.length - 1];
 
-            if (!pedido) {
-                mostrarNotificacion('No se encontró información del pedido', 'error');
-                return;
-            }
+            if (!pedido) { alert('No se encontró el pedido'); return; }
 
-            console.log('renderTicket llamado con pedido:', pedido);
-            const items = Array.isArray(pedido.items) ? pedido.items : [];
-            console.log('Items a mostrar en ticket:', items);
-
-            // Crear HTML del ticket
+            let subtotalItems = 0;
             let itemsHTML = '';
+
+            const items = Array.isArray(pedido.items) ? pedido.items : [];
             items.forEach(it => {
+                // Acepta 'nombre' o 'name' por si acaso
+                const nombreProd = it.nombre || it.name || 'Producto';
                 const precio = parseFloat(it.precio) || 0;
                 const cantidad = parseInt(it.cantidad) || 1;
-                const subtotal = precio * cantidad;
-                itemsHTML += `<div class="ticket-item">
-                    <span>${it.nombre}</span>
-                    <span>$${subtotal.toFixed(2)}</span>
-                </div>`;
+                const st = precio * cantidad;
+                subtotalItems += st;
+                itemsHTML += `<div class="ticket-item"><span>${nombreProd} (x${cantidad})</span><span>$${st.toFixed(2)}</span></div>`;
             });
 
-            const confirmacionDiv = document.getElementById('confirmacion-dinamica');
-            const facturaPregunta = document.querySelector('div[style*="text-align: center; margin-top: 30px"]');
+            const iva = subtotalItems * 0.16;
+            const envio = 80.00;
+            const totalFinal = subtotalItems + iva + envio;
 
-            // Crear ticket
             const ticketHTML = `
-                <div class="ticket-container" id="ticket">
-                    <img src="/img/Borrachoramalogo.png" alt="Borrachorama" class="ticket-logo">
-                    <div class="ticket-title">¡Gracias por tu compra!</div>
-                    <p style="color: #666; margin: 5px 0;">Número de pedido: <strong>${pedido.id}</strong></p>
-                    <div class="ticket-items">
-                        ${itemsHTML}
+                <div class="ticket-container">
+                    <img src="../../imagenes/Borrachoramalogo.png" alt="Logo" class="ticket-logo" style="max-width:100px;">
+                    <div class="ticket-title">TICKET DE VENTA</div>
+                    <p>Orden: ${pedido.id}</p>
+                    <div class="ticket-items">${itemsHTML}</div>
+                    <div style="text-align: right; font-size: 0.8rem;">
+                        <p>Subtotal: $${subtotalItems.toFixed(2)}</p>
+                        <p>IVA (16%): $${iva.toFixed(2)}</p>
+                        <p>Envío: $${envio.toFixed(2)}</p>
                     </div>
-                    <div class="ticket-total">Total: $${(pedido.total || 0).toFixed(2)} MXN</div>
-                    <div class="ticket-message">¡Esperamos te disfrutes tu compra!</div>
-                    <button class="ticket-print" onclick="window.print()">🖨️ Imprimir Ticket</button>
-                    <button class="ticket-button" onclick="window.location.href='/inicio.html'">Ir al Inicio</button>
-                </div>
-            `;
+                    <div class="ticket-total">TOTAL: $${totalFinal.toFixed(2)}</div>
+                    <button class="ticket-print" onclick="window.print()">🖨️ Imprimir</button>
+                    <button class="ticket-button" onclick="window.location.href='inicio.html'">Inicio</button>
+                </div>`;
 
-            // Limpiar pantalla y mostrar ticket
-            if (confirmacionDiv) confirmacionDiv.style.display = 'none';
-            if (facturaPregunta) facturaPregunta.style.display = 'none';
-
-            const containerMain = document.querySelector('.container');
-            if (containerMain) {
-                containerMain.innerHTML = ticketHTML;
-            }
+            document.getElementById('confirmacion-dinamica').style.display = 'none';
+            document.querySelector('div[style*="margin-top: 30px"]').style.display = 'none';
+            document.querySelector('.container').innerHTML = ticketHTML;
         }
 
-        // NUEVO: Render dinámico de la confirmación desde localStorage
         (function () {
             function renderPedido(pedido) {
-                const elId = document.getElementById('pedido-id');
-                const elMetodo = document.getElementById('pedido-metodo');
                 const detailsEl = document.getElementById('pedido-details');
+                document.getElementById('pedido-id').textContent = pedido.id || 'N/A';
+                document.getElementById('pedido-metodo').textContent = pedido.metodoPago || 'N/A';
 
-                elId.textContent = pedido.id || 'N/A';
-                const mapa = {
-                    tarjeta: 'Tarjeta',
-                    paypal: 'PayPal',
-                    efectivo: 'Efectivo (pago en entrega)',
-                    transferencia: 'Transferencia'
-                };
-                elMetodo.textContent = mapa[pedido.metodoPago] || pedido.metodoPago || 'N/A';
-
-                const items = Array.isArray(pedido.items) ? pedido.items : [];
-                if (!items.length) {
-                    detailsEl.innerHTML = '<p class="muted">No hay artículos en este pedido.</p>';
-                    return;
-                }
-
+                let subtotal = 0;
                 let rows = '';
-                let total = 0;
+                const items = Array.isArray(pedido.items) ? pedido.items : [];
+
                 items.forEach(it => {
-                    const precio = parseFloat(it.precio) || 0;
-                    const cantidad = parseInt(it.cantidad) || 1;
-                    const subtotal = precio * cantidad;
-                    total += subtotal;
-                    rows += `<tr>
-            <td>${it.nombre || '-'}</td>
-            <td>$${precio.toFixed(2)}</td>
-            <td>${cantidad}</td>
-            <td>$${subtotal.toFixed(2)}</td>
-          </tr>`;
+                    const nombreProd = it.nombre || it.name || 'Producto';
+                    const p = parseFloat(it.precio) || 0;
+                    const c = parseInt(it.cantidad) || 1;
+                    const st = p * c;
+                    subtotal += st;
+                    rows += `<tr><td>${nombreProd}</td><td>$${p.toFixed(2)}</td><td>${c}</td><td>$${st.toFixed(2)}</td></tr>`;
                 });
 
-                detailsEl.innerHTML = `
-          <h5 style="margin-top:12px;">Resumen del pedido</h5>
-          <div class="table-responsive">
-            <table class="table table-sm table-confirm" style="margin-top:8px;">
-              <thead>
-                <tr>
-                  <th>Producto</th>
-                  <th>Precio</th>
-                  <th>Cantidad</th>
-                  <th>Subtotal</th>
-                </tr>
-              </thead>
-              <tbody>${rows}</tbody>
-            </table>
-          </div>
-          <p style="text-align:right; font-weight:700; margin-top:6px;">Total: $${(pedido.total || total).toFixed(2)} MXN</p>
-        `;
+                const iva = subtotal * 0.16;
+                const totalFinal = subtotal + iva + 80;
 
-                // Datos de contacto/envío si existen
-                if (pedido.contacto || pedido.envio) {
-                    const c = pedido.contacto || pedido.envio || {};
-                    detailsEl.innerHTML += `
-            <div style="margin-top:10px; font-size:0.95rem; color:#444;">
-              <strong>Contacto / Envío:</strong><br>
-              ${c.nombre ? `Nombre: ${c.nombre}<br>` : ''}
-              ${c.correo ? `Correo: ${c.correo}<br>` : ''}
-              ${c.direccion ? `Dirección: ${c.direccion}<br>` : ''}
-            </div>
-          `;
-                }
+                detailsEl.innerHTML = `
+                    <table class="table table-sm mt-3">
+                        <thead class="table-warning"><tr><th>Producto</th><th>Precio</th><th>Cant.</th><th>Total</th></tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                    <div style="text-align: right; padding: 10px; border: 1px solid #eee;">
+                        <p class="m-0">Subtotal: $${subtotal.toFixed(2)}</p>
+                        <p class="m-0">IVA (16%): $${iva.toFixed(2)}</p>
+                        <p class="m-0">Envío: $80.00</p>
+                        <h4 class="text-success">Total: $${totalFinal.toFixed(2)}</h4>
+                    </div>`;
             }
 
             try {
                 const lastId = localStorage.getItem('lastPedidoId');
                 const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
                 const pedido = (lastId && pedidos.find(p => p.id === lastId)) || pedidos[pedidos.length - 1];
-
-                if (pedido) {
-                    renderPedido(pedido);
-                } else {
-                    document.getElementById('pedido-id').textContent = 'N/D';
-                    document.getElementById('pedido-metodo').textContent = 'N/D';
-                    document.getElementById('pedido-details').innerHTML =
-                        '<p class="muted">No se encontró información de pedidos en el sistema.</p>';
-                }
-            } catch (_) {
-                document.getElementById('pedido-details').innerHTML =
-                    '<p class="muted">Ocurrió un error al cargar la confirmación.</p>';
-            }
-        })();
-
-        // Si viene autoticket=1 en la URL, mostramos confirmación de ticket generado
-        (function () {
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('autoticket') === '1') {
-                // Aquí podrías invocar la generación real del ticket
-                const cont = document.querySelector('.container');
-                if (cont) {
-                    const msg = document.createElement('div');
-                    msg.style.marginTop = '20px';
-                    msg.style.padding = '15px';
-                    msg.style.borderRadius = '8px';
-                    msg.style.background = '#e8ffe8';
-                    msg.style.color = '#2e7d32';
-                    msg.textContent = 'Tu compra se ha finalizado y el ticket fue generado correctamente.';
-                    cont.appendChild(msg);
-                }
-            }
+                if (pedido) renderPedido(pedido);
+            } catch (e) { console.error(e); }
         })();
     </script>
 
     <!-- Sección de Contacto -->
-    <section id="contacto" class="text-center p-5" style="background: linear-gradient(135deg, #FFF8E1 0%, #FFE0B2 100%);">
+    <section id="contacto" class="text-center p-5"
+        style="background: linear-gradient(135deg, #FFF8E1 0%, #FFE0B2 100%);">
         <div class="container">
             <h2 style="color: #eb9452; font-weight: bold; margin-bottom: 20px;">📍 Contáctanos</h2>
             <p style="font-size: 1.1rem; color: #555; margin-bottom: 30px;">
@@ -478,7 +404,8 @@
             <div
                 style="background: white; border-radius: 15px; padding: 20px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                 <p style="margin: 0; color: #333;">
-                    <strong style="color: #FF6F00;">📍 Ubicación:</strong> Calle Paseo de la Presa #123, Aguascalientes, México
+                    <strong style="color: #FF6F00;">📍 Ubicación:</strong> Calle Paseo de la Presa #123, Aguascalientes,
+                    México
                 </p>
                 <p style="margin: 10px 0 0 0; color: #333;">
                     <strong style="color: #FF6F00;">📞 Teléfono:</strong> +52 (449) 123-4567
@@ -491,7 +418,8 @@
     </section>
 
     <!-- Footer Principal -->
-    <footer style="background: linear-gradient(135deg, #FF6F00 0%, #F57C00 100%); color: white; padding: 40px 20px 20px;">
+    <footer
+        style="background: linear-gradient(135deg, #FF6F00 0%, #F57C00 100%); color: white; padding: 40px 20px 20px;">
         <div class="container">
             <div
                 style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-bottom: 30px;">
@@ -516,19 +444,22 @@
                     <h4 style="font-weight: bold; margin-bottom: 15px; font-size: 1.2rem;">⚡ Enlaces Rápidos</h4>
                     <ul style="list-style: none; padding: 0; margin: 0;">
                         <li style="margin-bottom: 10px;">
-                            <a href="inicio.html" style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+                            <a href="inicio.html"
+                                style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
                                 onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
                                 🏠 Inicio
                             </a>
                         </li>
                         <li style="margin-bottom: 10px;">
-                            <a href="catalog.html" style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+                            <a href="catalog.html"
+                                style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
                                 onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
                                 🍺 Catálogo
                             </a>
                         </li>
                         <li style="margin-bottom: 10px;">
-                            <a href="Pedidos_Especiales.html" style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
+                            <a href="Pedidos_Especiales.html"
+                                style="color: white; text-decoration: none; opacity: 0.9; transition: opacity 0.3s;"
                                 onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">
                                 🎉 Pedidos Especiales
                             </a>
@@ -595,7 +526,8 @@
                         <strong>Sábado - Domingo:</strong><br>
                         12:00 PM - 11:00 PM
                     </p>
-                    <div style="margin-top: 15px; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px;">
+                    <div
+                        style="margin-top: 15px; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px;">
                         <p style="margin: 0; font-size: 0.85rem; font-weight: 600;">
                             ⚡ Entrega en 1-2 horas
                         </p>
@@ -845,8 +777,10 @@
     </script>
 
     <!-- Cookie consent overlay (muestra en cada carga/refresh) -->
-    <div id="cookieOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:10000; align-items:center; justify-content:center;">
-        <div style="background:#fff; max-width:560px; width:90%; border-radius:12px; padding:24px; box-shadow:0 10px 30px rgba(0,0,0,.3); text-align:center;">
+    <div id="cookieOverlay"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:10000; align-items:center; justify-content:center;">
+        <div
+            style="background:#fff; max-width:560px; width:90%; border-radius:12px; padding:24px; box-shadow:0 10px 30px rgba(0,0,0,.3); text-align:center;">
             <h3 style="margin-bottom:10px; color:#FF6F00;">🍪 Aviso de Cookies</h3>
             <p style="color:#333; margin-bottom:16px;">
                 Usamos cookies con fines estrictamente funcionales del sitio
@@ -873,7 +807,7 @@
 
     <!-- Script para Navbar Sticky -->
     <script>
-        window.addEventListener('scroll', function() {
+        window.addEventListener('scroll', function () {
             const navbar = document.getElementById('navbar');
             const placeholder = document.querySelector('.navbar-placeholder');
             if (window.scrollY > 100) {
@@ -886,5 +820,4 @@
         });
     </script>
 </body>
-
 </html>

@@ -21,7 +21,7 @@
         }
         
         header {
-            background: url('img/fondocerveza.jpg') no-repeat center center;
+            background: url('imagenes/fondocerveza.jpg') no-repeat center center;
             background-size: cover;
             color: white;
             padding: 40px 20px;
@@ -402,30 +402,30 @@
 <body>
     <header>
         <div style="position: relative; z-index: 1;">
-            <img src="img/Borrachoramalogo.png" alt="Borrachorama Logo">
+            <img src="imagenes/Borrachoramalogo.png" alt="Borrachorama Logo">
         </div>
     </header>
 
     <!-- Navbar: reemplaza el texto por el menú, conservando el fondo actual -->
     <nav class="navbar-custom" id="navbar">
-        <a href="/Panel.html" class="btn btn-dark text-white btn-cuenta">Cuenta</a>
+        <a href="Panel.html" class="btn btn-dark text-white btn-cuenta">Cuenta</a>
         <div class="menu-row">
-            <a href="/inicio.html" class="btn btn-dark text-white">Inicio</a>
-            <a href="/src/html/cart.html" class="btn btn-dark text-white">🛒 Carrito</a>
+            <a href="inicio.html" class="btn btn-dark text-white">Inicio</a>
+            <a href="src/html/cart.html" class="btn btn-dark text-white">🛒 Carrito</a>
             <button type="button" class="btn btn-dark text-white btn-acerca" data-bs-toggle="modal" data-bs-target="#nosotrosModal">Acerca de Nosotros</button>
             <div class="dropdown d-inline">
                 <button id="docsDropdownCajero" type="button" class="btn btn-dark dropdown-toggle text-white" data-bs-toggle="dropdown" aria-expanded="false">
                     📂 Documentación
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="/src/html/catalog.html">Catálogo</a></li>
-                    <li><a class="dropdown-item" href="/src/infraestructura.html">Infraestructura</a></li>
-                    <li><a class="dropdown-item" href="/Disponibilidad.html">Disponibilidad</a></li>
-                    <li><a class="dropdown-item" href="/Tecnologia.html">Tecnología</a></li>
-                    <li><a class="dropdown-item" href="/Status.html">Status</a></li>
-                    <li><a class="dropdown-item" href="/Pedidos_Especiales.html">Pedidos Especiales</a></li>
-                    <li><a class="dropdown-item" href="/Metricas.html">Métricas</a></li>
-                    <li><a class="dropdown-item" href="/Metodos_Pago.html">Métodos de Pago</a></li>
+                    <li><a class="dropdown-item" href="src/html/catalog.html">Catálogo</a></li>
+                    <li><a class="dropdown-item" href="src/infraestructura.html">Infraestructura</a></li>
+                    <li><a class="dropdown-item" href="Disponibilidad.html">Disponibilidad</a></li>
+                    <li><a class="dropdown-item" href="Tecnologia.html">Tecnología</a></li>
+                    <li><a class="dropdown-item" href="Status.html">Status</a></li>
+                    <li><a class="dropdown-item" href="Pedidos_Especiales.html">Pedidos Especiales</a></li>
+                    <li><a class="dropdown-item" href="Metricas.html">Métricas</a></li>
+                    <li><a class="dropdown-item" href="Metodos_Pago.html">Métodos de Pago</a></li>
                 </ul>
             </div>
         </div>
@@ -643,27 +643,23 @@
         function actualizarMonto() {
             let total = 0;
             
-            // Intentar de múltiples fuentes
-            const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-            total = carrito.reduce((sum, item) => {
-                return sum + (parseFloat(item.precio) || 0) * (parseInt(item.cantidad) || 1);
-            }, 0);
+            // 1. Intentar leer lo que guardamos en el carrito
+            const montoGuardado = localStorage.getItem('montoPagoIntento');
             
-            if (total === 0) {
-                const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
-                const ultimoPedido = pedidos[pedidos.length - 1];
-                if (ultimoPedido && ultimoPedido.total) {
-                    total = ultimoPedido.total;
-                }
+            if (montoGuardado) {
+                total = parseFloat(montoGuardado);
+            } else {
+                // Fallback: Si no hay nada, intentar calcular del carrito (por si acaso)
+                const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+                total = carrito.reduce((sum, item) => {
+                    return sum + (parseFloat(item.precio) || 0) * (parseInt(item.cantidad) || 1);
+                }, 0);
+                // Si hay productos, sumarle IVA y Envío manualmente como respaldo
+                if (total > 0) total = (total * 1.16) + 80; 
             }
             
-            if (total === 0) {
-                total = parseFloat(localStorage.getItem('pagoTotal') || '0');
-            }
-            
-            if (total === 0) {
-                total = 189.99; // Ejemplo
-            }
+            // Si después de todo sigue en 0, poner un monto de ejemplo o dejar en 0
+            if (total === 0) total = 0.00; 
             
             document.getElementById('montoPagar').textContent = '$' + total.toFixed(2);
             return total;
@@ -809,7 +805,7 @@
         function confirmarPagoCajero() {
             if (localStorage.getItem('paymentLocked') === 'true') {
                 alert('El pago ya fue realizado. Redirigiendo...');
-                window.location.replace('/PagoRealizado.html');
+                window.location.replace('PagoRealizado.html');
                 return;
             }
             
@@ -857,14 +853,14 @@
                         monto: total
                     });
                     
-                    window.location.href = `/Error-Pago.html?${params.toString()}`;
+                    window.location.href = `Error-Pago.html?${params.toString()}`;
                     return;
                 }
                 
                 // Doble verificación
                 if (localStorage.getItem('paymentLocked') === 'true') {
                     alert('El pago ya fue realizado. Redirigiendo...');
-                    window.location.replace('/PagoRealizado.html');
+                    window.location.replace('PagoRealizado.html');
                     return;
                 }
 
@@ -911,7 +907,7 @@
                 localStorage.setItem('paymentLocked', 'true');
                 localStorage.setItem('paymentCompleted', 'true');
                 setTimeout(() => {
-                    window.location.href = '/Confirmacion.html';
+                    window.location.href = 'Confirmacion.html';
                 }, 500);
             }, 1500); // Simular 1.5 segundos de procesamiento
         }

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,7 +23,7 @@
 
     /* Hero header (imagen + logo) */
     .hero-header {
-      background: url('/img/fondocerveza.jpg') no-repeat center center;
+      background: url('imagenes/fondocerveza.jpg') no-repeat center center;
       background-size: cover;
       padding: 40px 20px;
       text-align: center;
@@ -43,7 +42,6 @@
     }
   </style>
 </head>
-
 <body>
   <!-- Hero header con imagen -->
   <header class="hero-header">
@@ -154,9 +152,10 @@
             <label for="payment-method" class="form-label">Método de pago</label>
             <select id="payment-method" class="form-select">
               <option value="">-- Selecciona --</option>
-              <option value="tarjeta">Tarjeta</option>
-              <option value="paypal">PayPal</option>
-              <option value="efectivo">Efectivo (pago en entrega)</option>
+              <option value="Pago-Tarjeta.html">Tarjeta de Crédito/Débito</option>
+              <option value="Pago-Monadero.html">PayPal / Monadero Digital</option>
+              <option value="Pago-Cajero.html">Efectivo (Pago en entrega)</option>
+              <option value="Pago-Cheque.html">Transferencia / Cheque</option>
             </select>
           </div>
 
@@ -200,7 +199,6 @@
 
     async function cargarCarrito() {
       try {
-        // La ruta debe ser correcta desde /src/html/
         const response = await fetch('../../backend/getCarrito.php');
         const data = await response.json();
 
@@ -208,6 +206,11 @@
           console.log("No hay sesión activa");
           return;
         }
+
+        // --- AGREGA ESTA LÍNEA AQUÍ ---
+        // Esto guarda los productos en el navegador para que las pantallas de pago los lean
+        localStorage.setItem('carrito', JSON.stringify(data));
+        // ------------------------------
 
         renderCarrito(data);
       } catch (error) {
@@ -233,14 +236,14 @@
         subtotal += filaSubtotal;
 
         tbody.innerHTML += `
-            <tr>
-              <td>${item.nombre}</td>
-              <td>$${parseFloat(item.precio).toFixed(2)}</td>
-              <td>${item.cantidad}</td>
-              <td>$${filaSubtotal.toFixed(2)}</td>
-              <td><button class="btn btn-danger btn-sm" onclick="eliminarItem(${item.producto_id})">Eliminar</button></td>
-            </tr>
-          `;
+                    <tr>
+                      <td>${item.nombre}</td>
+                      <td>$${parseFloat(item.precio).toFixed(2)}</td>
+                      <td>${item.cantidad}</td>
+                      <td>$${filaSubtotal.toFixed(2)}</td>
+                      <td><button class="btn btn-danger btn-sm" onclick="eliminarItem(${item.producto_id})">Eliminar</button></td>
+                    </tr>
+                  `;
       });
 
       // Cálculos de impuestos
@@ -284,7 +287,11 @@
     }
 
     // 5. Botón "Comprar" abre el modal de Checkout
+    // 5. Botón "Comprar" abre el modal de Checkout
     document.getElementById("buy-btn").addEventListener("click", () => {
+      // --- AGREGA ESTA LÍNEA PARA ABRIR EL CANDADO ---
+      localStorage.setItem('paymentLocked', 'false');
+
       const checkoutModal = new bootstrap.Modal(document.getElementById('checkoutModal'));
       checkoutModal.show();
     });
@@ -292,25 +299,19 @@
     // 6. Botón final de "Confirmar Compra" en el Modal
     document.getElementById('confirm-purchase-btn').addEventListener('click', async () => {
       const edad = document.querySelector('input[name="edad"]:checked');
-      const metodo = document.getElementById('payment-method').value;
+      const metodoElegido = document.getElementById('payment-method').value;
       const nombre = document.getElementById('ship-name').value;
       const direccion = document.getElementById('ship-address').value;
 
-      // Validaciones básicas
-      if (!edad || edad.value === 'menor') {
-        alert("Debes ser mayor de edad para comprar alcohol 🔞");
-        return;
-      }
-      if (!metodo || !nombre || !direccion) {
-        alert("Por favor, completa todos los campos de envío y pago.");
-        return;
+      if (!edad || edad.value === 'menor') { alert("Debes ser mayor de edad 🔞"); return; }
+      if (!metodoElegido || nombre.trim() === "" || direccion.trim() === "") {
+        alert("Por favor llena todos los campos."); return;
       }
 
-      // Preparar los datos para enviar al PHP
       const formData = new FormData();
       formData.append("nombre", nombre);
       formData.append("direccion", direccion);
-      formData.append("metodo", metodo);
+      formData.append("metodo", metodoElegido);
 
       try {
         const response = await fetch('../../backend/finalizar_compra.php', {
@@ -320,14 +321,18 @@
         const resp = await response.json();
 
         if (resp.status === "ok") {
-          alert("✅ " + resp.msg);
-          window.location.href = "../../inicio.html"; // Redirigir al inicio tras la compra
+          // --- NUEVO: Guardar el total para la pantalla de pago ---
+          const totalFinal = document.getElementById('cart-total').textContent;
+          localStorage.setItem('montoPagoIntento', totalFinal);
+
+          localStorage.setItem('paymentLocked', 'false');
+          window.location.href = "../../" + metodoElegido;
         } else {
           alert("❌ Error: " + resp.msg);
         }
       } catch (error) {
-        console.error("Error en la compra:", error);
-        alert("Hubo un error al conectar con el servidor.");
+        console.error("Error:", error);
+        alert("Error al conectar con el servidor.");
       }
     });
   </script>
