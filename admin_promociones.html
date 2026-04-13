@@ -40,9 +40,7 @@
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="productos-tab" data-bs-toggle="tab" data-bs-target="#productos" type="button" role="tab">Productos</button>
                     </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="categorias-tab" data-bs-toggle="tab" data-bs-target="#categorias" type="button" role="tab">Categorías</button>
-                    </li>
+                    
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="pago-tab" data-bs-toggle="tab" data-bs-target="#pago" type="button" role="tab">Métodos de Pago</button>
                     </li>
@@ -63,20 +61,6 @@
                         </div>
                     </div>
 
-                    <!-- Promociones de Categorías -->
-                    <div class="tab-pane fade" id="categorias" role="tabpanel">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5>Promociones en Categorías</h5>
-                                <button class="btn btn-sm btn-outline-primary" onclick="cargarPromocionesCategorias()">🔄 Actualizar</button>
-                            </div>
-                            <div class="card-body">
-                                <div id="categorias-promociones">
-                                    <!-- Las promociones se cargarán aquí -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- Promociones de Pago -->
                     <div class="tab-pane fade" id="pago" role="tabpanel">
