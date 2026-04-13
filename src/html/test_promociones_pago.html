@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba Promociones de Pago - Borrachorama</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>🧪 Prueba de Promociones de Pago</h1>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Crear Promoción de Pago</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="testForm">
+                            <div class="mb-3">
+                                <label class="form-label">Método de Pago</label>
+                                <select class="form-select" id="testMetodoPago" required>
+                                    <option value="tarjeta">Tarjeta de Crédito</option>
+                                    <option value="efectivo">Efectivo</option>
+                                    <option value="transferencia">Transferencia</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tipo Descuento</label>
+                                <select class="form-select" id="testTipoDescuento" required>
+                                    <option value="porcentaje">Porcentaje</option>
+                                    <option value="fijo">Monto Fijo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Valor</label>
+                                <input type="number" class="form-control" id="testValor" min="0" step="0.01" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mínimo Compra</label>
+                                <input type="number" class="form-control" id="testMinimo" min="0" step="0.01">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Crear Promoción</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Promociones Existentes</h5>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-outline-primary mb-3" onclick="cargarPromociones()">Cargar Promociones</button>
+                        <div id="promocionesList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Cargar promociones existentes
+        async function cargarPromociones() {
+            try {
+                const response = await fetch('../backend/get_promociones_pago.php');
+                const promociones = await response.json();
+
+                const container = document.getElementById('promocionesList');
+
+                if (promociones.error) {
+                    container.innerHTML = `<div class="alert alert-danger">${promociones.error}</div>`;
+                    return;
+                }
+
+                if (promociones.length === 0) {
+                    container.innerHTML = '<div class="alert alert-info">No hay promociones.</div>';
+                    return;
+                }
+
+                let html = '<div class="list-group">';
+                promociones.forEach(promo => {
+                    const metodoTraducido = {
+                        'tarjeta': 'Tarjeta Crédito',
+                        'efectivo': 'Efectivo',
+                        'transferencia': 'Transferencia'
+                    }[promo.metodo_pago] || promo.metodo_pago;
+
+                    const descuento = promo.descuento_porcentaje > 0 ?
+                        `${promo.descuento_porcentaje}% OFF` :
+                        `$${promo.descuento_fijo} OFF`;
+
+                    html += `
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6>${metodoTraducido}</h6>
+                                <small class="text-muted">${promo.activa ? 'Activa' : 'Inactiva'}</small>
+                            </div>
+                            <p class="mb-1">${descuento} (Mínimo: $${promo.minimo_compra})</p>
+                            <button class="btn btn-sm btn-outline-danger" onclick="eliminarPromocion(${promo.id})">Eliminar</button>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+
+                container.innerHTML = html;
+            } catch (error) {
+                document.getElementById('promocionesList').innerHTML =
+                    '<div class="alert alert-danger">Error al cargar promociones.</div>';
+            }
+        }
+
+        // Crear nueva promoción
+        document.getElementById('testForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('metodo_pago', document.getElementById('testMetodoPago').value);
+            formData.append('descuento_porcentaje', document.getElementById('testTipoDescuento').value === 'porcentaje' ?
+                document.getElementById('testValor').value : 0);
+            formData.append('descuento_fijo', document.getElementById('testTipoDescuento').value === 'fijo' ?
+                document.getElementById('testValor').value : 0);
+            formData.append('minimo_compra', document.getElementById('testMinimo').value || 0);
+            formData.append('activa', 1);
+
+            try {
+                const response = await fetch('../backend/guardar_promocion_pago.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Promoción creada exitosamente');
+                    document.getElementById('testForm').reset();
+                    cargarPromociones();
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (error) {
+                alert('Error al crear la promoción');
+            }
+        });
+
+        // Eliminar promoción
+        async function eliminarPromocion(id) {
+            if (!confirm('¿Eliminar esta promoción?')) return;
+
+            const formData = new FormData();
+            formData.append('id', id);
+
+            try {
+                const response = await fetch('../backend/eliminar_promocion_pago.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    cargarPromociones();
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (error) {
+                alert('Error al eliminar');
+            }
+        }
+
+        // Cargar al iniciar
+        document.addEventListener('DOMContentLoaded', cargarPromociones);
+    </script>
+</body>
+</html>

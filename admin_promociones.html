@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Promociones - Borrachorama</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); }
+        .promotion-card { border-left: 4px solid #28a745; }
+        .promotion-inactive { border-left-color: #6c757d; opacity: 0.6; }
+        .badge-percentage { background-color: #dc3545; }
+        .badge-fixed { background-color: #fd7e14; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Borrachorama - Promociones</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="dashboard_admin.html">Volver al Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>🎉 Gestión de Promociones</h2>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addPromotionModal">
+                        ➕ Nueva Promoción
+                    </button>
+                </div>
+
+                <!-- Pestañas para diferentes tipos de promociones -->
+                <ul class="nav nav-tabs" id="promotionTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="productos-tab" data-bs-toggle="tab" data-bs-target="#productos" type="button" role="tab">Productos</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="categorias-tab" data-bs-toggle="tab" data-bs-target="#categorias" type="button" role="tab">Categorías</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pago-tab" data-bs-toggle="tab" data-bs-target="#pago" type="button" role="tab">Métodos de Pago</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content mt-4" id="promotionTabsContent">
+                    <!-- Promociones de Productos -->
+                    <div class="tab-pane fade show active" id="productos" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Promociones en Productos</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="productos-promociones" class="row">
+                                    <!-- Las promociones se cargarán aquí -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Promociones de Categorías -->
+                    <div class="tab-pane fade" id="categorias" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5>Promociones en Categorías</h5>
+                                <button class="btn btn-sm btn-outline-primary" onclick="cargarPromocionesCategorias()">🔄 Actualizar</button>
+                            </div>
+                            <div class="card-body">
+                                <div id="categorias-promociones">
+                                    <!-- Las promociones se cargarán aquí -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Promociones de Pago -->
+                    <div class="tab-pane fade" id="pago" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5>Promociones en Métodos de Pago</h5>
+                                <div>
+                                    <button class="btn btn-sm btn-success me-2" data-bs-toggle="modal" data-bs-target="#addPaymentPromotionModal">
+                                        ➕ Nueva Promoción
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="cargarPromocionesPago()">🔄 Actualizar</button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="pago-promociones">
+                                    <!-- Las promociones se cargarán aquí -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Agregar Promoción de Producto -->
+    <div class="modal fade" id="addPromotionModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nueva Promoción de Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="promotionForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">Producto</label>
+                                <select class="form-select" id="productoSelect" required>
+                                    <option value="">Seleccionar producto...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Tipo de Descuento</label>
+                                <select class="form-select" id="tipoDescuento" required>
+                                    <option value="porcentaje">Porcentaje (%)</option>
+                                    <option value="fijo">Monto Fijo ($)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label class="form-label" id="valorLabel">Porcentaje de descuento</label>
+                                <input type="number" class="form-control" id="valorDescuento" min="0" step="0.01" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Estado</label>
+                                <select class="form-select" id="estadoPromocion">
+                                    <option value="1">Activa</option>
+                                    <option value="0">Inactiva</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Fecha Inicio</label>
+                                <input type="datetime-local" class="form-control" id="fechaInicio">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Fecha Fin</label>
+                                <input type="datetime-local" class="form-control" id="fechaFin">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarPromocionProducto()">Guardar Promoción</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Agregar Promoción de Pago -->
+    <div class="modal fade" id="addPaymentPromotionModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nueva Promoción de Método de Pago</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="paymentPromotionForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">Método de Pago</label>
+                                <select class="form-select" id="metodoPagoSelect" required>
+                                    <option value="">Seleccionar método...</option>
+                                    <option value="tarjeta">Tarjeta de Crédito/Débito</option>
+                                    <option value="efectivo">Efectivo</option>
+                                    <option value="transferencia">Transferencia Bancaria</option>
+                                    <option value="cheque">Cheque</option>
+                                    <option value="monedero">Monedero Electrónico</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Tipo de Descuento</label>
+                                <select class="form-select" id="tipoDescuentoPago" required>
+                                    <option value="porcentaje">Porcentaje (%)</option>
+                                    <option value="fijo">Monto Fijo ($)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label class="form-label" id="valorPagoLabel">Porcentaje de descuento</label>
+                                <input type="number" class="form-control" id="valorDescuentoPago" min="0" step="0.01" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Mínimo de Compra ($)</label>
+                                <input type="number" class="form-control" id="minimoCompraPago" min="0" step="0.01" placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Fecha Inicio</label>
+                                <input type="datetime-local" class="form-control" id="fechaInicioPago">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Fecha Fin</label>
+                                <input type="datetime-local" class="form-control" id="fechaFinPago">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Estado</label>
+                                <select class="form-select" id="estadoPromocionPago">
+                                    <option value="1">Activa</option>
+                                    <option value="0">Inactiva</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarPromocionPago()">Guardar Promoción</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.js"></script>
+    <script>
+        // Cargar datos al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarProductos();
+            cargarPromocionesProductos();
+            cargarPromocionesCategorias();
+            cargarPromocionesPago();
+
+            // Cambiar label según tipo de descuento para productos
+            document.getElementById('tipoDescuento').addEventListener('change', function() {
+                const label = document.getElementById('valorLabel');
+                const input = document.getElementById('valorDescuento');
+
+                if (this.value === 'porcentaje') {
+                    label.textContent = 'Porcentaje de descuento (%)';
+                    input.max = 100;
+                    input.step = 0.01;
+                } else {
+                    label.textContent = 'Monto fijo de descuento ($)';
+                    input.removeAttribute('max');
+                    input.step = 0.01;
+                }
+            });
+
+            // Cambiar label según tipo de descuento para pagos
+            document.getElementById('tipoDescuentoPago').addEventListener('change', function() {
+                const label = document.getElementById('valorPagoLabel');
+                const input = document.getElementById('valorDescuentoPago');
+
+                if (this.value === 'porcentaje') {
+                    label.textContent = 'Porcentaje de descuento (%)';
+                    input.max = 100;
+                    input.step = 0.01;
+                } else {
+                    label.textContent = 'Monto fijo de descuento ($)';
+                    input.removeAttribute('max');
+                    input.step = 0.01;
+                }
+            });
+        });
+
+        // Cargar lista de productos
+        async function cargarProductos() {
+            try {
+                const response = await fetch('backend/getProducts.php');
+                const productos = await response.json();
+
+                const select = document.getElementById('productoSelect');
+                productos.forEach(producto => {
+                    const option = document.createElement('option');
+                    option.value = producto.id;
+                    option.textContent = `${producto.name} - $${producto.price}`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error cargando productos:', error);
+            }
+        }
+
+        // Cargar promociones de productos
+        async function cargarPromocionesProductos() {
+            try {
+                const response = await fetch('backend/getProducts.php');
+                const productos = await response.json();
+
+                const container = document.getElementById('productos-promociones');
+                container.innerHTML = '';
+
+                productos.filter(p => p.promotion_active).forEach(producto => {
+                    const card = document.createElement('div');
+                    card.className = 'col-md-4 mb-3';
+
+                    let descuentoInfo = '';
+                    if (producto.discount_percentage > 0) {
+                        descuentoInfo = `${producto.discount_percentage}% OFF`;
+                    } else if (producto.discount_fixed > 0) {
+                        descuentoInfo = `$${producto.discount_fixed} OFF`;
+                    }
+
+                    card.innerHTML = `
+                        <div class="card promotion-card">
+                            <div class="card-body">
+                                <h6 class="card-title">${producto.name}</h6>
+                                <p class="card-text">
+                                    <del>$${producto.price}</del>
+                                    <strong>$${(producto.price - (producto.discount_percentage > 0 ?
+                                        producto.price * producto.discount_percentage / 100 :
+                                        producto.discount_fixed)).toFixed(2)}</strong>
+                                </p>
+                                <span class="badge ${producto.discount_percentage > 0 ? 'badge-percentage' : 'badge-fixed'}">
+                                    ${descuentoInfo}
+                                </span>
+                                <br><br>
+                                <button class="btn btn-sm btn-outline-danger" onclick="eliminarPromocionProducto(${producto.id})">
+                                    🗑️ Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    container.appendChild(card);
+                });
+
+                if (productos.filter(p => p.promotion_active).length === 0) {
+                    container.innerHTML = '<div class="col-12"><div class="alert alert-info">No hay promociones activas en productos.</div></div>';
+                }
+            } catch (error) {
+                console.error('Error cargando promociones:', error);
+            }
+        }
+
+        // Guardar promoción de producto
+        async function guardarPromocionProducto() {
+            const formData = new FormData();
+            formData.append('producto_id', document.getElementById('productoSelect').value);
+            formData.append('tipo_descuento', document.getElementById('tipoDescuento').value);
+            formData.append('valor', document.getElementById('valorDescuento').value);
+            formData.append('activa', document.getElementById('estadoPromocion').value);
+            formData.append('fecha_inicio', document.getElementById('fechaInicio').value);
+            formData.append('fecha_fin', document.getElementById('fechaFin').value);
+
+            try {
+                const response = await fetch('backend/guardar_promocion_producto.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Promoción guardada exitosamente');
+                    bootstrap.Modal.getInstance(document.getElementById('addPromotionModal')).hide();
+                    cargarPromocionesProductos();
+                    document.getElementById('promotionForm').reset();
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al guardar la promoción');
+            }
+        }
+
+        // Funciones placeholder para categorías y pago
+        function cargarPromocionesCategorias() {
+            document.getElementById('categorias-promociones').innerHTML =
+                '<div class="alert alert-info">Funcionalidad de promociones por categoría próximamente.</div>';
+        }
+
+        // Cargar promociones de pago
+        async function cargarPromocionesPago() {
+            try {
+                const response = await fetch('backend/get_promociones_pago.php');
+                const promociones = await response.json();
+
+                const container = document.getElementById('pago-promociones');
+
+                if (promociones.error) {
+                    container.innerHTML = `<div class="alert alert-danger">${promociones.error}</div>`;
+                    return;
+                }
+
+                if (promociones.length === 0) {
+                    container.innerHTML = '<div class="alert alert-info">No hay promociones de métodos de pago configuradas.</div>';
+                    return;
+                }
+
+                let html = '<div class="table-responsive"><table class="table table-striped">';
+                html += '<thead><tr><th>Método de Pago</th><th>Descuento</th><th>Mínimo Compra</th><th>Período</th><th>Estado</th><th>Acciones</th></tr></thead>';
+                html += '<tbody>';
+
+                promociones.forEach(promo => {
+                    const metodoPagoTraducido = {
+                        'tarjeta': 'Tarjeta Crédito/Débito',
+                        'efectivo': 'Efectivo',
+                        'transferencia': 'Transferencia',
+                        'cheque': 'Cheque',
+                        'monedero': 'Monedero Electrónico'
+                    }[promo.metodo_pago] || promo.metodo_pago;
+
+                    let descuentoInfo = '';
+                    if (promo.descuento_porcentaje > 0) {
+                        descuentoInfo = `${promo.descuento_porcentaje}% OFF`;
+                    } else if (promo.descuento_fijo > 0) {
+                        descuentoInfo = `$${promo.descuento_fijo} OFF`;
+                    }
+
+                    const minimoCompra = promo.minimo_compra > 0 ? `$${promo.minimo_compra}` : 'Sin mínimo';
+                    const estado = promo.activa == 1 ? '<span class="badge bg-success">Activa</span>' : '<span class="badge bg-secondary">Inactiva</span>';
+
+                    const fechaInicio = promo.fecha_inicio ? new Date(promo.fecha_inicio).toLocaleDateString() : 'Sin fecha';
+                    const fechaFin = promo.fecha_fin ? new Date(promo.fecha_fin).toLocaleDateString() : 'Sin fecha';
+                    const periodo = fechaInicio === 'Sin fecha' ? 'Sin límite' : `${fechaInicio} - ${fechaFin}`;
+
+                    html += `
+                        <tr>
+                            <td>${metodoPagoTraducido}</td>
+                            <td><span class="badge ${promo.descuento_porcentaje > 0 ? 'badge-percentage' : 'badge-fixed'}">${descuentoInfo}</span></td>
+                            <td>${minimoCompra}</td>
+                            <td>${periodo}</td>
+                            <td>${estado}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-danger" onclick="eliminarPromocionPago(${promo.id})">
+                                    🗑️ Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                html += '</tbody></table></div>';
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error cargando promociones de pago:', error);
+                document.getElementById('pago-promociones').innerHTML =
+                    '<div class="alert alert-danger">Error al cargar las promociones de pago.</div>';
+            }
+        }
+
+        // Eliminar promoción de producto
+        async function eliminarPromocionProducto(productoId) {
+            if (!confirm('¿Estás seguro de eliminar esta promoción?')) return;
+
+            const formData = new FormData();
+            formData.append('producto_id', productoId);
+
+            try {
+                const response = await fetch('backend/eliminar_promocion_producto.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    cargarPromocionesProductos();
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al eliminar la promoción');
+            }
+        }
+
+        // Guardar promoción de pago
+        async function guardarPromocionPago() {
+            const formData = new FormData();
+            formData.append('metodo_pago', document.getElementById('metodoPagoSelect').value);
+            formData.append('descuento_porcentaje', document.getElementById('tipoDescuentoPago').value === 'porcentaje' ?
+                document.getElementById('valorDescuentoPago').value : 0);
+            formData.append('descuento_fijo', document.getElementById('tipoDescuentoPago').value === 'fijo' ?
+                document.getElementById('valorDescuentoPago').value : 0);
+            formData.append('fecha_inicio', document.getElementById('fechaInicioPago').value);
+            formData.append('fecha_fin', document.getElementById('fechaFinPago').value);
+            formData.append('minimo_compra', document.getElementById('minimoCompraPago').value || 0);
+            formData.append('activa', document.getElementById('estadoPromocionPago').value);
+
+            try {
+                const response = await fetch('backend/guardar_promocion_pago.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Promoción de pago guardada exitosamente');
+                    bootstrap.Modal.getInstance(document.getElementById('addPaymentPromotionModal')).hide();
+                    cargarPromocionesPago();
+                    document.getElementById('paymentPromotionForm').reset();
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al guardar la promoción de pago');
+            }
+        }
+
+        // Eliminar promoción de pago
+        async function eliminarPromocionPago(id) {
+            if (!confirm('¿Estás seguro de eliminar esta promoción de pago?')) return;
+
+            const formData = new FormData();
+            formData.append('id', id);
+
+            try {
+                const response = await fetch('backend/eliminar_promocion_pago.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    cargarPromocionesPago();
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al eliminar la promoción de pago');
+            }
+        }
+    </script>
+</body>
+</html>

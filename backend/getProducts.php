@@ -15,6 +15,12 @@ SELECT
     p.stock,
     p.stock_minimo,
     p.estatus,
+    p.descuento_porcentaje,
+    p.descuento_fijo,
+    p.fecha_inicio_promocion,
+    p.fecha_fin_promocion,
+    p.tipo_promocion,
+    p.promocion_activa,
     c.nombre AS categoria_nombre
 FROM productos p
 INNER JOIN categorias c ON p.categoria_id = c.id
@@ -35,7 +41,13 @@ if ($result && $result->num_rows > 0) {
             "price"       => (float)$row["precio"],
             "stock"       => (int)$row["stock"],
             "min_stock"   => isset($row["stock_minimo"]) ? (int)$row["stock_minimo"] : 0,
-            "status"      => (int)$row["estatus"]
+            "status"      => (int)$row["estatus"],
+            "discount_percentage" => (float)($row["descuento_porcentaje"] ?? 0),
+            "discount_fixed" => (float)($row["descuento_fijo"] ?? 0),
+            "promotion_start" => $row["fecha_inicio_promocion"],
+            "promotion_end" => $row["fecha_fin_promocion"],
+            "promotion_type" => $row["tipo_promocion"] ?? 'producto',
+            "promotion_active" => (int)($row["promocion_activa"] ?? 0)
         ];
     }
 

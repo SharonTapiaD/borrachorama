@@ -75,7 +75,8 @@
 
                 <button class="btn-accion btn-ver" onclick="verFactura()">👁️ Ver Factura</button>
                 <button class="btn-accion btn-descargar" onclick="descargarFactura()">📥 Descargar PDF y XML</button>
-                <button class="btn-accion btn-whatsapp">💬 Enviar por WhatsApp</button>
+                <button class="btn-accion btn-correo" onclick="enviarPorCorreo()" style="background: #EA4335; color: white;">📧 Enviar por Correo</button>
+                <button class="btn-accion btn-whatsapp" onclick="enviarPorWhatsApp()">💬 Enviar por WhatsApp</button>
 
                 <hr>
                 <a href="inicio.html" class="btn btn-outline-secondary mt-3">Finalizar y volver al inicio</a>
@@ -104,6 +105,16 @@
             btn.disabled = true;
             btn.innerText = "Conectando con el SAT...";
 
+            // Guardar datos del formulario
+            const datosFactura = {
+                razonSocial: document.getElementById('razonSocial').value,
+                rfc: document.getElementById('rfc').value,
+                cp: document.getElementById('cp').value,
+                email: document.getElementById('emailFactura').value
+            };
+            localStorage.setItem('datosFactura', JSON.stringify(datosFactura));
+            console.log('Datos guardados en localStorage:', datosFactura);
+
             setTimeout(() => {
                 // Ocultar formulario y mostrar acciones
                 document.getElementById('seccion-formulario').style.display = 'none';
@@ -113,11 +124,54 @@
 
         // Funciones de los botones
         function verFactura() {
-            alert("Simulación: Abriendo visor de PDF oficial del SAT...");
+            window.location.href = 'factura.html';
         }
 
         function descargarFactura() {
-            alert("Simulación: Descargando archivo comprimido FACTURA_BCH.zip (PDF + XML)");
+            // Redirigir a factura y luego descargar
+            window.location.href = 'factura.html?descargar=true';
+        }
+
+        function enviarPorCorreo() {
+            const datos = JSON.parse(localStorage.getItem('datosFactura') || '{}');
+            const pedido = JSON.parse(localStorage.getItem('pedidos') || '[]').find(p => p.id === localStorage.getItem('lastPedidoId'));
+            const total = pedido ? pedido.total : 0;
+            
+            const asunto = encodeURIComponent(`Factura Electrónica - Borrachorama - Folio ${Date.now().toString().slice(-8)}`);
+            const cuerpo = encodeURIComponent(`Estimado ${datos.razonSocial},
+
+Adjunto encontrará su factura electrónica correspondiente a su compra en Borrachorama.
+
+Detalles de la factura:
+- Folio: FCT-${Date.now().toString().slice(-8)}
+- Total: $${total.toFixed(2)} MXN
+- Fecha: ${new Date().toLocaleDateString('es-MX')}
+
+Para descargar su factura completa, visite: ${window.location.origin}/factura.html
+
+Atentamente,
+Equipo de Borrachorama
+facturacion@borrachorama.com`);
+
+            window.open(`mailto:${datos.email}?subject=${asunto}&body=${cuerpo}`);
+        }
+
+        function enviarPorWhatsApp() {
+            const datos = JSON.parse(localStorage.getItem('datosFactura') || '{}');
+            const pedido = JSON.parse(localStorage.getItem('pedidos') || '[]').find(p => p.id === localStorage.getItem('lastPedidoId'));
+            const total = pedido ? pedido.total : 0;
+            
+            const mensaje = encodeURIComponent(`¡Hola! Aquí tienes tu factura electrónica de Borrachorama 🍺
+
+📄 Folio: FCT-${Date.now().toString().slice(-8)}
+💰 Total: $${total.toFixed(2)} MXN
+📅 Fecha: ${new Date().toLocaleDateString('es-MX')}
+
+Para ver y descargar tu factura completa, visita: ${window.location.origin}/factura.html
+
+¡Gracias por tu compra! 🎉`);
+
+            window.open(`https://wa.me/?text=${mensaje}`);
         }
     </script>
 </body>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de Promociones</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Prueba del Sistema de Promociones</h1>
+
+    <div id="results"></div>
+
+    <button onclick="testPromotions()">Ejecutar Pruebas</button>
+    <button onclick="activateTestPromotion()">Activar Promoción de Prueba</button>
+    <button onclick="checkCart()">Ver Carrito Actual</button>
+
+    <script>
+        async function testPromotions() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="test-result warning">Ejecutando pruebas...</div>';
+
+            try {
+                // Prueba 1: Verificar productos con promociones
+                const productsResponse = await fetch('backend/getProducts.php');
+                const products = await productsResponse.json();
+
+                let resultHtml = '<h2>Resultados de Pruebas:</h2>';
+
+                const productsWithPromotions = products.filter(p => p.promotion_active);
+                resultHtml += `<div class="test-result ${productsWithPromotions.length > 0 ? 'success' : 'error'}">`;
+                resultHtml += `📦 Productos con promociones activas: ${productsWithPromotions.length}`;
+                resultHtml += '</div>';
+
+                if (productsWithPromotions.length > 0) {
+                    resultHtml += '<h3>Productos con promociones:</h3><ul>';
+                    productsWithPromotions.forEach(p => {
+                        const discount = p.discount_percentage > 0 ?
+                            `${p.discount_percentage}% OFF` :
+                            `$${p.discount_fixed} OFF`;
+                        resultHtml += `<li>${p.name} - ${discount}</li>`;
+                    });
+                    resultHtml += '</ul>';
+                }
+
+                // Prueba 2: Verificar carrito
+                const cartResponse = await fetch('backend/getCarrito.php');
+                const cartData = await cartResponse.json();
+
+                if (cartData.status === "error") {
+                    resultHtml += '<div class="test-result warning">⚠️ No hay sesión activa para probar carrito</div>';
+                } else {
+                    const cartItems = Array.isArray(cartData) ? cartData : [];
+                    resultHtml += `<div class="test-result success">🛒 Items en carrito: ${cartItems.length}</div>`;
+
+                    if (cartItems.length > 0) {
+                        // Calcular descuentos manualmente
+                        let totalDescuentos = 0;
+                        cartItems.forEach(item => {
+                            if (item.promocion_activa) {
+                                const precio = parseFloat(item.precio);
+                                if (item.descuento_porcentaje > 0) {
+                                    totalDescuentos += precio * (item.descuento_porcentaje / 100) * item.cantidad;
+                                } else if (item.descuento_fijo > 0) {
+                                    totalDescuentos += Math.min(item.descuento_fijo, precio) * item.cantidad;
+                                }
+                            }
+                        });
+
+                        resultHtml += `<div class="test-result ${totalDescuentos > 0 ? 'success' : 'warning'}">`;
+                        resultHtml += `💰 Descuentos calculados: $${totalDescuentos.toFixed(2)}`;
+                        resultHtml += '</div>';
+                    }
+                }
+
+                results.innerHTML = resultHtml;
+
+            } catch (error) {
+                results.innerHTML = `<div class="test-result error">❌ Error en pruebas: ${error.message}</div>`;
+            }
+        }
+
+        async function activateTestPromotion() {
+            try {
+                const response = await fetch('backend/activar_promocion_prueba.php');
+                const html = await response.text();
+
+                // Mostrar resultado en una nueva ventana
+                const newWindow = window.open('', '_blank');
+                newWindow.document.write(html);
+                newWindow.document.close();
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function checkCart() {
+            window.open('src/html/cart.html', '_blank');
+        }
+    </script>
+</body>
+</html>

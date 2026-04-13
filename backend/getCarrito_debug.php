@@ -47,8 +47,14 @@ while ($row = $res->fetch_assoc()) {
         'descuento_porcentaje' => $row['descuento_porcentaje'] ?? 0,
         'descuento_fijo' => $row['descuento_fijo'] ?? 0,
         'promocion_activa' => $promocionActiva,
-        'categoria' => $row['categoria']
+        'categoria' => $row['categoria'],
+        // Debug info
+        'debug_promocion_activa_db' => $row['promocion_activa'],
+        'debug_fecha_inicio' => $row['fecha_inicio_promocion'],
+        'debug_fecha_fin' => $row['fecha_fin_promocion'],
+        'debug_ahora' => date('Y-m-d H:i:s')
     ];
 }
 
 echo json_encode($items);
+?>

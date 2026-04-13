@@ -95,9 +95,14 @@
 
       <div class="cart-summary"
         style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; margin-left: auto;">
+        <h5>Resumen de Compra</h5>
         <div class="d-flex justify-content-between mb-2">
           <span>Subtotal:</span>
           <span>$<span id="cart-subtotal">0.00</span></span>
+        </div>
+        <div class="d-flex justify-content-between mb-2 text-success" id="descuentos-section" style="display: none;">
+          <span>Descuentos aplicados:</span>
+          <span>-$<span id="cart-descuentos">0.00</span></span>
         </div>
         <div class="d-flex justify-content-between mb-2 text-muted">
           <span>IVA (16%):</span>
@@ -112,6 +117,7 @@
           <strong style="font-size: 1.4rem;">Total Final:</strong>
           <strong style="font-size: 1.4rem; color: #28a745;">$<span id="cart-total">0.00</span> MXN</strong>
         </div>
+        <div id="promociones-info" class="mb-3" style="font-size: 0.9em; color: #666;"></div>
         <button id="buy-btn" class="btn btn-success w-100 fw-bold" disabled>Proceder al Pago</button>
       </div>
     </section>
@@ -222,24 +228,58 @@
     function renderCarrito(items) {
       const tbody = document.getElementById("cart-body");
       const subtotalEl = document.getElementById("cart-subtotal");
+      const descuentosEl = document.getElementById("cart-descuentos");
       const ivaEl = document.getElementById("cart-iva");
       const envioEl = document.getElementById("cart-envio");
       const totalEl = document.getElementById("cart-total");
+      const descuentosSection = document.getElementById("descuentos-section");
+      const promocionesInfo = document.getElementById("promociones-info");
       const buyBtn = document.getElementById("buy-btn");
 
       tbody.innerHTML = "";
       let subtotal = 0;
-      const COSTO_ENVIO = items.length > 0 ? 80.00 : 0.00; // Si hay items, cobramos 80
+      let totalDescuentos = 0;
+      const COSTO_ENVIO = items.length > 0 ? 80.00 : 0.00;
 
       items.forEach((item) => {
-        const filaSubtotal = parseFloat(item.precio) * parseInt(item.cantidad);
+        const precioOriginal = parseFloat(item.precio);
+        const cantidad = parseInt(item.cantidad);
+
+        // Calcular precio con descuento si existe
+        let precioFinal = precioOriginal;
+        let descuentoItem = 0;
+        let infoPromocion = '';
+
+        // Verificar promoción de forma más robusta
+        const tienePromocion = item.promocion_activa === true || item.promocion_activa === 1 || item.promocion_activa === "1";
+        const descuentoPorcentaje = parseFloat(item.descuento_porcentaje) || 0;
+        const descuentoFijo = parseFloat(item.descuento_fijo) || 0;
+
+        if (tienePromocion && descuentoPorcentaje > 0) {
+          descuentoItem = precioOriginal * (descuentoPorcentaje / 100);
+          precioFinal = precioOriginal - descuentoItem;
+          infoPromocion = `${descuentoPorcentaje}% OFF`;
+        } else if (tienePromocion && descuentoFijo > 0) {
+          descuentoItem = Math.min(descuentoFijo, precioOriginal);
+          precioFinal = precioOriginal - descuentoItem;
+          infoPromocion = `$${descuentoFijo} OFF`;
+        }
+
+        const filaSubtotal = precioFinal * cantidad;
         subtotal += filaSubtotal;
+        totalDescuentos += descuentoItem * cantidad;
 
         tbody.innerHTML += `
                     <tr>
-                      <td>${item.nombre}</td>
-                      <td>$${parseFloat(item.precio).toFixed(2)}</td>
-                      <td>${item.cantidad}</td>
+                      <td>
+                        ${item.nombre}
+                        ${infoPromocion ? `<br><small class="text-success">${infoPromocion}</small>` : ''}
+                      </td>
+                      <td>
+                        ${descuentoItem > 0 ? `<del class="text-muted">$${precioOriginal.toFixed(2)}</del><br>` : ''}
+                        $${precioFinal.toFixed(2)}
+                      </td>
+                      <td>${cantidad}</td>
                       <td>$${filaSubtotal.toFixed(2)}</td>
                       <td><button class="btn btn-danger btn-sm" onclick="eliminarItem(${item.producto_id})">Eliminar</button></td>
                     </tr>
@@ -255,6 +295,20 @@
       ivaEl.textContent = iva.toFixed(2);
       envioEl.textContent = COSTO_ENVIO.toFixed(2);
       totalEl.textContent = totalFinal.toFixed(2);
+
+      // Mostrar descuentos si existen
+      if (totalDescuentos > 0) {
+        descuentosEl.textContent = totalDescuentos.toFixed(2);
+        descuentosSection.style.display = 'block';
+      } else {
+        descuentosSection.style.display = 'none';
+      }
+
+      // Información de promociones
+      promocionesInfo.innerHTML = '';
+      if (totalDescuentos > 0) {
+        promocionesInfo.innerHTML = '<div class="alert alert-success py-2"><small>🎉 ¡Promociones aplicadas!</small></div>';
+      }
 
       buyBtn.disabled = items.length === 0;
     }

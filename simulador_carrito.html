@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Carrito con Promociones</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .cart-item { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .price { font-weight: bold; color: #28a745; }
+        .original-price { text-decoration: line-through; color: #6c757d; }
+        .discount { color: #dc3545; font-weight: bold; }
+        .summary { background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 20px; }
+        .test-btn { background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        .test-btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>🛒 Simulador de Carrito con Promociones</h1>
+
+    <div>
+        <button class="test-btn" onclick="cargarDatosReales()">Cargar Datos Reales del Carrito</button>
+        <button class="test-btn" onclick="cargarDatosPrueba()">Cargar Datos de Prueba</button>
+        <button class="test-btn" onclick="activarPromocionPrueba()">Activar Promoción de Prueba</button>
+    </div>
+
+    <div id="cart-container">
+        <h2>Productos en Carrito:</h2>
+        <div id="cart-items"></div>
+        <div id="cart-summary" class="summary"></div>
+    </div>
+
+    <script>
+        // Datos de prueba
+        const datosPrueba = [
+            {
+                nombre: "Cerveza Artesanal",
+                precio: 45.00,
+                cantidad: 1,
+                promocion_activa: true,
+                descuento_porcentaje: 20,
+                descuento_fijo: 0
+            },
+            {
+                nombre: "Whisky Buchanan's",
+                precio: 420.00,
+                cantidad: 2,
+                promocion_activa: false,
+                descuento_porcentaje: 0,
+                descuento_fijo: 0
+            }
+        ];
+
+        async function cargarDatosReales() {
+            try {
+                const response = await fetch('backend/getCarrito.php');
+                const data = await response.json();
+
+                if (data.status === "error") {
+                    alert("No hay sesión activa. Usando datos de prueba.");
+                    cargarDatosPrueba();
+                    return;
+                }
+
+                renderCarrito(data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al cargar datos reales. Usando datos de prueba.');
+                cargarDatosPrueba();
+            }
+        }
+
+        function cargarDatosPrueba() {
+            renderCarrito(datosPrueba);
+        }
+
+        async function activarPromocionPrueba() {
+            try {
+                const response = await fetch('backend/activar_promocion_prueba.php');
+                const result = await response.text();
+
+                if (result.includes('exitosa')) {
+                    alert('Promoción activada. Recarga los datos para ver cambios.');
+                } else {
+                    alert('Resultado: ' + result.substring(0, 200) + '...');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function renderCarrito(items) {
+            const container = document.getElementById('cart-items');
+            const summary = document.getElementById('cart-summary');
+
+            container.innerHTML = '';
+            let subtotal = 0;
+            let totalDescuentos = 0;
+            const COSTO_ENVIO = items.length > 0 ? 80.00 : 0.00;
+
+            items.forEach((item, index) => {
+                const precioOriginal = parseFloat(item.precio);
+                const cantidad = parseInt(item.cantidad);
+
+                // Calcular precio con descuento
+                let precioFinal = precioOriginal;
+                let descuentoItem = 0;
+                let infoPromocion = '';
+
+                const tienePromocion = item.promocion_activa === true || item.promocion_activa === 1 || item.promocion_activa === "1";
+                const descuentoPorcentaje = parseFloat(item.descuento_porcentaje) || 0;
+                const descuentoFijo = parseFloat(item.descuento_fijo) || 0;
+
+                if (tienePromocion && descuentoPorcentaje > 0) {
+                    descuentoItem = precioOriginal * (descuentoPorcentaje / 100);
+                    precioFinal = precioOriginal - descuentoItem;
+                    infoPromocion = `${descuentoPorcentaje}% OFF`;
+                } else if (tienePromocion && descuentoFijo > 0) {
+                    descuentoItem = Math.min(descuentoFijo, precioOriginal);
+                    precioFinal = precioOriginal - descuentoItem;
+                    infoPromocion = `$${descuentoFijo} OFF`;
+                }
+
+                const filaSubtotal = precioFinal * cantidad;
+                subtotal += filaSubtotal;
+                totalDescuentos += descuentoItem * cantidad;
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'cart-item';
+                itemDiv.innerHTML = `
+                    <h4>${item.nombre}</h4>
+                    <p>
+                        Precio: ${descuentoItem > 0 ? `<span class="original-price">$${precioOriginal.toFixed(2)}</span> ` : ''}
+                        <span class="price">$${precioFinal.toFixed(2)}</span>
+                        ${infoPromocion ? `<span class="discount">${infoPromocion}</span>` : ''}
+                    </p>
+                    <p>Cantidad: ${cantidad}</p>
+                    <p>Subtotal: $${filaSubtotal.toFixed(2)}</p>
+                    <small>Promoción activa: ${tienePromocion ? 'Sí' : 'No'} |
+                    Descuento %: ${descuentoPorcentaje} |
+                    Descuento $: ${descuentoFijo}</small>
+                `;
+                container.appendChild(itemDiv);
+            });
+
+            // Calcular totales
+            const iva = subtotal * 0.16;
+            const totalFinal = subtotal + iva + COSTO_ENVIO;
+
+            summary.innerHTML = `
+                <h3>Resumen de Compra</h3>
+                <p>Subtotal: $${subtotal.toFixed(2)}</p>
+                <p>Descuentos aplicados: ${totalDescuentos > 0 ? `<span class="discount">-$${totalDescuentos.toFixed(2)}</span>` : '$0.00'}</p>
+                <p>IVA (16%): $${iva.toFixed(2)}</p>
+                <p>Costo de Envío: $${COSTO_ENVIO.toFixed(2)}</p>
+                <hr>
+                <p><strong>Total Final: $${totalFinal.toFixed(2)} MXN</strong></p>
+            `;
+
+            console.log('Cálculos:', { subtotal, totalDescuentos, iva, COSTO_ENVIO, totalFinal });
+        }
+
+        // Cargar datos de prueba al iniciar
+        cargarDatosPrueba();
+    </script>
+</body>
+</html>

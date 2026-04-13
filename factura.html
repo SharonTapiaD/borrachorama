@@ -666,6 +666,12 @@
             <button class="btn btn-descargar" onclick="descargarFacturaPDF()">
                 📥 Descargar Factura (PDF)
             </button>
+            <button class="btn btn-correo" onclick="enviarPorCorreo()" style="background: linear-gradient(135deg, #EA4335 0%, #D33B2C 100%); color: white;">
+                📧 Enviar por Correo
+            </button>
+            <button class="btn btn-whatsapp" onclick="enviarPorWhatsApp()" style="background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); color: white;">
+                💬 Enviar por WhatsApp
+            </button>
             <button class="btn btn-donar" onclick="irADonacion()"
                 style="background: linear-gradient(135deg, #FF5722 0%, #E64A19 100%); color: white;">
                 ❤️ ¿Quieres donar?
@@ -762,12 +768,14 @@
 
             // PRIORIDAD 3: Cargar datos del cliente
             const datosPago = JSON.parse(localStorage.getItem('datosPagoTemp') || '{}');
+            const datosFactura = JSON.parse(localStorage.getItem('datosFactura') || '{}');
             console.log("3. Datos del cliente:", datosPago);
+            console.log("3. Datos fiscales:", datosFactura);
 
             // CARGAR DATOS EN LA FACTURA
             if (pedido && pedido.items && pedido.items.length > 0) {
                 console.log("4. ✅ Cargando factura con datos reales");
-                cargarDatosFactura(pedido, datosPago);
+                cargarDatosFactura(pedido, datosPago, datosFactura);
             } else {
                 console.log("4. ❌ No se encontraron datos, usando ejemplo");
                 cargarDatosEjemplo();
@@ -795,6 +803,14 @@
             }
 
             console.log("=== CARGA DE FACTURA COMPLETADA ===");
+
+            // Verificar si debe descargar automáticamente
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('descargar') === 'true') {
+                setTimeout(() => {
+                    descargarFacturaPDF();
+                }, 1000); // Esperar un segundo para que se cargue todo
+            }
         });
 
         // ================= CARGAR QR DE INSTAGRAM =================
@@ -849,17 +865,22 @@
         }
 
         // ================= FUNCIÓN PARA CARGAR DATOS =================
-        function cargarDatosFactura(pedido, datosCliente) {
+        function cargarDatosFactura(pedido, datosCliente, datosFactura) {
             try {
                 console.log("--- CARGANDO DATOS EN FACTURA ---");
                 console.log("Pedido recibido:", pedido);
-                console.log("Items del pedido:", pedido.items);
+                console.log("Datos cliente:", datosCliente);
+                console.log("Datos factura:", datosFactura);
 
                 // Datos del cliente
                 document.getElementById('nombre-cliente').textContent =
-                    datosCliente.nombre || pedido.contacto?.nombre || 'CONSUMIDOR FINAL';
+                    datosFactura.razonSocial || datosCliente.nombre || pedido.contacto?.nombre || 'CONSUMIDOR FINAL';
+                document.getElementById('rfc-cliente').textContent =
+                    datosFactura.rfc || datosCliente.rfc || 'XAXX010101000';
                 document.getElementById('correo-cliente').textContent =
-                    datosCliente.correo || pedido.contacto?.correo || 'No especificado';
+                    datosFactura.email || datosCliente.correo || pedido.contacto?.correo || 'No especificado';
+                document.getElementById('domicilio-cliente').textContent =
+                    datosCliente.domicilio || `C.P. ${datosFactura.cp || '00000'}`;
 
                 // Generar folios únicos
                 const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
@@ -911,8 +932,10 @@
                     folioFiscal: document.getElementById('folio').textContent,
                     folioSimple: document.getElementById('folio-simple').textContent,
                     fecha: new Date().toISOString(),
-                    cliente: datosCliente.nombre || pedido.contacto?.nombre || 'CONSUMIDOR FINAL',
-                    rfc: datosCliente.rfc || 'XAXX010101000',
+                    cliente: document.getElementById('nombre-cliente').textContent,
+                    rfc: document.getElementById('rfc-cliente').textContent,
+                    email: document.getElementById('correo-cliente').textContent,
+                    cp: datosFactura.cp || '',
                     items: pedido.items,
                     total: sumaImportes,
                     metodoPago: pedido.metodoPago
@@ -981,6 +1004,88 @@
             const facturaData = JSON.parse(localStorage.getItem('facturaActual') || '{}');
             localStorage.setItem('facturaParaDonacion', JSON.stringify(facturaData));
             window.location.href = '/Donacion.html';
+        }
+
+        function enviarPorCorreo() {
+            const datosFactura = JSON.parse(localStorage.getItem('datosFactura') || '{}');
+            const facturaData = JSON.parse(localStorage.getItem('facturaActual') || '{}');
+
+            if (!datosFactura.email) {
+                mostrarNotificacion('No se encontró el correo electrónico del cliente', 'error');
+                return;
+            }
+
+            // Preparar datos para el envío
+            const emailData = {
+                to: datosFactura.email,
+                subject: `Factura Electrónica - Borrachorama - Folio ${facturaData.folioSimple || '001'}`,
+                body: `
+                    <p>Estimado ${datosFactura.razonSocial || 'Cliente'},</p>
+
+                    <p>Adjunto encontrará su factura electrónica correspondiente a su compra en Borrachorama.</p>
+
+                    <h3>Detalles de la factura:</h3>
+                    <ul>
+                        <li><strong>Folio Fiscal:</strong> ${facturaData.folioFiscal || 'FCT-001'}</li>
+                        <li><strong>Folio:</strong> ${facturaData.folioSimple || '001'}</li>
+                        <li><strong>Total:</strong> $${facturaData.total ? facturaData.total.toFixed(2) : '0.00'} MXN</li>
+                        <li><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-MX')}</li>
+                    </ul>
+
+                    <p>Para descargar su factura completa en formato PDF, visite el siguiente enlace:</p>
+                    <p><a href="${window.location.href}">Ver y descargar factura</a></p>
+
+                    <p>¡Gracias por su compra!</p>
+
+                    <p>Atentamente,<br>
+                    <strong>Equipo de Borrachorama</strong><br>
+                    facturacion@borrachorama.com<br>
+                    (55) 1234-5678</p>
+                `,
+                folio: facturaData.folioSimple || '001'
+            };
+
+            // Mostrar loading
+            mostrarNotificacion('Enviando factura por correo...', 'info');
+
+            // Enviar petición AJAX
+            fetch('backend/enviar_factura_email.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(emailData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    mostrarNotificacion('✅ ' + data.message, 'success');
+                } else {
+                    mostrarNotificacion('❌ ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarNotificacion('❌ Error al enviar el correo. Intente nuevamente.', 'error');
+            });
+        }
+
+        function enviarPorWhatsApp() {
+            const datosFactura = JSON.parse(localStorage.getItem('datosFactura') || '{}');
+            const facturaData = JSON.parse(localStorage.getItem('facturaActual') || '{}');
+            
+            const mensaje = encodeURIComponent(`¡Hola! Aquí tienes tu factura electrónica de Borrachorama 🍺
+
+📄 Folio Fiscal: ${facturaData.folioFiscal || 'FCT-001'}
+📄 Folio: ${facturaData.folioSimple || '001'}
+💰 Total: $${facturaData.total ? facturaData.total.toFixed(2) : '0.00'} MXN
+📅 Fecha: ${new Date().toLocaleDateString('es-MX')}
+
+Para ver y descargar tu factura completa, visita: ${window.location.href}
+
+¡Gracias por tu compra! 🎉`);
+
+            window.open(`https://wa.me/?text=${mensaje}`);
         }
 
         // ================= GENERAR PDF PROFESIONAL CON QR =================
