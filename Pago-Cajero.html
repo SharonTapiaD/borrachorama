@@ -624,7 +624,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             if (localStorage.getItem('paymentLocked') === 'true') {
                 try { document.getElementById('btnConfirmar').disabled = true; } catch(e){}
-                window.location.replace('/PagoRealizado.html');
+                window.location.replace('PagoRealizado.html');
                 return;
             }
             // Calcular monto del carrito

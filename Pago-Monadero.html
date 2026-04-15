@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1000,7 +999,7 @@
         function procesarPagoMonedero() {
             if (localStorage.getItem('paymentLocked') === 'true') {
                 alert('El pago ya fue realizado. Redirigiendo...');
-                window.location.replace('/PagoRealizado.html');
+                window.location.replace('PagoRealizado.html');
                 return;
             }
 
@@ -1038,7 +1037,7 @@
                     // Doble verificación
                     if (localStorage.getItem('paymentLocked') === 'true') {
                         alert('El pago ya fue realizado. Redirigiendo...');
-                        window.location.replace('/PagoRealizado.html');
+                        window.location.replace('PagoRealizado.html');
                         return;
                     }
 
@@ -1108,7 +1107,7 @@
                         monto: total,
                         proveedor: resultadoSimulacion.proveedor
                     });
-                    window.location.href = `/Error-Pago.html?${params.toString()}`;
+                    window.location.href = `Error-Pago.html?${params.toString()}`;
                 }
             }, resultadoSimulacion.tiempoSimulado);
         }

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -863,13 +862,20 @@
       }
     });
 
-    // Mostrar aviso de cookies en cada carga/refresh
+    // Mostrar aviso de cookies SOLO si no se ha tomado una decisión previa
     document.addEventListener('DOMContentLoaded', function () {
       const overlay = document.getElementById('cookieOverlay');
-      overlay.style.display = 'flex';
+      
+      // REVISIÓN: ¿Ya existen preferencias guardadas?
+      const decisionPrevia = localStorage.getItem('cookiePreferences');
 
+      if (!decisionPrevia) {
+          // Si no hay decisión, lo mostramos
+          overlay.style.display = 'flex';
+      }
+
+      // Botón Aceptar
       document.getElementById('cookieAccept').onclick = function () {
-        // Guardar todas las cookies aceptadas
         const preferences = {
           configuracion: true,
           seguridad: true,
@@ -881,8 +887,8 @@
         mostrarNotificacion('Preferencias de cookies guardadas', 'success');
       };
 
+      // Botón Rechazar
       document.getElementById('cookieReject').onclick = function () {
-        // Guardar todas las cookies rechazadas sin redirigir
         const preferences = {
           configuracion: false,
           seguridad: false,
@@ -894,30 +900,20 @@
         mostrarNotificacion('Has rechazado las cookies', 'warning');
       };
 
-      // Mostrar detalles de configuración al pulsar 'Configuración'
+      // Botón Configuración
       const btnConfigure = document.getElementById('cookieConfigure');
       if (btnConfigure) {
         btnConfigure.onclick = function () {
-          // cargar preferencias actuales en los checkboxes
-          const prefs = JSON.parse(localStorage.getItem('cookiePreferences') || '{}');
-          document.getElementById('cookieConfiguracion').checked = !!prefs.configuracion;
-          document.getElementById('cookieSeguridad').checked = !!prefs.seguridad;
-          document.getElementById('cookieInicio').checked = !!prefs.inicio;
-
           document.getElementById('cookieCompact').style.display = 'none';
           document.getElementById('cookieDetails').style.display = 'block';
-          document.getElementById('cookieActionsDetail').style.display = 'flex';
+          
+          // Opcional: Si tienes un botón "Guardar" dentro de detalles, 
+          // asegúrate de que también llame a localStorage.setItem y oculte el overlay.
         };
       }
-
-      // Vincular los botones de la vista detallada a las mismas acciones
-      const acceptDetail = document.getElementById('cookieAcceptDetail');
-      if (acceptDetail) acceptDetail.onclick = document.getElementById('cookieAccept').onclick;
-      const rejectDetail = document.getElementById('cookieRejectDetail');
-      if (rejectDetail) rejectDetail.onclick = document.getElementById('cookieReject').onclick;
     });
 
-    // Función para guardar preferencias personalizadas
+    // Función extra para el botón "Guardar" que está dentro de Configuración
     function guardarCookiesPersonalizadas() {
       const preferences = {
         configuracion: document.getElementById('cookieConfiguracion').checked,
@@ -926,8 +922,8 @@
         fecha: new Date().toISOString()
       };
       localStorage.setItem('cookiePreferences', JSON.stringify(preferences));
-      document.getElementById('cookieOverlay').style.display = 'none';
-      mostrarNotificacion('Preferencias de cookies guardadas correctamente', 'success');
+      document.getElementById('cookieOverlay').style.display = 'none'; // Ocultar al guardar
+      mostrarNotificacion('Preferencias personalizadas guardadas', 'success');
     }
   </script>
 

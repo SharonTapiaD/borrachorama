@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -330,7 +329,7 @@
           💬 Ayuda y Soporte
         </div>
 
-      
+
 
         <div class="p-3">
           <a href="backend/logout.php" class="btn btn-logout">Cerrar Sesión</a>
@@ -379,46 +378,20 @@
         <!-- SECCIÓN: HISTORIAL -->
         <div id="historial" class="content-section">
           <h3 class="section-title">Historial de Compras</h3>
+          <p class="text-muted">Aquí puedes ver tus pedidos pasados y el estado de tu entrega actual.</p>
 
-          <table>
-            <thead>
+          <table class="table table-hover border">
+            <thead class="table-warning">
               <tr>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Precio</th>
+                <th>ID Pedido</th>
                 <th>Fecha</th>
+                <th>Total</th>
                 <th>Estado</th>
+                <th>Acciones</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>Cerveza Corona Extra 355ml</td>
-                <td>6</td>
-                <td>$153.00</td>
-                <td>15/01/2026</td>
-                <td style="color: green; font-weight: bold;">✓ Entregado</td>
-              </tr>
-              <tr>
-                <td>Cerveza Modelo Especial 355ml</td>
-                <td>12</td>
-                <td>$276.00</td>
-                <td>20/01/2026</td>
-                <td style="color: green; font-weight: bold;">✓ Entregado</td>
-              </tr>
-              <tr>
-                <td>Cerveza Victoria 355ml</td>
-                <td>6</td>
-                <td>$138.00</td>
-                <td>25/01/2026</td>
-                <td style="color: green; font-weight: bold;">✓ Entregado</td>
-              </tr>
-              <tr>
-                <td>Cerveza Heineken 355ml</td>
-                <td>6</td>
-                <td>$162.00</td>
-                <td>01/02/2026</td>
-                <td style="color: orange; font-weight: bold;">🚚 En camino</td>
-              </tr>
+            <tbody id="tablaHistorialCompras">
+              <!-- Se llena dinámicamente -->
             </tbody>
           </table>
         </div>
@@ -478,13 +451,13 @@
                 <th>ID</th>
                 <th>Tipo</th>
                 <th>Mensaje</th>
-                <th>Respuesta de Soporte</th> 
+                <th>Respuesta de Soporte</th>
                 <th>Fecha</th>
-                <th>Estado de la respuesta</th> 
+                <th>Estado de la respuesta</th>
               </tr>
             </thead>
             <tbody id="tablaReportesUser">
-            
+
             </tbody>
           </table>
         </div>
@@ -809,30 +782,30 @@
       });
 
       // FUNCIÓN PARA LLENAR LA TABLA DE REPORTES DEL USUARIO
-function cargarMisReportes() {
-    fetch('backend/obtener_reportes_user.php')
-    .then(res => res.json())
-    .then(data => {
-        const tbody = document.getElementById('tablaReportesUser');
-        tbody.innerHTML = ''; // Limpiamos la tabla antes de llenarla
+      function cargarMisReportes() {
+        fetch('backend/obtener_reportes_user.php')
+          .then(res => res.json())
+          .then(data => {
+            const tbody = document.getElementById('tablaReportesUser');
+            tbody.innerHTML = ''; // Limpiamos la tabla antes de llenarla
 
-        if(data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center">Aún no tienes reportes o quejas.</td></tr>';
-            return;
-        }
+            if (data.length === 0) {
+              tbody.innerHTML = '<tr><td colspan="6" class="text-center">Aún no tienes reportes o quejas.</td></tr>';
+              return;
+            }
 
-        data.forEach(r => {
-            // Colores para el estado
-            let badgeClass = 'bg-secondary';
-            if(r.estado === 'Pendiente') badgeClass = 'bg-danger';
-            else if(r.estado === 'En proceso') badgeClass = 'bg-warning text-dark';
-            else if(r.estado === 'Resuelto') badgeClass = 'bg-success';
+            data.forEach(r => {
+              // Colores para el estado
+              let badgeClass = 'bg-secondary';
+              if (r.estado === 'Pendiente') badgeClass = 'bg-danger';
+              else if (r.estado === 'En proceso') badgeClass = 'bg-warning text-dark';
+              else if (r.estado === 'Resuelto') badgeClass = 'bg-success';
 
-            // Si no hay respuesta, ponemos un texto por defecto
-            const respuestaTxt = r.respuesta ? r.respuesta : '<em class="text-muted">En revisión por soporte...</em>';
+              // Si no hay respuesta, ponemos un texto por defecto
+              const respuestaTxt = r.respuesta ? r.respuesta : '<em class="text-muted">En revisión por soporte...</em>';
 
-            // Dibujar la fila en la tabla
-            tbody.innerHTML += `
+              // Dibujar la fila en la tabla
+              tbody.innerHTML += `
                 <tr>
                     <td><strong>#${r.id}</strong></td>
                     <td>${r.tipo}</td>
@@ -842,10 +815,10 @@ function cargarMisReportes() {
                     <td><span class="badge ${badgeClass}">${r.estado}</span></td>
                 </tr>
             `;
-        });
-    })
-    .catch(err => console.error('Error al cargar la tabla:', err));
-}
+            });
+          })
+          .catch(err => console.error('Error al cargar la tabla:', err));
+      }
 
       function enviarDuda() {
         const tipo = document.getElementById('tipoInteraccion').value;
@@ -900,6 +873,135 @@ function cargarMisReportes() {
         `).join('');
         }
       }
+
+      // Carga la lista de pedidos al entrar a la pestaña historial
+      function cargarHistorialCompras() {
+        fetch('backend/obtener_historial.php')
+          .then(res => res.json())
+          .then(data => {
+            const tbody = document.getElementById('tablaHistorialCompras');
+            tbody.innerHTML = "";
+
+            if (data.length === 0) {
+              tbody.innerHTML = "<tr><td colspan='5' class='text-center'>No has realizado ninguna compra aún. 🍺</td></tr>";
+              return;
+            }
+
+            data.forEach(p => {
+              let colorStatus = p.estatus === 'completada' ? 'green' : 'orange';
+              tbody.innerHTML += `
+                <tr>
+                    <td><strong>#${p.id}</strong></td>
+                    <td>${p.fecha_formateada}</td>
+                    <td>$${parseFloat(p.total).toFixed(2)}</td>
+                    <td style="color: ${colorStatus}; font-weight: bold;">${p.estatus.toUpperCase()}</td>
+                    <td>
+                        <button class="btn btn-sm btn-dark" onclick="verSeguimiento(${p.id}, '${p.estatus}', ${p.total})">
+                            🔍 Ver Seguimiento
+                        </button>
+                    </td>
+                </tr>`;
+            });
+          });
+      }
+
+      function verSeguimiento(id, estatus, total) {
+        document.getElementById('track-id').textContent = id;
+        document.getElementById('track-total').textContent = "$" + total.toFixed(2);
+
+        // Reset de colores en la barra
+        for (let i = 1; i <= 4; i++) document.getElementById('step' + i).className = 'rounded-circle bg-secondary text-white d-inline-block';
+
+        // Lógica de iluminación de la barra según el estatus
+        document.getElementById('step1').classList.replace('bg-secondary', 'bg-success');
+        if (estatus === 'pendiente') { /* Solo paso 1 */ }
+        if (estatus === 'procesada') { document.getElementById('step2').classList.replace('bg-secondary', 'bg-success'); }
+        if (estatus === 'en camino') {
+          document.getElementById('step2').classList.replace('bg-secondary', 'bg-success');
+          document.getElementById('step3').classList.replace('bg-secondary', 'bg-success');
+        }
+        if (estatus === 'completada') {
+          document.getElementById('step2').classList.replace('bg-secondary', 'bg-success');
+          document.getElementById('step3').classList.replace('bg-secondary', 'bg-success');
+          document.getElementById('step4').classList.replace('bg-secondary', 'bg-success');
+        }
+
+        // Cargar productos del pedido
+        fetch('backend/obtener_detalle_pedido.php?id=' + id)
+          .then(res => res.json())
+          .then(items => {
+            const lista = document.getElementById('listaDetallesPedido');
+            lista.innerHTML = "";
+            items.forEach(it => {
+              lista.innerHTML += `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <img src="${it.imagen}" width="30" class="me-2"> ${it.nombre}
+                    </div>
+                    <span>${it.cantidad} x $${parseFloat(it.precio_unitario).toFixed(2)}</span>
+                </li>`;
+            });
+
+            const myModal = new bootstrap.Modal(document.getElementById('seguimientoModal'));
+            myModal.show();
+          });
+      }
+
+      // Modifica tu función cambiarSeccion para incluir esta carga
+      function cambiarSeccion(event, seccion) {
+        document.querySelectorAll('.menu-option').forEach(o => o.classList.remove('active'));
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+
+        event.currentTarget.classList.add('active');
+        document.getElementById(seccion).classList.add('active');
+
+        if (seccion === 'interacciones') cargarMisReportes();
+        if (seccion === 'historial') cargarHistorialCompras(); // <--- NUEVO
+      }
     </script>
+
+    <!-- Modal Seguimiento -->
+    <div class="modal fade" id="seguimientoModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-dark text-white">
+            <h5 class="modal-title">📦 Seguimiento del Pedido #<span id="track-id"></span></h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Barra de Progreso Visual -->
+            <div class="d-flex justify-content-between mb-4 px-5">
+              <div class="text-center">
+                <div id="step1" class="rounded-circle bg-success text-white d-inline-block"
+                  style="width:40px; height:40px; line-height:40px;">1</div>
+                <p class="small">Procesada</p>
+              </div>
+              <div class="text-center">
+                <div id="step2" class="rounded-circle bg-secondary text-white d-inline-block"
+                  style="width:40px; height:40px; line-height:40px;">2</div>
+                <p class="small">Pagado</p>
+              </div>
+              <div class="text-center">
+                <div id="step3" class="rounded-circle bg-secondary text-white d-inline-block"
+                  style="width:40px; height:40px; line-height:40px;">3</div>
+                <p class="small">En camino</p>
+              </div>
+              <div class="text-center">
+                <div id="step4" class="rounded-circle bg-secondary text-white d-inline-block"
+                  style="width:40px; height:40px; line-height:40px;">4</div>
+                <p class="small">Entregado</p>
+              </div>
+            </div>
+
+            <h6>Productos en este pedido:</h6>
+            <ul id="listaDetallesPedido" class="list-group list-group-flush mb-3"></ul>
+
+            <div class="text-end">
+              <h5>Total: <span id="track-total" class="text-success"></span></h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 </body>
 </html>

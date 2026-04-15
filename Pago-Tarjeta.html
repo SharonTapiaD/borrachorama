@@ -576,7 +576,7 @@
             // Chequeo inmediato por si el usuario toca “Atrás” desde Confirmacion
             if (localStorage.getItem('paymentLocked') === 'true') {
                 alert('El pago ya fue realizado. Redirigiendo...');
-                window.location.replace('/PagoRealizado.html');
+                window.location.replace('PagoRealizado.html');
                 return;
             }
 
@@ -629,7 +629,7 @@
                     // Segundo chequeo ANTES de registrar pedido (doble verificación)
                     if (localStorage.getItem('paymentLocked') === 'true') {
                         alert('El pago ya fue realizado. Redirigiendo...');
-                        window.location.replace('/PagoRealizado.html');
+                        window.location.replace('PagoRealizado.html');
                         return;
                     }
 
@@ -707,7 +707,7 @@
                         monto: total
                     });
 
-                    window.location.href = `/Error-Pago.html?${params.toString()}`;
+                    window.location.href = `Error-Pago.html?${params.toString()}`;
                 }
             }, resultadoSimulacion.tiempoSimulado);
         }
@@ -741,7 +741,7 @@
             // Bloqueo fuerte: si ya se pagó, redirigir inmediatamente
             if (localStorage.getItem('paymentLocked') === 'true') {
                 try { document.getElementById('btnPagar').disabled = true; } catch (e) { }
-                window.location.replace('/PagoRealizado.html');
+                window.location.replace('PagoRealizado.html');
                 return;
             }
 

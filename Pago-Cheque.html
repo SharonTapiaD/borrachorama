@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -307,7 +306,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('paymentLocked') === 'true') {
                 try { document.getElementById('btnPagar').disabled = true; } catch (e) { }
-                window.location.replace('/PagoRealizado.html');
+                window.location.replace('PagoRealizado.html');
                 return;
             }
             const total = calcularYMostrarMonto();
@@ -496,7 +495,7 @@
                         metodo: 'cheque',
                         monto: total
                     });
-                    window.location.href = `/Error-Pago.html?${params.toString()}`;
+                    window.location.href = `Error-Pago.html?${params.toString()}`;
                 }
             }, resultado.tiempo);
         }
