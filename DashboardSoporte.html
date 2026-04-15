@@ -10,8 +10,6 @@
       background-size: cover;
       padding: 40px 20px;
       text-align: center; }
-    .card-reporte { border: 2px solid #ffc107; transition: transform 0.2s; }
-    .card-reporte:hover { transform: scale(1.01); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
     .badge-Pendiente { background-color: #dc3545; }
     .badge-En_proceso { background-color: #fd7e14; }
     .badge-Resuelto { background-color: #198754; }
@@ -28,7 +26,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="fw-bold" style="color: #FF6F00;">Reportes de Usuarios</h3>
+                <h3 class="fw-bold" style="color: #FF6F00;">Reportes y Quejas</h3>
                 <button class="btn btn-warning fw-bold" onclick="cargarReportes()">🔄 Actualizar Lista</button>
             </div>
             
@@ -39,21 +37,50 @@
                             <th>ID</th>
                             <th>Usuario</th>
                             <th>Motivo</th>
-                            <th>Mensaje</th>
-                            <th>Fecha</th>
+                            <th>Mensaje del Cliente</th>
+                            <th>Nuestra Respuesta</th>
                             <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="listaReportesAdmin">
-                        <!-- Se llena con JS -->
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
 
+<div class="modal fade" id="modalResponder" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-warning">
+        <h5 class="modal-title">Responder Ticket #<span id="ticketIdTxt"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="inputId">
+        <div class="mb-3">
+            <label><strong>Respuesta al cliente:</strong></label>
+            <textarea id="inputRespuesta" class="form-control" rows="4" placeholder="Escribe tu solución..."></textarea>
+        </div>
+        <div class="mb-3">
+            <label><strong>Cambiar estado a:</strong></label>
+            <select id="inputEstado" class="form-select">
+                <option value="En proceso">En proceso</option>
+                <option value="Resuelto">Resuelto</option>
+            </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-success" onclick="enviarRespuesta()">Guardar y Actualizar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", cargarReportes);
 
@@ -65,23 +92,24 @@
             tbody.innerHTML = "";
             
             data.forEach(r => {
-                // Ajuste de nombre de estado para el badge de CSS
                 const statusClass = r.estado.replace(" ", "_");
+                const respuestaUI = r.respuesta ? r.respuesta : '<em class="text-muted">Sin respuesta aún</em>';
                 
+                // Escapar comillas para evitar errores de JS
+                const respuestaLimpia = r.respuesta ? r.respuesta.replace(/"/g, '&quot;') : '';
+
                 tbody.innerHTML += `
                     <tr class="align-middle">
                         <td>#${r.id}</td>
-                        <td><strong>${r.usuario}</strong></td>
+                        <td><strong>${r.usuario}</strong><br><small>${r.fecha}</small></td>
                         <td><span class="badge bg-secondary">${r.tipo}</span></td>
                         <td><small>${r.mensaje}</small></td>
-                        <td>${r.fecha}</td>
+                        <td><small>${respuestaUI}</small></td>
                         <td><span class="badge badge-${statusClass}">${r.estado}</span></td>
                         <td>
-                            <select class="form-select form-select-sm" onchange="cambiarEstado(${r.id}, this.value)">
-                                <option value="Pendiente" ${r.estado === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
-                                <option value="En proceso" ${r.estado === 'En proceso' ? 'selected' : ''}>En proceso</option>
-                                <option value="Resuelto" ${r.estado === 'Resuelto' ? 'selected' : ''}>Resuelto</option>
-                            </select>
+                            <button class="btn btn-sm btn-outline-primary" onclick="abrirModal(${r.id}, '${r.estado}', '${respuestaLimpia}')">
+                                💬 Responder
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -89,20 +117,43 @@
         });
     }
 
-    function cambiarEstado(id, nuevoEstado) {
+    let modalInstancia;
+    function abrirModal(id, estadoActual, respuestaActual) {
+        document.getElementById('ticketIdTxt').innerText = id;
+        document.getElementById('inputId').value = id;
+        document.getElementById('inputRespuesta').value = respuestaActual;
+        document.getElementById('inputEstado').value = estadoActual === 'Pendiente' ? 'En proceso' : estadoActual;
+        
+        modalInstancia = new bootstrap.Modal(document.getElementById('modalResponder'));
+        modalInstancia.show();
+    }
+
+    function enviarRespuesta() {
+        const id = document.getElementById('inputId').value;
+        const respuesta = document.getElementById('inputRespuesta').value;
+        const estado = document.getElementById('inputEstado').value;
+
+        if(respuesta.trim() === '') {
+            alert("Debes escribir una respuesta.");
+            return;
+        }
+
         const fd = new FormData();
         fd.append('id', id);
-        fd.append('estado', nuevoEstado);
+        fd.append('respuesta', respuesta);
+        fd.append('estado', estado);
 
-        fetch('backend/actualizar_estado_reporte.php', {
+        fetch('backend/responder_reporte.php', {
             method: 'POST',
             body: fd
         })
         .then(res => res.json())
         .then(data => {
             if(data.status === 'ok') {
-                alert("✅ Estado del reporte #" + id + " actualizado a: " + nuevoEstado);
-                cargarReportes();
+                modalInstancia.hide();
+                cargarReportes(); // Recargar tabla
+            } else {
+                alert("Error: " + data.msg);
             }
         });
     }

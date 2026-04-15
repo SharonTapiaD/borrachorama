@@ -61,7 +61,17 @@ if ($result->num_rows == 1) {
                 "usuario_id" => $user['id'],
                 "redirect" => "GerenciaPanel.html"
             ]);
-        } else {
+        }else if ($user['rol'] === 'soporte'){
+            echo json_encode([
+                "status" => "ok",
+                "msg" => "Bienvenido, " . $user['nombre'],
+                "rol" => "soporte",
+                "nombre" => $user['nombre'],
+                "usuario_id" => $user['id'],
+                "redirect" => "DashboardSoporte.html"
+            ]);
+        } 
+        else {
             echo json_encode([
                 "status" => "ok",
                 "msg" => "Bienvenido, " . $user['nombre'],

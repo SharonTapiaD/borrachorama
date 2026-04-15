@@ -330,6 +330,8 @@
           💬 Ayuda y Soporte
         </div>
 
+      
+
         <div class="p-3">
           <a href="backend/logout.php" class="btn btn-logout">Cerrar Sesión</a>
         </div>
@@ -476,12 +478,13 @@
                 <th>ID</th>
                 <th>Tipo</th>
                 <th>Mensaje</th>
+                <th>Respuesta de Soporte</th> 
                 <th>Fecha</th>
-                <th>Estado</th>
+                <th>Estado de la respuesta</th> 
               </tr>
             </thead>
             <tbody id="tablaReportesUser">
-              <!-- Se llena con JS -->
+            
             </tbody>
           </table>
         </div>
@@ -804,6 +807,45 @@
             alert("Error al conectar con el servidor. Verifica que el archivo backend/perfil_guardar.php exista.");
           });
       });
+
+      // FUNCIÓN PARA LLENAR LA TABLA DE REPORTES DEL USUARIO
+function cargarMisReportes() {
+    fetch('backend/obtener_reportes_user.php')
+    .then(res => res.json())
+    .then(data => {
+        const tbody = document.getElementById('tablaReportesUser');
+        tbody.innerHTML = ''; // Limpiamos la tabla antes de llenarla
+
+        if(data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center">Aún no tienes reportes o quejas.</td></tr>';
+            return;
+        }
+
+        data.forEach(r => {
+            // Colores para el estado
+            let badgeClass = 'bg-secondary';
+            if(r.estado === 'Pendiente') badgeClass = 'bg-danger';
+            else if(r.estado === 'En proceso') badgeClass = 'bg-warning text-dark';
+            else if(r.estado === 'Resuelto') badgeClass = 'bg-success';
+
+            // Si no hay respuesta, ponemos un texto por defecto
+            const respuestaTxt = r.respuesta ? r.respuesta : '<em class="text-muted">En revisión por soporte...</em>';
+
+            // Dibujar la fila en la tabla
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>#${r.id}</strong></td>
+                    <td>${r.tipo}</td>
+                    <td><small>${r.mensaje}</small></td>
+                    <td><small><strong>${respuestaTxt}</strong></small></td>
+                    <td><small>${r.fecha}</small></td>
+                    <td><span class="badge ${badgeClass}">${r.estado}</span></td>
+                </tr>
+            `;
+        });
+    })
+    .catch(err => console.error('Error al cargar la tabla:', err));
+}
 
       function enviarDuda() {
         const tipo = document.getElementById('tipoInteraccion').value;
