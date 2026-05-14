@@ -59,6 +59,19 @@
       top: 50%;
       transform: translateY(-50%)
     }
+
+    /* Estilos para el recuadro de cuentas demo */
+    .demo-accounts-container {
+      max-width: 400px;
+      margin: 20px auto 40px auto; /* Centrado y con espacio arriba/abajo */
+    }
+
+    .demo-accounts-container table code {
+      color: #d63384;
+      background-color: #f8f9fa;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
   </style>
 </head>
 
@@ -164,6 +177,56 @@
 
     </div>
   </div>
+
+  <!-- Recuadro de Credenciales de Prueba (Demo) -->
+<div class="demo-accounts-container">
+    <div class="card shadow-sm border-warning">
+        <div class="card-header bg-warning text-dark fw-bold text-center py-1">
+            🔑 Cuentas de Acceso (Pruebas)
+        </div>
+        <div class="card-body p-2">
+            <table class="table table-sm table-hover mb-0" style="font-size: 0.85rem;">
+                <thead>
+                    <tr class="table-light">
+                        <th>Rol</th>
+                        <th>Correo</th>
+                        <th>Contraseña</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                        <td><span class="badge bg-danger">Gerente</span></td>
+                        <td>alejandrod@gmail.com</td>
+                        <td><code>12345</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge bg-danger">Admin</span></td>
+                        <td>sharonsingui1501@gmail.com</td>
+                        <td><code>*0cean3yes*</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge bg-primary">Cliente</span></td>
+                        <td>danna@gmail.com</td>
+                        <td><code>Maria123</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge bg-success">Ventas</span></td>
+                        <td>diegoN@test.com</td>
+                        <td><code>Diego123</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge bg-success">Soporte</span></td>
+                        <td>fannyG@test.com</td>
+                        <td><code>Fanny123</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer text-muted text-center" style="font-size: 0.7rem;">
+            * Solo visible en entorno de desarrollo
+        </div>
+    </div>
+</div>
 
   <script>
     /* ================= LOGIN ================= */

@@ -11,16 +11,12 @@ $inactivos = $conn->query("SELECT COUNT(*) AS c FROM clientes WHERE estado='inac
 
 // Clientes con sus compras
 $sql = "
-SELECT 
-    c.id AS cliente_id,
-    c.nombre,
-    c.correo,
-    p.id AS pedido_id,
-    p.carrito_id,
-    p.total,
-    (SELECT MAX(fecha) FROM interacciones i WHERE i.cliente_id=c.id) AS ultima_interaccion
-FROM clientes c
-LEFT JOIN pedidos p ON c.id = p.cliente_id
+SELECT c.id as cliente_id, c.nombre, c.correo, c.fecha_registro
+    FROM clientes c
+    LEFT JOIN pedidos p ON c.id = p.cliente_id
+    WHERE p.id IS NULL 
+    ORDER BY c.fecha_registro DESC 
+    LIMIT 10
 ";
 
 $res = $conn->query($sql);
@@ -31,10 +27,10 @@ while ($row = $res->fetch_assoc()) {
         "cliente_id"       => (int)$row["cliente_id"],
         "nombre"           => $row["nombre"],
         "correo"           => $row["correo"],
-        "pedido_id"        => $row["pedido_id"] ? (int)$row["pedido_id"] : null,
-        "carrito_id"       => $row["carrito_id"] ? (int)$row["carrito_id"] : null,
-        "total"            => $row["total"] ? (float)$row["total"] : 0,
-        "ultima_interaccion"=> $row["ultima_interaccion"]
+        "pedido_id"        => null,
+        "carrito_id"       => null,
+        "total"            => 0,
+        "ultima_interaccion"=> null
     ];
 }
 

@@ -25,7 +25,7 @@
 
         /* HEADER */
         header {
-            background: url('/img/fondocerveza.jpg') no-repeat center center;
+            background: url('imagenes/fondocerveza.jpg') no-repeat center center;
             background-size: cover;
             padding: 30px 20px;
             text-align: center;
@@ -528,7 +528,7 @@
 <body>
     <!-- HEADER -->
     <header>
-        <img src="img/Borrachoramaimg.png" alt="Borrachorama Logo">
+        <img src="imagenes/Borrachoramalogo.png" alt="Borrachorama Logo">
     </header>
 
     <!-- NAVBAR TOP -->
@@ -970,7 +970,7 @@
         function cerrarSesion() {
             if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
                 sessionStorage.clear();
-                window.location.href = '/backend/logout.php';
+                window.location.href = 'panel.html';
             }
         }
 
