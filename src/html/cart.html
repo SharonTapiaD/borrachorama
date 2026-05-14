@@ -279,7 +279,10 @@
                         ${descuentoItem > 0 ? `<del class="text-muted">$${precioOriginal.toFixed(2)}</del><br>` : ''}
                         $${precioFinal.toFixed(2)}
                       </td>
-                      <td>${cantidad}</td>
+                      <td>
+                        <input type="number" min="1" value="${cantidad}" class="form-control" style="width: 80px;" 
+                               onchange="actualizarCantidad(${item.producto_id}, this.value)">
+                      </td>
                       <td>$${filaSubtotal.toFixed(2)}</td>
                       <td><button class="btn btn-danger btn-sm" onclick="eliminarItem(${item.producto_id})">Eliminar</button></td>
                     </tr>

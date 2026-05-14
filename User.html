@@ -899,6 +899,9 @@
                         <button class="btn btn-sm btn-dark" onclick="verSeguimiento(${p.id}, '${p.estatus}', ${p.total})">
                             🔍 Ver Seguimiento
                         </button>
+                        <button class="btn btn-sm btn-warning" onclick="verFactura(${p.id}, ${p.total}, '${p.fecha_formateada}')">
+                            📄 Factura
+                        </button>
                     </td>
                 </tr>`;
             });
@@ -945,6 +948,79 @@
             const myModal = new bootstrap.Modal(document.getElementById('seguimientoModal'));
             myModal.show();
           });
+      }
+
+      // NUEVA FUNCIÓN: Ver o Crear Factura
+      function verFactura(idPedido, total, fecha) {
+        // Primero verificar si ya existe factura para este pedido
+        fetch(`backend/obtener_factura.php?pedido_id=${idPedido}`)
+          .then(res => res.json())
+          .then(data => {
+            document.getElementById('factura-pedido-id').value = idPedido;
+            document.getElementById('factura-total-pedido').textContent = '$' + parseFloat(total).toFixed(2);
+            document.getElementById('factura-fecha-pedido').textContent = fecha;
+
+            if (data.status === 'ok' && data.factura) {
+              // La factura ya existe
+              document.getElementById('facturaExistente').style.display = 'block';
+              document.getElementById('formularioFactura').style.display = 'none';
+              document.getElementById('factura-numero').textContent = data.factura.numero_factura;
+              document.getElementById('factura-fecha').textContent = data.factura.fecha_emision;
+              document.getElementById('factura-rfc').textContent = data.factura.rfc_cliente || 'N/A';
+              document.getElementById('factura-razon-social').textContent = data.factura.razon_social || 'N/A';
+            } else {
+              // No existe factura, mostrar formulario
+              document.getElementById('facturaExistente').style.display = 'none';
+              document.getElementById('formularioFactura').style.display = 'block';
+              document.getElementById('formFactura').reset();
+            }
+
+            const myModal = new bootstrap.Modal(document.getElementById('facturaModal'));
+            myModal.show();
+          })
+          .catch(err => {
+            alert('Error al verificar la factura: ' + err);
+          });
+      }
+
+      // Guardar factura nueva
+      document.getElementById('guardarFacturaBtn')?.addEventListener('click', function () {
+        const idPedido = document.getElementById('factura-pedido-id').value;
+        const rfc = document.getElementById('input-rfc').value;
+        const razonSocial = document.getElementById('input-razon-social').value;
+        const domicilio = document.getElementById('input-domicilio').value;
+
+        if (!rfc || !razonSocial || !domicilio) {
+          alert('Por favor completa todos los campos');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('pedido_id', idPedido);
+        formData.append('rfc', rfc);
+        formData.append('razon_social', razonSocial);
+        formData.append('domicilio', domicilio);
+
+        fetch('backend/guardar_factura.php', {
+          method: 'POST',
+          body: formData
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.status === 'ok') {
+              alert('✅ Factura creada exitosamente');
+              // Recargar la información
+              verFactura(idPedido, 0, '');
+            } else {
+              alert('❌ Error: ' + data.msg);
+            }
+          })
+          .catch(err => alert('Error: ' + err));
+      });
+
+      // Descargar factura en PDF
+      function descargarFacturaPDF(pedidoId) {
+        window.open(`backend/descargar_factura_pdf.php?pedido_id=${pedidoId}`, '_blank');
       }
 
       // Modifica tu función cambiarSeccion para incluir esta carga
@@ -998,6 +1074,79 @@
 
             <div class="text-end">
               <h5>Total: <span id="track-total" class="text-success"></span></h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Factura -->
+    <div class="modal fade" id="facturaModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-warning text-dark">
+            <h5 class="modal-title">📄 Gestión de Factura - Pedido #<span id="factura-pedido-id" style="display: none;"></span></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Información del Pedido -->
+            <div class="card mb-3" style="background: #fffbea; border: 2px solid #FFD600;">
+              <div class="card-body">
+                <h6 class="card-title">📋 Información del Pedido</h6>
+                <p class="mb-1"><strong>Total:</strong> <span id="factura-total-pedido">$0.00</span></p>
+                <p class="mb-0"><strong>Fecha:</strong> <span id="factura-fecha-pedido">-</span></p>
+              </div>
+            </div>
+
+            <!-- Factura Existente -->
+            <div id="facturaExistente" style="display: none;">
+              <div class="alert alert-success">
+                <h6>✅ Factura Encontrada</h6>
+                <p class="mb-1"><strong>Número de Factura:</strong> <span id="factura-numero">-</span></p>
+                <p class="mb-1"><strong>Fecha de Emisión:</strong> <span id="factura-fecha">-</span></p>
+                <p class="mb-1"><strong>RFC:</strong> <span id="factura-rfc">-</span></p>
+                <p class="mb-0"><strong>Razón Social:</strong> <span id="factura-razon-social">-</span></p>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-primary" onclick="descargarFacturaPDF(document.getElementById('factura-pedido-id').value)">
+                  📥 Descargar PDF
+                </button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              </div>
+            </div>
+
+            <!-- Formulario para Crear Factura -->
+            <div id="formularioFactura" style="display: none;">
+              <form id="formFactura" class="needs-validation">
+                <input type="hidden" id="factura-pedido-id">
+                
+                <div class="mb-3">
+                  <label class="form-label">RFC <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="input-rfc" placeholder="Ej: ABC123456XYZ" required>
+                  <small class="form-text text-muted">Registro Federal del Contribuyente (13 caracteres)</small>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Razón Social <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="input-razon-social" placeholder="Nombre de la empresa o persona" required>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Domicilio <span class="text-danger">*</span></label>
+                  <textarea class="form-control" id="input-domicilio" rows="3" placeholder="Calle, número, ciudad, estado, código postal" required></textarea>
+                </div>
+
+                <div class="alert alert-info">
+                  <strong>ℹ️ Nota:</strong> Esta información se usará para generar tu factura fiscal.
+                </div>
+
+                <div class="d-flex gap-2">
+                  <button type="button" class="btn btn-success" id="guardarFacturaBtn">
+                    💾 Crear Factura
+                  </button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
