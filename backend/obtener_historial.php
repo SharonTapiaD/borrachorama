@@ -11,10 +11,12 @@ if (!isset($_SESSION['usuario_id'])) {
 $usuario_id = $_SESSION['usuario_id'];
 
 // Consultamos los pedidos del usuario
-$sql = "SELECT id, total, estatus, DATE_FORMAT(fecha, '%d/%m/%Y %H:%i') as fecha_formateada 
-        FROM pedidos 
-        WHERE usuario_id = ? 
-        ORDER BY id DESC";
+$sql = "SELECT p.id, p.total, p.estatus, DATE_FORMAT(p.fecha, '%d/%m/%Y %H:%i') as fecha_formateada, 
+        f.id as factura_id, f.numero_factura 
+        FROM pedidos p 
+        LEFT JOIN facturas f ON p.id = f.pedido_id 
+        WHERE p.usuario_id = ? 
+        ORDER BY p.id DESC";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $usuario_id);

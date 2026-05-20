@@ -38,7 +38,7 @@ if (!$pedido) {
 }
 
 // Buscar si existe factura para este pedido
-$sql = "SELECT id, numero_factura, fecha_emision, rfc_cliente, razon_social FROM facturas WHERE pedido_id = ?";
+$sql = "SELECT id, numero_factura, fecha_emision, rfc_cliente, razon_social, domicilio_fiscal, monto_total FROM facturas WHERE pedido_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $pedido_id);
 $stmt->execute();

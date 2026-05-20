@@ -657,10 +657,61 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <script>
       window.addEventListener('DOMContentLoaded', function () {
         cargarDatosUsuario();
+        inicializarFactura();
       });
+
+      function inicializarFactura() {
+        const guardarFacturaBtn = document.getElementById('guardarFacturaBtn');
+        if (!guardarFacturaBtn) return;
+
+        guardarFacturaBtn.addEventListener('click', function () {
+          const idPedido = document.getElementById('factura-pedido-id-input').value;
+          const rfc = document.getElementById('input-rfc').value;
+          const razonSocial = document.getElementById('input-razon-social').value;
+          const domicilio = document.getElementById('input-domicilio').value;
+
+          if (!rfc || !razonSocial || !domicilio) {
+            alert('Por favor completa todos los campos');
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append('pedido_id', idPedido);
+          formData.append('rfc', rfc);
+          formData.append('razon_social', razonSocial);
+          formData.append('domicilio', domicilio);
+
+          fetch('backend/guardar_factura.php', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Accept': 'application/json' },
+            body: formData
+          })
+            .then(res => res.text())
+            .then(text => {
+              try {
+                return JSON.parse(text);
+              } catch (error) {
+                throw new Error('Respuesta inválida de guardar_factura.php: ' + text);
+              }
+            })
+            .then(data => {
+              if (data.status === 'ok') {
+                alert('✅ Factura creada exitosamente');
+                // Recargar la información
+                verFactura(idPedido, 0, '');
+              } else {
+                alert('❌ Error: ' + data.msg);
+              }
+            })
+            .catch(err => alert('Error: ' + err.message));
+        });
+      }
 
       function cargarDatosUsuario() {
         // Usamos ruta relativa para evitar errores de carpetas
@@ -941,7 +992,9 @@
 
             data.forEach(p => {
               let colorStatus = p.estatus === 'completada' ? 'green' : 'orange';
+              const facturaExiste = p.factura_id && p.factura_id !== null;
               tbody.innerHTML += `
+<<<<<<< HEAD
                         <tr>
                             <td><strong>#${p.id}</strong></td>
                             <td>${p.fecha_formateada}</td>
@@ -956,6 +1009,7 @@
                                 </button>
                             </td>
                         </tr>`;
+
             });
           });
       }
@@ -1005,10 +1059,18 @@
       // NUEVA FUNCIÓN: Ver o Crear Factura
       function verFactura(idPedido, total, fecha) {
         // Primero verificar si ya existe factura para este pedido
-        fetch(`backend/obtener_factura.php?pedido_id=${idPedido}`)
-          .then(res => res.json())
+        fetch(`backend/obtener_factura.php?pedido_id=${idPedido}`, { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
+          .then(res => res.text())
+          .then(text => {
+            try {
+              return JSON.parse(text);
+            } catch (error) {
+              throw new Error('Respuesta inválida de obtener_factura.php: ' + text);
+            }
+          })
           .then(data => {
-            document.getElementById('factura-pedido-id').value = idPedido;
+            document.getElementById('factura-pedido-id-input').value = idPedido;
+            document.getElementById('factura-pedido-id-display').textContent = idPedido;
             document.getElementById('factura-total-pedido').textContent = '$' + parseFloat(total).toFixed(2);
             document.getElementById('factura-fecha-pedido').textContent = fecha;
 
@@ -1020,6 +1082,8 @@
               document.getElementById('factura-fecha').textContent = data.factura.fecha_emision;
               document.getElementById('factura-rfc').textContent = data.factura.rfc_cliente || 'N/A';
               document.getElementById('factura-razon-social').textContent = data.factura.razon_social || 'N/A';
+              document.getElementById('factura-pedido-id-input').value = idPedido;
+              document.getElementById('factura-pedido-id-display').textContent = idPedido;
             } else {
               // No existe factura, mostrar formulario
               document.getElementById('facturaExistente').style.display = 'none';
@@ -1031,48 +1095,92 @@
             myModal.show();
           })
           .catch(err => {
-            alert('Error al verificar la factura: ' + err);
+            alert('Error al verificar la factura: ' + err.message);
           });
       }
 
       // Guardar factura nueva
-      document.getElementById('guardarFacturaBtn')?.addEventListener('click', function () {
-        const idPedido = document.getElementById('factura-pedido-id').value;
-        const rfc = document.getElementById('input-rfc').value;
-        const razonSocial = document.getElementById('input-razon-social').value;
-        const domicilio = document.getElementById('input-domicilio').value;
-
-        if (!rfc || !razonSocial || !domicilio) {
-          alert('Por favor completa todos los campos');
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append('pedido_id', idPedido);
-        formData.append('rfc', rfc);
-        formData.append('razon_social', razonSocial);
-        formData.append('domicilio', domicilio);
-
-        fetch('backend/guardar_factura.php', {
-          method: 'POST',
-          body: formData
-        })
-          .then(res => res.json())
-          .then(data => {
-            if (data.status === 'ok') {
-              alert('✅ Factura creada exitosamente');
-              // Recargar la información
-              verFactura(idPedido, 0, '');
-            } else {
-              alert('❌ Error: ' + data.msg);
-            }
-          })
-          .catch(err => alert('Error: ' + err));
-      });
+      // Este código se adjunta en inicializarFactura() después de que el DOM esté listo.
 
       // Descargar factura en PDF
       function descargarFacturaPDF(pedidoId) {
-        window.open(`backend/descargar_factura_pdf.php?pedido_id=${pedidoId}`, '_blank');
+        Promise.all([
+          fetch(`backend/obtener_factura.php?pedido_id=${pedidoId}`, { credentials: 'same-origin', headers: { Accept: 'application/json' } })
+            .then(res => res.text())
+            .then(text => {
+              try { return JSON.parse(text); } catch (error) { throw new Error('Respuesta inválida de obtener_factura.php: ' + text); }
+            }),
+          fetch(`backend/obtener_detalle_pedido.php?id=${pedidoId}`, { credentials: 'same-origin', headers: { Accept: 'application/json' } })
+            .then(res => res.text())
+            .then(text => {
+              try { return JSON.parse(text); } catch (error) { throw new Error('Respuesta inválida de obtener_detalle_pedido.php: ' + text); }
+            })
+        ])
+        .then(([facturaResp, productos]) => {
+          if (facturaResp.status !== 'ok' || !facturaResp.factura) {
+            throw new Error(facturaResp.msg || 'No existe factura para este pedido');
+          }
+
+          const factura = facturaResp.factura;
+          const items = productos.map(item => ({
+            nombre: item.nombre,
+            cantidad: Number(item.cantidad) || 0,
+            precio_unitario: Number(item.precio_unitario) || 0
+          }));
+
+          const { jsPDF } = window.jspdf || { jsPDF: window.jsPDF };
+          if (!jsPDF) {
+            throw new Error('jsPDF no está disponible');
+          }
+
+          const doc = new jsPDF('p', 'mm', 'letter');
+          doc.setFontSize(18);
+          doc.text('BORRACHORAMA', 105, 20, { align: 'center' });
+          doc.setFontSize(12);
+          doc.text(`Factura #${factura.numero_factura}`, 14, 36);
+          doc.text(`Fecha: ${factura.fecha_emision}`, 14, 44);
+          doc.text(`Pedido: #${pedidoId}`, 14, 52);
+          doc.text(`RFC: ${factura.rfc_cliente || 'N/A'}`, 14, 60);
+          doc.text(`Razón Social: ${factura.razon_social || 'N/A'}`, 14, 68);
+          if (factura.domicilio_fiscal) {
+            doc.text(`Domicilio Fiscal: ${factura.domicilio_fiscal}`, 14, 76);
+          }
+
+          const body = items.map(item => [
+            item.nombre,
+            item.cantidad.toString(),
+            `$${item.precio_unitario.toFixed(2)}`,
+            `$${(item.cantidad * item.precio_unitario).toFixed(2)}`
+          ]);
+
+          doc.autoTable({
+            head: [['Producto', 'Cantidad', 'Precio unitario', 'Subtotal']],
+            body,
+            startY: 90,
+            styles: { fontSize: 10 },
+            headStyles: { fillColor: [255, 214, 0], textColor: 20 }
+          });
+
+          const subtotal = items.reduce((sum, item) => sum + item.cantidad * item.precio_unitario, 0);
+          const iva = subtotal * 0.16;
+          const envio = 80.00;
+          const total = subtotal + iva + envio;
+          const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 130;
+
+          doc.setFontSize(11);
+          doc.text(`Subtotal: $${subtotal.toFixed(2)}`, 180, finalY, { align: 'right' });
+          doc.text(`IVA (16%): $${iva.toFixed(2)}`, 180, finalY + 8, { align: 'right' });
+          doc.text(`Costo de envío: $${envio.toFixed(2)}`, 180, finalY + 16, { align: 'right' });
+          doc.setFontSize(13);
+          doc.setFont('helvetica', 'bold');
+          doc.text(`Total: $${total.toFixed(2)} MXN`, 180, finalY + 28, { align: 'right' });
+
+          const filename = `Factura_${factura.numero_factura}.pdf`;
+          doc.save(filename);
+        })
+        .catch(err => {
+          alert('Error al generar PDF: ' + err.message);
+        });
       }
 
       // Modifica tu función cambiarSeccion para incluir esta carga
@@ -1138,7 +1246,7 @@
       <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header bg-warning text-dark">
-            <h5 class="modal-title">📄 Gestión de Factura - Pedido #<span id="factura-pedido-id" style="display: none;"></span></h5>
+            <h5 class="modal-title">📄 Gestión de Factura - Pedido #<span id="factura-pedido-id-display"></span></h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
@@ -1161,7 +1269,7 @@
                 <p class="mb-0"><strong>Razón Social:</strong> <span id="factura-razon-social">-</span></p>
               </div>
               <div class="d-flex gap-2">
-                <button class="btn btn-primary" onclick="descargarFacturaPDF(document.getElementById('factura-pedido-id').value)">
+                <button class="btn btn-primary" onclick="descargarFacturaPDF(document.getElementById('factura-pedido-id-input').value)">
                   📥 Descargar PDF
                 </button>
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -1171,12 +1279,12 @@
             <!-- Formulario para Crear Factura -->
             <div id="formularioFactura" style="display: none;">
               <form id="formFactura" class="needs-validation">
-                <input type="hidden" id="factura-pedido-id">
+                <input type="hidden" id="factura-pedido-id-input">
                 
                 <div class="mb-3">
                   <label class="form-label">RFC <span class="text-danger">*</span></label>
                   <input type="text" class="form-control" id="input-rfc" placeholder="Ej: ABC123456XYZ" required>
-                  <small class="form-text text-muted">Registro Federal del Contribuyente (13 caracteres)</small>
+                  <small class="form-text text-muted">Registro Federal del Contribuyente (12 o 13 caracteres)</small>
                 </div>
 
                 <div class="mb-3">

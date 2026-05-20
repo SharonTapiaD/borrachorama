@@ -26,11 +26,11 @@ if ($pedido_id == 0 || $rfc == '' || $razon_social == '' || $domicilio == '') {
     exit;
 }
 
-// Validar RFC (13 caracteres)
-if (strlen($rfc) != 13) {
+// Validar RFC válido (12 o 13 caracteres)
+if (strlen($rfc) !== 12 && strlen($rfc) !== 13) {
     echo json_encode([
         "status" => "error",
-        "msg" => "El RFC debe tener 13 caracteres"
+        "msg" => "El RFC debe tener 12 o 13 caracteres"
     ]);
     exit;
 }
@@ -70,8 +70,16 @@ $numero_factura = "FAC-" . date('Ymd') . "-" . str_pad(rand(1, 9999), 4, '0', ST
 $sql = "INSERT INTO facturas (pedido_id, numero_factura, rfc_cliente, razon_social, domicilio_fiscal, fecha_emision, monto_total) 
         VALUES (?, ?, ?, ?, ?, NOW(), ?)";
 $stmt = $conn->prepare($sql);
+if (!$stmt) {
+    echo json_encode([
+        "status" => "error",
+        "msg" => "Error en preparación de consulta: " . $conn->error
+    ]);
+    exit;
+}
+
 $total = floatval($pedido['total']);
-$stmt->bind_param("isssssd", $pedido_id, $numero_factura, $rfc, $razon_social, $domicilio, $total);
+$stmt->bind_param("issssd", $pedido_id, $numero_factura, $rfc, $razon_social, $domicilio, $total);
 
 if ($stmt->execute()) {
     echo json_encode([

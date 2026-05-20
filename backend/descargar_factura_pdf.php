@@ -23,12 +23,20 @@ if ($pedido_id == 0) {
 }
 
 // Obtener datos del pedido
-$sql = "SELECT p.*, u.nombre as cliente_nombre, u.correo, u.telefono, f.numero_factura, f.rfc_cliente, f.razon_social, f.domicilio_fiscal, f.fecha_emision
-        FROM pedidos p
-        JOIN usuarios u ON p.usuario_id = u.id
-        LEFT JOIN facturas f ON p.id = f.pedido_id
-        WHERE p.id = ? AND p.usuario_id = ?";
+$sql = "SELECT pe.*, u.nombre as cliente_nombre, u.correo, pf.telefono, f.numero_factura, f.rfc_cliente, f.razon_social, f.domicilio_fiscal, f.fecha_emision
+        FROM pedidos pe
+        JOIN usuarios u ON pe.usuario_id = u.id
+        LEFT JOIN perfiles pf ON u.id = pf.usuario_id
+        LEFT JOIN facturas f ON pe.id = f.pedido_id
+        WHERE pe.id = ? AND pe.usuario_id = ?";
 $stmt = $conn->prepare($sql);
+if (!$stmt) {
+    echo json_encode([
+        "status" => "error",
+        "msg" => "Error en preparación de consulta: " . $conn->error
+    ]);
+    exit;
+}
 $stmt->bind_param("ii", $pedido_id, $_SESSION['usuario_id']);
 $stmt->execute();
 $pedido = $stmt->get_result()->fetch_assoc();
@@ -51,8 +59,15 @@ if (!$pedido['numero_factura']) {
 }
 
 // Obtener detalles de productos del pedido
-$sql = "SELECT pp.nombre, pp.cantidad, pp.precio_unitario FROM pedidos_productos pp WHERE pedido_id = ?";
+$sql = "SELECT dp.cantidad, dp.precio_unitario, p.nombre FROM detalle_pedido dp JOIN productos p ON dp.producto_id = p.id WHERE dp.pedido_id = ?";
 $stmt = $conn->prepare($sql);
+if (!$stmt) {
+    echo json_encode([
+        "status" => "error",
+        "msg" => "Error en preparación de consulta de productos: " . $conn->error
+    ]);
+    exit;
+}
 $stmt->bind_param("i", $pedido_id);
 $stmt->execute();
 $productos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
