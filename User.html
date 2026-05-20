@@ -994,22 +994,21 @@
               let colorStatus = p.estatus === 'completada' ? 'green' : 'orange';
               const facturaExiste = p.factura_id && p.factura_id !== null;
               tbody.innerHTML += `
-<<<<<<< HEAD
-                        <tr>
-                            <td><strong>#${p.id}</strong></td>
-                            <td>${p.fecha_formateada}</td>
-                            <td>$${parseFloat(p.total).toFixed(2)}</td>
-                            <td style="color: ${colorStatus}; font-weight: bold;">${p.estatus.toUpperCase()}</td>
-                            <td>
-                                <button class="btn btn-sm btn-dark" onclick="verSeguimiento(${p.id}, '${p.estatus}', ${p.total})">
-                                    🔍 Ver Seguimiento
-                                </button>
-                                <button class="btn btn-sm btn-warning" onclick="verFactura(${p.id}, ${p.total}, '${p.fecha_formateada}')">
-                                    📄 Factura
-                                </button>
-                            </td>
-                        </tr>`;
-
+<tr>
+    <td><strong>#${p.id}</strong></td>
+    <td>${p.fecha_formateada}</td>
+    <td>$${parseFloat(p.total).toFixed(2)}</td>
+    <td style="color: ${colorStatus}; font-weight: bold;">${p.estatus.toUpperCase()}</td>
+    <td>
+        <button class="btn btn-sm btn-dark" onclick="verSeguimiento(${p.id}, '${p.estatus}', ${p.total})">
+            🔍 Ver Seguimiento
+        </button>
+        <button class="btn btn-sm ${facturaExiste ? 'btn-success' : 'btn-warning'}" onclick="verFactura(${p.id}, ${p.total}, '${p.fecha_formateada}')">
+            ${facturaExiste ? '📥 Descargar' : '📄 Solicitar'}
+        </button>
+    </td>
+</tr>`;
+                
             });
           });
       }
