@@ -352,6 +352,15 @@
   </nav>
 
   <main>
+    <br><br>
+    <!-- Busca tu <nav class="navbar-custom ..."> y añade esto dentro -->
+    <div class="d-flex justify-content-center mt-2">
+      <div class="input-group" style="max-width: 400px;">
+        <input type="text" id="inputBusqueda" class="form-control"
+          placeholder="Buscar por nombre o categoría (ej: Don Julio, Bebidas)...">
+        <button class="btn btn-dark" type="button" id="btnBuscar">🔍</button>
+      </div>
+    </div>
     <!-- Sección de Bienvenida con Productos -->
     <section class="welcome-section text-center">
       <h1>🍻 Bienvenido a Borrachorama</h1>
@@ -363,73 +372,108 @@
       </div>
 
       <script>
-        // Cargar productos desde la BD
-        fetch('backend/getProducts.php')
-          .then(response => response.json())
-          .then(products => {
-            const container = document.getElementById('products-container');
-            products.forEach(product => {
-              const card = document.createElement('div');
-              card.className = 'product-card';
-              card.innerHTML = `
-                    <img src="${product.image}" alt="${product.name}">
-                    <h3>${product.name}</h3>
-                    <span class="category">${product.category}</span>
-                    <p class="description">${product.description}</p>
-                    <div class="price">$${parseFloat(product.price).toFixed(2)}</div>
-                    <button class="btn btn-warning text-dark agregar" 
-                            data-id="${product.id}" 
-                            data-nombre="${product.name}" 
-                            data-precio="${product.price}">
-                      Agregar al Carrito
-                    </button>
-                  `;
-              container.appendChild(card);
-            });
+        const container = document.getElementById('products-container');
+        const inputBusqueda = document.getElementById('inputBusqueda');
+        const btnBuscar = document.getElementById('btnBuscar');
 
-            // Activar los botones de agregar al carrito
-            const botones = document.querySelectorAll('.agregar');
-            botones.forEach(boton => {
-              boton.addEventListener('click', () => {
-                const producto_id = boton.getAttribute('data-id');
-                const nombre = boton.getAttribute('data-nombre');
+        // 1. Función para cargar productos (acepta un término de búsqueda)
+        function cargarProductos(termino = '') {
+          // Limpiamos el contenedor y mostramos mensaje de carga
+          container.innerHTML = '<p class="text-center w-100">Buscando...</p>';
 
-                const formData = new FormData();
-                formData.append("producto_id", producto_id); // Solo enviamos el ID del producto
+          // Hacemos la petición al PHP enviando el término "buscar"
+          fetch(`backend/getProducts.php?buscar=${encodeURIComponent(termino)}`)
+            .then(response => response.json())
+            .then(products => {
+              container.innerHTML = ''; // Limpiar mensaje de carga
 
-                fetch('backend/agregar_carrito.php', {
-                  method: 'POST',
-                  body: formData
-                })
-                  .then(res => res.json())
-                  .then(resp => {
-                    if (resp.status === "ok") {
-                      mostrarNotificacion(`${nombre} se agregó al carrito 🛒`);
-                    } else {
-                      // Si el error es "Inicia sesión", podrías redirigir al login
-                      mostrarNotificacion(resp.msg, "error");
-                    }
-                  });
+              if (products.length === 0) {
+                container.innerHTML = '<p class="text-center w-100">No se encontraron resultados 🍻</p>';
+                return;
+              }
+
+              products.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+
+                const stockColor = product.stock <= 5 ? 'text-danger fw-bold' : 'text-muted';
+                const estaAgotado = product.stock <= 0;
+
+                card.innerHTML = `
+                  <img src="${product.image}" alt="${product.name}">
+                  <h3>${product.name}</h3>
+                  <span class="category">${product.category}</span>
+                  <p class="description">${product.description}</p>
+                  <div class="price">$${parseFloat(product.price).toFixed(2)}</div>
+                  
+                  <p class="stock-info ${stockColor}">
+                    ${estaAgotado ? '🚫 Agotado' : `📦 Stock: ${product.stock} unidades`}
+                  </p>
+          
+                  <button class="btn btn-warning text-dark agregar" 
+                          data-id="${product.id}" 
+                          data-nombre="${product.name}" 
+                          ${estaAgotado ? 'disabled' : ''}>
+                    ${estaAgotado ? 'Sin existencias' : 'Agregar al Carrito'}
+                  </button>
+                `;
+                container.appendChild(card);
               });
-            });
-          })
-          .catch(error => {
-            console.error('Error al cargar los productos:', error);
-            mostrarNotificacion('Error al cargar los productos', 'error');
-            document.getElementById('products-container').innerHTML =
-              '<p class="text-center">Error al cargar los productos. Por favor, intente más tarde.</p>';
-          });
 
-        // Función para mostrar notificaciones personalizadas
+              // Volver a activar los botones de "Agregar al Carrito"
+              vincularBotonesCarrito();
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              container.innerHTML = '<p class="text-center w-100">Error al cargar productos.</p>';
+            });
+        }
+
+        // 2. Función para que el botón de carrito funcione
+        function vincularBotonesCarrito() {
+          const botones = document.querySelectorAll('.agregar');
+          botones.forEach(boton => {
+            boton.onclick = function () {
+              const producto_id = this.getAttribute('data-id');
+              const nombre = this.getAttribute('data-nombre');
+              const formData = new FormData();
+              formData.append("producto_id", producto_id);
+
+              fetch('backend/agregar_carrito.php', { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(resp => {
+                  if (resp.status === "ok") {
+                    mostrarNotificacion(`${nombre} se agregó al carrito 🛒`);
+                  } else {
+                    mostrarNotificacion(resp.msg, "error");
+                  }
+                });
+            };
+          });
+        }
+
+        // 3. Eventos para activar la búsqueda
+        btnBuscar.addEventListener('click', () => {
+          cargarProductos(inputBusqueda.value);
+        });
+
+        inputBusqueda.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            cargarProductos(inputBusqueda.value);
+          }
+        });
+
+        // 4. Carga inicial de productos al abrir la página
+        document.addEventListener('DOMContentLoaded', () => {
+          cargarProductos('');
+        });
+
+        // Función de notificaciones (la que ya tenías)
         function mostrarNotificacion(mensaje, tipo = 'success') {
           const notif = document.createElement('div');
           notif.className = `notification ${tipo}`;
-          notif.innerHTML = `
-                <span>${tipo === 'success' ? '✓' : tipo === 'error' ? '✕' : 'ℹ'}</span>
-                <span>${mensaje}</span>
-              `;
+          notif.innerHTML = `<span>${tipo === 'success' ? '✓' : '✕'}</span> <span>${mensaje}</span>`;
           document.body.appendChild(notif);
-
           setTimeout(() => {
             notif.classList.add('removing');
             setTimeout(() => notif.remove(), 300);

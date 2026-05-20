@@ -668,7 +668,6 @@
                     localStorage.setItem('lastPedidoId', pedido.id);
 
                     // Limpiar datos de intento
-                    localStorage.removeItem('carrito');
                     localStorage.removeItem('reintentoPago');
                     localStorage.removeItem('datosErrorPago');
                     localStorage.removeItem('ultimoErrorPago');
@@ -677,7 +676,23 @@
                     localStorage.setItem('paymentLocked', 'true');
                     localStorage.setItem('paymentCompleted', 'true');
 
-                    window.location.href = 'Confirmacion.html';
+                    // Descontar stock en el servidor
+                    const carritoParaEnviar = JSON.parse(localStorage.getItem('carrito') || '[]');
+                    fetch('backend/procesar_pago_exitoso.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ items: carritoParaEnviar })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        localStorage.removeItem('carrito');
+                        if (data.status !== "ok") alert("Atención: " + data.msg);
+                        window.location.href = 'Confirmacion.html';
+                    })
+                    .catch(() => {
+                        localStorage.removeItem('carrito');
+                        window.location.href = 'Confirmacion.html';
+                    });
                 } else {
                     // Pago fallido
                     const datosError = {
@@ -765,5 +780,4 @@
 
     </script>
     </body>
-    
     </html>

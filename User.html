@@ -329,7 +329,9 @@
           💬 Ayuda y Soporte
         </div>
 
-
+        <div class="menu-option" onclick="cambiarSeccion(event, 'seguimiento-ventas')">
+          🤝 Seguimiento Comercial
+        </div>
 
         <div class="p-3">
           <a href="backend/logout.php" class="btn btn-logout">Cerrar Sesión</a>
@@ -438,6 +440,25 @@
             </div>
             <button type="button" class="btn btn-warning fw-bold" onclick="enviarReporte()">Enviar Reporte</button>
           </form>
+        </div>
+
+        <!-- Agrega esta sección dentro de <main class="content-area"> -->
+        <div id="seguimiento-ventas" class="content-section">
+          <h3 class="section-title">Seguimiento de Ventas</h3>
+          <p class="text-muted">Aquí puedes ver el historial de contacto que nuestro equipo de ventas ha tenido contigo.</p>
+        
+          <table class="table table-hover border">
+            <thead class="table-warning">
+              <tr>
+                <th>Fecha</th>
+                <th>Tipo de Contacto</th>
+                <th>Detalles / Notas</th>
+              </tr>
+            </thead>
+            <tbody id="tablaSeguimientoComercial">
+              <!-- Se llenará con JavaScript -->
+            </tbody>
+          </table>
         </div>
 
         <!-- SECCIÓN: HISTORIAL DE REPORTES -->
@@ -701,14 +722,14 @@
             data.forEach(r => {
               let color = r.estado === 'Resuelto' ? 'green' : (r.estado === 'En proceso' ? 'orange' : 'red');
               tbody.innerHTML += `
-              <tr>
-                <td>#${r.id}</td>
-                <td><strong>${r.tipo}</strong></td>
-                <td>${r.mensaje}</td>
-                <td>${r.fecha}</td>
-                <td style="color: ${color}; font-weight: bold;">${r.estado}</td>
-              </tr>
-            `;
+                      <tr>
+                        <td>#${r.id}</td>
+                        <td><strong>${r.tipo}</strong></td>
+                        <td>${r.mensaje}</td>
+                        <td>${r.fecha}</td>
+                        <td style="color: ${color}; font-weight: bold;">${r.estado}</td>
+                      </tr>
+                    `;
             });
           });
       }
@@ -781,6 +802,37 @@
           });
       });
 
+      function cargarSeguimientoComercial() {
+        fetch('backend/obtener_interacciones_comerciales.php')
+          .then(res => res.json())
+          .then(data => {
+            const tbody = document.getElementById('tablaSeguimientoComercial');
+            tbody.innerHTML = "";
+
+            if (data.length === 0) {
+              tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted">Aún no hay interacciones registradas para tu cuenta.</td></tr>`;
+              return;
+            }
+
+            data.forEach(i => {
+              // Seleccionamos un icono según el tipo
+              let icono = "🤝";
+              if (i.tipo.toLowerCase().includes('llamada')) icono = "📞";
+              if (i.tipo.toLowerCase().includes('correo')) icono = "📧";
+              if (i.tipo.toLowerCase().includes('reunion')) icono = "👥";
+
+              tbody.innerHTML += `
+                        <tr>
+                            <td><small>${i.fecha}</small></td>
+                            <td class="text-capitalize"><strong>${icono} ${i.tipo}</strong></td>
+                            <td>${i.descripcion}</td>
+                        </tr>
+                    `;
+            });
+          })
+          .catch(err => console.error("Error al cargar interacciones:", err));
+      }
+
       // FUNCIÓN PARA LLENAR LA TABLA DE REPORTES DEL USUARIO
       function cargarMisReportes() {
         fetch('backend/obtener_reportes_user.php')
@@ -806,15 +858,15 @@
 
               // Dibujar la fila en la tabla
               tbody.innerHTML += `
-                <tr>
-                    <td><strong>#${r.id}</strong></td>
-                    <td>${r.tipo}</td>
-                    <td><small>${r.mensaje}</small></td>
-                    <td><small><strong>${respuestaTxt}</strong></small></td>
-                    <td><small>${r.fecha}</small></td>
-                    <td><span class="badge ${badgeClass}">${r.estado}</span></td>
-                </tr>
-            `;
+                        <tr>
+                            <td><strong>#${r.id}</strong></td>
+                            <td>${r.tipo}</td>
+                            <td><small>${r.mensaje}</small></td>
+                            <td><small><strong>${respuestaTxt}</strong></small></td>
+                            <td><small>${r.fecha}</small></td>
+                            <td><span class="badge ${badgeClass}">${r.estado}</span></td>
+                        </tr>
+                    `;
             });
           })
           .catch(err => console.error('Error al cargar la tabla:', err));
@@ -864,13 +916,13 @@
 
           const tbody = document.querySelector('#interacciones table tbody');
           tbody.innerHTML = interacciones.map(i => `
-          <tr>
-            <td>${i.fecha}</td>
-            <td>${i.tipo}</td>
-            <td>${i.descripcion}</td>
-            <td>${i.estado}</td>
-          </tr>
-        `).join('');
+                  <tr>
+                    <td>${i.fecha}</td>
+                    <td>${i.tipo}</td>
+                    <td>${i.descripcion}</td>
+                    <td>${i.estado}</td>
+                  </tr>
+                `).join('');
         }
       }
 
@@ -890,20 +942,20 @@
             data.forEach(p => {
               let colorStatus = p.estatus === 'completada' ? 'green' : 'orange';
               tbody.innerHTML += `
-                <tr>
-                    <td><strong>#${p.id}</strong></td>
-                    <td>${p.fecha_formateada}</td>
-                    <td>$${parseFloat(p.total).toFixed(2)}</td>
-                    <td style="color: ${colorStatus}; font-weight: bold;">${p.estatus.toUpperCase()}</td>
-                    <td>
-                        <button class="btn btn-sm btn-dark" onclick="verSeguimiento(${p.id}, '${p.estatus}', ${p.total})">
-                            🔍 Ver Seguimiento
-                        </button>
-                        <button class="btn btn-sm btn-warning" onclick="verFactura(${p.id}, ${p.total}, '${p.fecha_formateada}')">
-                            📄 Factura
-                        </button>
-                    </td>
-                </tr>`;
+                        <tr>
+                            <td><strong>#${p.id}</strong></td>
+                            <td>${p.fecha_formateada}</td>
+                            <td>$${parseFloat(p.total).toFixed(2)}</td>
+                            <td style="color: ${colorStatus}; font-weight: bold;">${p.estatus.toUpperCase()}</td>
+                            <td>
+                                <button class="btn btn-sm btn-dark" onclick="verSeguimiento(${p.id}, '${p.estatus}', ${p.total})">
+                                    🔍 Ver Seguimiento
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="verFactura(${p.id}, ${p.total}, '${p.fecha_formateada}')">
+                                    📄 Factura
+                                </button>
+                            </td>
+                        </tr>`;
             });
           });
       }
@@ -937,12 +989,12 @@
             lista.innerHTML = "";
             items.forEach(it => {
               lista.innerHTML += `
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <img src="${it.imagen}" width="30" class="me-2"> ${it.nombre}
-                    </div>
-                    <span>${it.cantidad} x $${parseFloat(it.precio_unitario).toFixed(2)}</span>
-                </li>`;
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <img src="${it.imagen}" width="30" class="me-2"> ${it.nombre}
+                            </div>
+                            <span>${it.cantidad} x $${parseFloat(it.precio_unitario).toFixed(2)}</span>
+                        </li>`;
             });
 
             const myModal = new bootstrap.Modal(document.getElementById('seguimientoModal'));
@@ -1033,6 +1085,7 @@
 
         if (seccion === 'interacciones') cargarMisReportes();
         if (seccion === 'historial') cargarHistorialCompras(); // <--- NUEVO
+        if (seccion === 'seguimiento-ventas') cargarSeguimientoComercial(); // <-- AGREGA ESTO
       }
     </script>
 

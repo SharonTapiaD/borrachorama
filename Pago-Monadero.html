@@ -1080,12 +1080,28 @@
                     localStorage.removeItem('datosPagoMonedero');
                     localStorage.removeItem('datosErrorPago');
                     localStorage.removeItem('ultimoErrorPago');
-                    localStorage.removeItem('carrito');
 
                     // Cerrar pago para impedir duplicados
                     localStorage.setItem('paymentLocked', 'true');
                     localStorage.setItem('paymentCompleted', 'true');
-                    setTimeout(() => { window.location.href = 'Confirmacion.html'; }, 500);
+
+                    // Descontar stock en el servidor
+                    const carritoParaEnviar = JSON.parse(localStorage.getItem('carrito') || '[]');
+                    fetch('backend/procesar_pago_exitoso.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ items: carritoParaEnviar })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        localStorage.removeItem('carrito');
+                        if (data.status !== "ok") alert("Atención: " + data.msg);
+                        window.location.href = 'Confirmacion.html';
+                    })
+                    .catch(() => {
+                        localStorage.removeItem('carrito');
+                        window.location.href = 'Confirmacion.html';
+                    });
                 } else {
                     const datosError = {
                         motivo: resultadoSimulacion.error,

@@ -4,7 +4,11 @@ header("Content-Type: application/json");
 
 require __DIR__ . "/config/conexion.php";
 
-// Consulta con INNER JOIN para traer el nombre de la categoría
+// 1. Capturar el término de búsqueda (si existe)
+// Usamos real_escape_string para evitar errores con comillas o inyecciones SQL básicas
+$buscar = isset($_GET['buscar']) ? $conn->real_escape_string($_GET['buscar']) : '';
+
+// 2. Consulta base con INNER JOIN
 $sql = "
 SELECT 
     p.id,
@@ -26,6 +30,12 @@ FROM productos p
 INNER JOIN categorias c ON p.categoria_id = c.id
 ";
 
+// 3. Si el usuario escribió algo en el buscador, añadimos el filtro
+if ($buscar !== '') {
+    // Filtramos si el nombre del producto contiene la palabra O si la categoría la contiene
+    $sql .= " WHERE (p.nombre LIKE '%$buscar%' OR c.nombre LIKE '%$buscar%')";
+}
+
 $result = $conn->query($sql);
 
 $productos = [];
@@ -35,13 +45,13 @@ if ($result && $result->num_rows > 0) {
         $productos[] = [
             "id"          => (int)$row["id"],
             "name"        => $row["nombre"],
-            "category"    => $row["categoria_nombre"], // ahora devuelve el nombre
+            "category"    => $row["categoria_nombre"], 
             "description" => $row["descripcion"],
             "image"       => $row["imagen"],
             "price"       => (float)$row["precio"],
             "stock"       => (int)$row["stock"],
             "min_stock"   => isset($row["stock_minimo"]) ? (int)$row["stock_minimo"] : 0,
-            "status"      => (int)$row["estatus"],
+            "status"      => $row["estatus"], // Mantener como string si en la BD es 'activo'/'inactivo'
             "discount_percentage" => (float)($row["descuento_porcentaje"] ?? 0),
             "discount_fixed" => (float)($row["descuento_fijo"] ?? 0),
             "promotion_start" => $row["fecha_inicio_promocion"],
@@ -50,8 +60,8 @@ if ($result && $result->num_rows > 0) {
             "promotion_active" => (int)($row["promocion_activa"] ?? 0)
         ];
     }
-
     echo json_encode($productos);
 } else {
+    // Si no hay resultados, devolvemos un array vacío
     echo json_encode([]);
 }
