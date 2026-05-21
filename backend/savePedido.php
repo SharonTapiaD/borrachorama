@@ -19,13 +19,12 @@ if ($stmt->execute()) {
     $sql_cart = "SELECT producto_id, cantidad FROM carrito WHERE usuario_id = ?";
     $stmt_cart = $conn->prepare($sql_cart);
     
-    
     $sesion_actual = $_SESSION['usuario_id'] ?? 1; 
     $stmt_cart->bind_param("i", $sesion_actual);
     $stmt_cart->execute();
     $res_cart = $stmt_cart->get_result();
 
-    
+    // Restar el stock de cada producto vendido
     while ($item = $res_cart->fetch_assoc()) {
         $upd_stock = $conn->prepare("UPDATE productos SET stock = stock - ? WHERE id = ? AND stock >= ?");
         $upd_stock->bind_param("iii", $item['cantidad'], $item['producto_id'], $item['cantidad']);

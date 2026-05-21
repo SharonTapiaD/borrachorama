@@ -21,6 +21,14 @@ if ($id === 0) {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("iiid", $pedido_id, $producto_id, $cantidad, $precio_uni);
     $ok = $stmt->execute();
+    
+    // NUEVO: Sumar stock al producto en el inventario
+    if ($ok) {
+        $upd_stock = $conn->prepare("UPDATE productos SET stock = stock + ? WHERE id = ?");
+        $upd_stock->bind_param("ii", $cantidad, $producto_id);
+        $upd_stock->execute();
+    }
+    
     $msg = $ok ? "Detalle agregado" : "Error al agregar detalle";
 } else {
     $sql = "UPDATE detalle_pedido_proveedor SET producto_id=?, cantidad=?, precio_unitario=? WHERE id=?";
