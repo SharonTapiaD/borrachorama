@@ -10,6 +10,21 @@ if (!isset($_SESSION['usuario_id'])) {
 
 $usuario_id = $_SESSION['usuario_id'];
 
+// Buscamos el cliente real vinculado a este usuario
+$cliente_id = 0;
+$stmt_cliente = $conn->prepare("SELECT id FROM clientes WHERE usuario_id = ?");
+$stmt_cliente->bind_param("i", $usuario_id);
+$stmt_cliente->execute();
+$res_cliente = $stmt_cliente->get_result();
+if ($res_cliente && $row_cliente = $res_cliente->fetch_assoc()) {
+    $cliente_id = (int)$row_cliente['id'];
+}
+
+// Si no existe un cliente vinculado, usamos el usuario como fallback.
+if ($cliente_id === 0) {
+    $cliente_id = $usuario_id;
+}
+
 // 1. OBTENEMOS LOS PRODUCTOS DEL CARRITO
 $sql_carrito = "SELECT c.id AS carrito_id, c.producto_id, c.cantidad, p.precio 
                 FROM carrito c 
@@ -54,7 +69,7 @@ try {
     $stmt_p = $conn->prepare($sql_pedido);
     
     // El 'd' es para Double (decimales), pasamos $total_final
-    $stmt_p->bind_param("idii", $usuario_id, $total_final, $usuario_id, $primer_carrito_id);
+    $stmt_p->bind_param("idii", $usuario_id, $total_final, $cliente_id, $primer_carrito_id);
     $stmt_p->execute();
     
     $pedido_id = $conn->insert_id;
@@ -71,7 +86,7 @@ try {
             $prod['cantidad'], 
             $prod['precio'],
             $prod['carrito_id'],
-            $usuario_id
+            $cliente_id
         );
         $stmt_d->execute();
     }

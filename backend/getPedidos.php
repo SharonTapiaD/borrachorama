@@ -13,9 +13,10 @@ SELECT
     p.fecha,
     p.cliente_id,
     p.carrito_id,
-    c.nombre AS cliente_nombre
+    COALESCE(c.nombre, c2.nombre, 'Cliente desconocido') AS cliente_nombre
 FROM pedidos p
-INNER JOIN clientes c ON p.cliente_id = c.id
+LEFT JOIN clientes c ON p.cliente_id = c.id
+LEFT JOIN clientes c2 ON p.cliente_id = c2.usuario_id AND c.id IS NULL
 ORDER BY p.fecha DESC
 ";
 
