@@ -12,7 +12,9 @@ SELECT
     telefono,
     correo,
     direccion,
-    estatus
+    estatus,
+    vende_Producto,
+    producto_especifico_id
 FROM proveedores
 ORDER BY nombre
 ";
@@ -29,7 +31,9 @@ if ($result && $result->num_rows > 0) {
             "telefono"  => $row["telefono"],
             "correo"    => $row["correo"],
             "direccion" => $row["direccion"],
-            "estatus"   => $row["estatus"]
+            "estatus"   => $row["estatus"],
+            "vende_Producto" => (int)$row["vende_Producto"],
+            "producto_especifico_id" => (int)$row["producto_especifico_id"]
         ];
     }
 }

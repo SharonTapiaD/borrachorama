@@ -349,7 +349,9 @@
                                         <th>Contacto</th>
                                         <th>Teléfono</th>
                                         <th>Correo</th>
-                                        <th>Dirección</th>
+                                        <!-- Agregamos estas dos -->
+                                        <th>Categoría</th>
+                                        <th>Producto que surte</th>
                                         <th>Estatus</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -408,18 +410,18 @@
                                 <div class="mb-2">
                                     <label>Fecha entrega estimada</label>
                                     <input type="date" name="fecha_entrega_estimada" id="pedido-prov-entrega"
-                                        class="form-control">
+                                        class="form-control" required>
                                 </div>
                                 <div class="mb-2">
                                     <label>Tipo</label>
-                                    <select name="tipo" id="pedido-prov-tipo" class="form-select">
+                                    <select name="tipo" id="pedido-prov-tipo" class="form-select" required>
                                         <option value="reposicion">Reposición</option>
                                         <option value="venta">Venta</option>
                                     </select>
                                 </div>
                                 <div class="mb-2">
                                     <label>Estado</label>
-                                    <select name="estado" id="pedido-prov-estado" class="form-select">
+                                    <select name="estado" id="pedido-prov-estado" class="form-select" required>
                                         <option value="pendiente">Pendiente</option>
                                         <option value="enviado">Enviado</option>
                                         <option value="recibido">Recibido</option>
@@ -450,17 +452,31 @@
                                 <div class="modal-body">
                                     <form id="proveedorForm">
                                         <input type="hidden" id="proveedor-id" name="id">
-                                        <input type="text" id="proveedor-nombre" name="nombre" class="form-control mb-2"
-                                            placeholder="Nombre" required>
-                                        <input type="text" id="proveedor-contacto" name="contacto"
-                                            class="form-control mb-2" placeholder="Contacto">
-                                        <input type="text" id="proveedor-telefono" name="telefono"
-                                            class="form-control mb-2" placeholder="Teléfono">
-                                        <input type="email" id="proveedor-correo" name="correo"
-                                            class="form-control mb-2" placeholder="Correo">
+                                        <input type="text" id="proveedor-nombre" name="nombre" class="form-control mb-2" placeholder="Nombre" required>
+                                        <input type="text" id="proveedor-contacto" name="contacto" class="form-control mb-2" placeholder="Contacto" required>
+                                        <label class="small fw-bold">Teléfono (10 dígitos):</label>
+                                        <input type="text" id="proveedor-telefono" name="telefono" class="form-control mb-2" 
+                                            placeholder="4491234567" required maxlength="10" pattern="\d{10}"
+                                            onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                                        <input type="email" id="proveedor-correo" name="correo" class="form-control mb-2" placeholder="Correo" required>
                                         <textarea id="proveedor-direccion" name="direccion" class="form-control mb-2"
-                                            placeholder="Dirección"></textarea>
-                                        <select id="proveedor-estatus" name="estatus" class="form-select mb-2">
+                                            placeholder="Dirección" required></textarea>
+                                        <label class="form-label mt-2">Categoría que surte:</label>
+                                        <select id="proveedor-vende" name="vende_Producto" class="form-select mb-2" required>
+                                            <option value="">-- Seleccione Categoría --</option>
+                                            <option value="1">Bebidas (ID: 1)</option>
+                                            <option value="2">Comida (ID: 2)</option>
+                                            <option value="3">Snacks (ID: 3)</option>
+                                        </select>
+                                        <!-- Dentro de formProveedorModal, busca donde pusiste el de categoría y cámbialo por esto -->
+                                        <div class="mb-2">
+                                            <label class="form-label fw-bold">Producto específico que surte:</label>
+                                            <select id="proveedor-producto-especifico" name="producto_especifico_id" class="form-select" required>
+                                                <option value="">-- Cargando productos... --</option>
+                                            </select>
+                                            <small class="text-muted">Este producto aparecerá automáticamente al pedirle a este proveedor.</small>
+                                        </div>
+                                        <select id="proveedor-estatus" name="estatus" class="form-select mb-2" required>
                                             <option value="activo">Activo</option>
                                             <option value="inactivo">Inactivo</option>
                                         </select>
@@ -468,8 +484,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="submit" form="proveedorForm" class="btn btn-primary">Guardar</button>
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                                 </div>
                             </div>
                         </div>
@@ -490,22 +505,24 @@
                 <div class="modal-body">
                     <form id="productoForm" enctype="multipart/form-data">
                         <input type="hidden" name="id" id="producto-id">
-                        <input type="text" name="nombre" id="producto-nombre" class="form-control mb-2"
-                            placeholder="Nombre" required>
-                        <textarea name="descripcion" id="producto-descripcion" class="form-control mb-2"
-                            placeholder="Descripción" required></textarea>
+                        <input type="text" name="nombre" id="producto-nombre" class="form-control mb-2" placeholder="Nombre" required>
+                        <textarea name="descripcion" id="producto-descripcion" class="form-control mb-2" placeholder="Descripción"
+                            required></textarea>
                         <input type="number" name="categoria_id" id="producto-categoria" class="form-control mb-2"
                             placeholder="ID Categoría" required>
-                        <input type="number" step="0.01" name="precio" id="producto-precio" class="form-control mb-2"
-                            placeholder="Precio" required>
-                        <input type="number" name="stock" id="producto-stock" class="form-control mb-2"
-                            placeholder="Stock" required>
+                        <input type="number" step="0.01" name="precio" id="producto-precio" class="form-control mb-2" placeholder="Precio"
+                            required>
+                        <input type="number" name="stock" id="producto-stock" class="form-control mb-2" placeholder="Stock" required>
                         <select name="estatus" id="producto-estatus" class="form-select mb-2">
                             <option value="1">Activo</option>
                             <option value="0">Inactivo</option>
                         </select>
-                        <input type="file" name="imagen" id="producto-imagen" class="form-control mb-2"
-                            accept="image/*">
+                        <input type="file" name="imagen" id="producto-imagen" class="form-control mb-2" accept="image/*">
+                        <select name="estrategia" id="producto-estrategia" class="form-select mb-2" required>
+                            <option value="" disabled selected>Seleccione Estrategia (Push/Pull)</option>
+                            <option value="PUSH">PUSH (Basado en pronóstico)</option>
+                            <option value="PULL">PULL (Basado en demanda real)</option>
+                        </select>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -527,16 +544,18 @@
                     <div class="modal-body">
                         <input type="hidden" name="id" id="editar-id">
                         <input type="text" name="nombre" id="editar-nombre" class="form-control mb-2" required>
-                        <textarea name="descripcion" id="editar-descripcion" class="form-control mb-2"
-                            required></textarea>
-                        <input type="number" name="categoria_id" id="editar-categoria" class="form-control mb-2"
-                            required>
-                        <input type="number" step="0.01" name="precio" id="editar-precio" class="form-control mb-2"
-                            required>
+                        <textarea name="descripcion" id="editar-descripcion" class="form-control mb-2" required></textarea>
+                        <input type="number" name="categoria_id" id="editar-categoria" class="form-control mb-2" required>
+                        <input type="number" step="0.01" name="precio" id="editar-precio" class="form-control mb-2" required>
                         <input type="number" name="stock" id="editar-stock" class="form-control mb-2" required>
                         <select name="estatus" id="editar-estatus" class="form-select mb-2">
                             <option value="1">Activo</option>
                             <option value="0">Inactivo</option>
+                        </select>
+                        <!-- Busca el form con id="editarProductoForm" y agrega esto después del select de editar-estatus -->
+                        <select name="estrategia" id="editar-estrategia" class="form-select mb-2" required>
+                            <option value="PUSH">PUSH</option>
+                            <option value="PULL">PULL</option>
                         </select>
                     </div>
                     <div class="modal-footer">
@@ -575,9 +594,9 @@
                 .then(productos => {
                     const tbody = document.querySelector('#tabla-productos tbody');
                     tbody.innerHTML = '';
-                    productos.forEach(p => {
 
-                        // Lógica de Semáforo de Stock (ya la tenías)
+                    productos.forEach(p => {
+                        // 1. Lógica de Semáforo de Stock
                         let claseStock = 'bg-success';
                         const min = p.stock_minimo || 10;
                         if (p.stock <= min) {
@@ -586,35 +605,38 @@
                             claseStock = 'bg-warning text-dark';
                         }
 
-                        // NUEVA LÓGICA: Determinar Estrategia Push/Pull
-                        // Comida y Snacks suelen ser Push (se fabrican/compran por pronóstico)
-                        // Bebidas suelen ser Pull (se reponen según consumo/demanda real)
-                        let estrategiaEtiqueta = '';
-                        if (p.category === 'Comida' || p.category === 'Snacks') {
-                            estrategiaEtiqueta = '<span class="badge bg-info text-dark">PUSH</span>';
-                        } else if (p.category === 'Bebidas') {
-                            estrategiaEtiqueta = '<span class="badge bg-primary">PULL</span>';
+                        // 2. NUEVA LÓGICA: Leer Estrategia desde la BD
+                        // Usamos el valor que viene en p.estrategia ('PUSH' o 'PULL')
+                        let badgeClass = '';
+                        if (p.estrategia === 'PUSH') {
+                            badgeClass = 'bg-info text-dark'; // Color cyan/celeste
+                        } else if (p.estrategia === 'PULL') {
+                            badgeClass = 'bg-primary'; // Color azul
                         } else {
-                            estrategiaEtiqueta = '<span class="badge bg-secondary">N/A</span>';
+                            badgeClass = 'bg-secondary'; // Por si no tiene valor asignado
                         }
 
+                        let estrategiaEtiqueta = `<span class="badge ${badgeClass}">${p.estrategia || 'S/E'}</span>`;
+
+                        // 3. Renderizado de la fila
                         tbody.innerHTML += `
-                                <tr>
-                                    <td>${p.id}</td>
-                                    <td><img src="${p.image}" alt="${p.name}" style="width:40px;"></td>
-                                    <td>${p.name}</td>
-                                    <td>${p.description}</td>
-                                    <td>${p.category}</td>
-                                    <td><span class="badge ${claseStock} p-2">${p.stock}</span></td>
-                                    <td>$${p.price.toFixed(2)}</td>
-                                    <td>${estrategiaEtiqueta}</td> <!-- Aquí mostramos la estrategia -->
-                                    <td>
-                                        <button class="btn btn-warning btn-sm" onclick="editarProducto(${p.id})">✏️</button>
-                                        <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${p.id})">🗑️</button>
-                                    </td>
-                                </tr>`;
+                        <tr>
+                            <td>${p.id}</td>
+                            <td><img src="${p.image}" alt="${p.name}" style="width:40px;"></td>
+                            <td>${p.name}</td>
+                            <td>${p.description}</td>
+                            <td>${p.category}</td>
+                            <td><span class="badge ${claseStock} p-2">${p.stock}</span></td>
+                            <td>$${p.price.toFixed(2)}</td>
+                            <td>${estrategiaEtiqueta}</td> 
+                            <td>
+                                <button class="btn btn-warning btn-sm" onclick="editarProducto(${p.id})">✏️</button>
+                                <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${p.id})">🗑️</button>
+                            </td>
+                        </tr>`;
                     });
-                });
+                })
+                .catch(error => console.error('Error al cargar productos:', error));
         }
 
         document.getElementById('productoForm').addEventListener('submit', function (e) {
@@ -644,6 +666,7 @@
                         document.getElementById('editar-precio').value = producto.precio;
                         document.getElementById('editar-stock').value = producto.stock;
                         document.getElementById('editar-estatus').value = producto.status;
+                        document.getElementById('editar-estrategia').value = producto.estrategia; // Agrega esta línea
                         new bootstrap.Modal(document.getElementById('editarProductoModal')).show();
                     }
                 });
@@ -682,14 +705,14 @@
                 .then(data => {
                     const thead = document.querySelector('#pedidos table thead');
                     thead.innerHTML = `
-                            <tr class="table-dark">
-                                <th>ID Pedido</th>
-                                <th>Fecha</th>
-                                <th>Cliente</th>
-                                <th>Total</th>
-                                <th>Estado / Cambiar</th>
-                            </tr>
-                        `;
+                                            <tr class="table-dark">
+                                                <th>ID Pedido</th>
+                                                <th>Fecha</th>
+                                                <th>Cliente</th>
+                                                <th>Total</th>
+                                                <th>Estado / Cambiar</th>
+                                            </tr>
+                                        `;
 
                     const tbody = document.querySelector('#pedidos-tbody');
                     tbody.innerHTML = '';
@@ -709,17 +732,17 @@
                         ).join('');
 
                         tbody.innerHTML += `
-                                <tr>
-                                    <td>#${p.id}</td>
-                                    <td>${p.fecha}</td>
-                                    <td><strong>${p.cliente_nombre || 'Cliente'}</strong></td>
-                                    <td>$${parseFloat(p.total).toFixed(2)}</td>
-                                    <td>
-                                        <select class="form-select form-select-sm" onchange="cambiarEstadoPedido(${p.id}, this.value)">
-                                            ${opciones}
-                                        </select>
-                                    </td>
-                                </tr>`;
+                                                <tr>
+                                                    <td>#${p.id}</td>
+                                                    <td>${p.fecha}</td>
+                                                    <td><strong>${p.cliente_nombre || 'Cliente'}</strong></td>
+                                                    <td>$${parseFloat(p.total).toFixed(2)}</td>
+                                                    <td>
+                                                        <select class="form-select form-select-sm" onchange="cambiarEstadoPedido(${p.id}, this.value)">
+                                                            ${opciones}
+                                                        </select>
+                                                    </td>
+                                                </tr>`;
                     });
 
                     // (Opcional) Aquí va tu código de la gráfica que ya tenías
@@ -759,13 +782,13 @@
 
                     const thead = document.querySelector('#pedidos table thead');
                     thead.innerHTML = `
-                                    <tr class="table-dark">
-                                        <th>Análisis</th>
-                                        <th>Nombre del Producto</th>
-                                        <th>Métrica</th>
-                                        <th>Stock Actual</th>
-                                    </tr>
-                                `;
+                                                    <tr class="table-dark">
+                                                        <th>Análisis</th>
+                                                        <th>Nombre del Producto</th>
+                                                        <th>Métrica</th>
+                                                        <th>Stock Actual</th>
+                                                    </tr>
+                                                `;
 
                     const tbody = document.querySelector('#pedidos-tbody');
                     tbody.innerHTML = '';
@@ -779,12 +802,12 @@
 
                     data.forEach(p => {
                         tbody.innerHTML += `
-                                        <tr>
-                                            <td><span class="badge bg-dark">${tipo.replace('_', ' ').toUpperCase()}</span></td>
-                                            <td><strong>${p.nombre}</strong></td>
-                                            <td>Ventas/Cantidad: <span class="badge bg-primary">${p.total_vendido || 0}</span></td>
-                                            <td>Stock: <strong>${p.stock}</strong></td>
-                                        </tr>`;
+                                                        <tr>
+                                                            <td><span class="badge bg-dark">${tipo.replace('_', ' ').toUpperCase()}</span></td>
+                                                            <td><strong>${p.nombre}</strong></td>
+                                                            <td>Ventas/Cantidad: <span class="badge bg-primary">${p.total_vendido || 0}</span></td>
+                                                            <td>Stock: <strong>${p.stock}</strong></td>
+                                                        </tr>`;
                     });
 
 
@@ -845,7 +868,10 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             cargarProductos();
-            cargarProveedores();
+            // Le damos un pequeño tiempo o lo llamamos después para asegurar que los nombres aparezcan
+            setTimeout(() => {
+                cargarProveedores();
+            }, 500);
             cargarPedidosProveedor();
             llenarSelectProveedores();
             llenarSelectProductos();
@@ -853,27 +879,47 @@
         });
 
 
+        let listaProveedoresGlobal = []; // Para saber qué categoría vende cada uno
+
+        // 1. Modificamos cargarProveedores para guardar la lista
         function cargarProveedores() {
             fetch('backend/getProveedores.php')
                 .then(res => res.json())
                 .then(data => {
+                    listaProveedoresGlobal = data;
                     const tbody = document.querySelector('#tabla-proveedores tbody');
                     tbody.innerHTML = '';
+
+                    // Diccionario para traducir el ID de categoría a nombre
+                    const nombresCategorias = {
+                        1: "Bebidas",
+                        2: "Comida",
+                        3: "Snacks"
+                    };
+
                     data.forEach(p => {
+                        // 1. Buscamos el nombre de la categoría
+                        const categoriaNombre = nombresCategorias[p.vende_Producto] || "No asignada";
+
+                        // 2. Buscamos el nombre del producto en nuestra lista global de productos
+                        const productoEncontrado = listaProductosGlobal.find(prod => prod.id == p.producto_especifico_id);
+                        const productoNombre = productoEncontrado ? productoEncontrado.name : "Sin producto";
+
                         tbody.innerHTML += `
-                                        <tr>
-                                            <td class="d-none">${p.id}</td>
-                                            <td>${p.nombre}</td>
-                                            <td>${p.contacto}</td>
-                                            <td>${p.telefono}</td>
-                                            <td>${p.correo}</td>
-                                            <td>${p.direccion}</td>
-                                            <td>${p.estatus}</td>
-                                            <td>
-                                                <button class="btn btn-warning btn-sm" onclick="editarProveedor(${p.id})">✏️</button>
-                                                <button class="btn btn-danger btn-sm" onclick="eliminarProveedor(${p.id})">🗑️</button>
-                                            </td>
-                                        </tr>`;
+                            <tr>
+                                <td class="d-none">${p.id}</td>
+                                <td>${p.nombre}</td>
+                                <td>${p.contacto}</td>
+                                <td>${p.telefono}</td>
+                                <td>${p.correo}</td>
+                                <td><span class="badge bg-info text-dark">${categoriaNombre}</span></td>
+                                <td><strong>${productoNombre}</strong></td>
+                                <td>${p.estatus}</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm" onclick="editarProveedor(${p.id})">✏️</button>
+                                    <button class="btn btn-danger btn-sm" onclick="eliminarProveedor(${p.id})">🗑️</button>
+                                </td>
+                            </tr>`;
                     });
                 });
         }
@@ -881,6 +927,14 @@
         function abrirFormProveedor() {
             document.getElementById('formProveedorTitle').textContent = 'Agregar Proveedor';
             document.getElementById('proveedorForm').reset();
+
+            // LLENAR EL SELECT DE PRODUCTOS CON EL INVENTARIO ACTUAL
+            const selProd = document.getElementById('proveedor-producto-especifico');
+            selProd.innerHTML = '<option value="">-- Seleccione un producto --</option>';
+
+            listaProductosGlobal.forEach(p => {
+                selProd.innerHTML += `<option value="${p.id}">${p.name} (Stock: ${p.stock})</option>`;
+            });
             new bootstrap.Modal(document.getElementById('formProveedorModal')).show();
         }
 
@@ -937,16 +991,16 @@
                     tbody.innerHTML = '';
                     data.forEach(p => {
                         tbody.innerHTML += `
-                                        <tr>
-                                            <td class="d-none">${p.id}</td>
-                                            <td>${p.proveedor_nombre}</td>
-                                            <td>${p.producto_nombre || ''}</td>
-                                            <td>${p.fecha_pedido}</td>
-                                            <td>${p.fecha_entrega_estimada || ''}</td>
-                                            <td>${p.estado}</td>
-                                            <td>${p.tipo}</td>
-                                            <td>$${p.total.toFixed(2)}</td>
-                                        </tr>`;
+                                                        <tr>
+                                                            <td class="d-none">${p.id}</td>
+                                                            <td>${p.proveedor_nombre}</td>
+                                                            <td>${p.producto_nombre || ''}</td>
+                                                            <td>${p.fecha_pedido}</td>
+                                                            <td>${p.fecha_entrega_estimada || ''}</td>
+                                                            <td>${p.estado}</td>
+                                                            <td>${p.tipo}</td>
+                                                            <td>${p.total.toFixed(2)}</td>
+                                                        </tr>`;
                     });
                 });
         }
@@ -972,40 +1026,33 @@
         }
 
         // Detectar cambio en el select de Proveedor
+        // 2. Modificamos el evento del select de proveedores en el formulario de pedido
         document.getElementById('pedido-prov-proveedor').addEventListener('change', function () {
-            const proveedorId = this.value;
-            const nombreProveedor = this.options[this.selectedIndex].text; // Obtenemos el nombre (Maya, Israel, etc.)
-            const selProducto = document.getElementById('pedido-prov-producto');
+            const proveedorId = parseInt(this.value);
+            const selProductoEnPedido = document.getElementById('pedido-prov-producto');
 
-            // Limpiamos el select de productos
-            selProducto.innerHTML = '<option value="">(elija producto)</option>';
+            selProductoEnPedido.innerHTML = '<option value="">-- Seleccione --</option>';
 
             if (!proveedorId) return;
 
-            // FILTRADO LÓGICO PUSH / PULL
-            const productosFiltrados = listaProductosGlobal.filter(p => {
+            // 1. Buscamos al proveedor en nuestra lista
+            const proveedor = listaProveedoresGlobal.find(p => p.id === proveedorId);
 
-                // Lógica para Israel o Jorge (PULL - Bebidas)
-                if (nombreProveedor.includes("Israel") || nombreProveedor.includes("Jorge")) {
-                    return p.category === "Bebidas"; // Solo muestra bebidas
+            if (proveedor && proveedor.producto_especifico_id) {
+                // 2. Buscamos el producto que tiene asignado ese proveedor
+                const productoAsignado = listaProductosGlobal.find(p => p.id == proveedor.producto_especifico_id);
+
+                if (productoAsignado) {
+                    // 3. Mostramos SOLO ese producto
+                    selProductoEnPedido.innerHTML = `<option value="${productoAsignado.id}" selected>${productoAsignado.name}</option>`;
+
+                    // Tip extra: Podemos avisar al usuario
+                    mostrarNotificacion(`Producto detectado: ${productoAsignado.name}`, 'success');
+                } else {
+                    selProductoEnPedido.innerHTML = '<option value="">El producto asignado ya no existe</option>';
                 }
-
-                // Lógica para Maya Martínez (PUSH - Alimentos/Snacks)
-                if (nombreProveedor.includes("Maya")) {
-                    return p.category === "Comida" || p.category === "Snacks"; // Solo alimentos
-                }
-
-                // Si es otro proveedor, podrías mostrar todos o filtrar por una columna 'proveedor_id' si tu DB la tiene
-                return true;
-            });
-
-            // Llenar el select con los resultados filtrados
-            if (productosFiltrados.length === 0) {
-                selProducto.innerHTML = '<option value="">No hay productos para este proveedor</option>';
             } else {
-                productosFiltrados.forEach(p => {
-                    selProducto.innerHTML += `<option value="${p.id}">${p.name} [${p.category}]</option>`;
-                });
+                selProductoEnPedido.innerHTML = '<option value="">Este proveedor no tiene un producto fijo</option>';
             }
         });
 
@@ -1061,10 +1108,10 @@
 
                             resp.whatsapp_links.forEach(link => {
                                 divContenedor.innerHTML += `
-                                                <a href="${link.url}" target="_blank" class="btn btn-success btn-sm me-2 mb-2">
-                                                    Enviar WA a ${link.nombre_proveedor}
-                                                </a>
-                                            `;
+                                                                <a href="${link.url}" target="_blank" class="btn btn-success btn-sm me-2 mb-2">
+                                                                    Enviar WA a ${link.nombre_proveedor}
+                                                                </a>
+                                                            `;
                             });
                         }
                     }
@@ -1090,13 +1137,13 @@
                     // 1. Cambiar los encabezados de la tabla para que coincidan con el análisis
                     const thead = document.querySelector('#pedidos table thead');
                     thead.innerHTML = `
-                        <tr class="table-dark">
-                            <th>Estrategia</th>
-                            <th>Categoría</th>
-                            <th>Producto</th>
-                            <th>Stock Actual</th>
-                        </tr>
-                    `;
+                                        <tr class="table-dark">
+                                            <th>Estrategia</th>
+                                            <th>Categoría</th>
+                                            <th>Producto</th>
+                                            <th>Stock Actual</th>
+                                        </tr>
+                                    `;
 
                     const tbody = document.querySelector('#pedidos-tbody');
                     tbody.innerHTML = '';
@@ -1122,12 +1169,12 @@
                         }
 
                         tbody.innerHTML += `
-                            <tr>
-                                <td><span class="badge ${badgeClass}">${estrategia}</span></td>
-                                <td>${p.category}</td>
-                                <td><strong>${p.name}</strong></td>
-                                <td>${p.stock} unidades</td>
-                            </tr>`;
+                                            <tr>
+                                                <td><span class="badge ${badgeClass}">${estrategia}</span></td>
+                                                <td>${p.category}</td>
+                                                <td><strong>${p.name}</strong></td>
+                                                <td>${p.stock} unidades</td>
+                                            </tr>`;
                     });
 
                     // 3. Actualizar la Gráfica

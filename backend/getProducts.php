@@ -19,6 +19,7 @@ SELECT
     p.stock,
     p.stock_minimo,
     p.estatus,
+    p.estrategia,
     p.descuento_porcentaje,
     p.descuento_fijo,
     p.fecha_inicio_promocion,
@@ -52,6 +53,7 @@ if ($result && $result->num_rows > 0) {
             "stock"       => (int)$row["stock"],
             "min_stock"   => isset($row["stock_minimo"]) ? (int)$row["stock_minimo"] : 0,
             "status"      => $row["estatus"], // Mantener como string si en la BD es 'activo'/'inactivo'
+            "estrategia"  => (!empty($row["estrategia"])) ? $row["estrategia"] : "PUSH",
             "discount_percentage" => (float)($row["descuento_porcentaje"] ?? 0),
             "discount_fixed" => (float)($row["descuento_fijo"] ?? 0),
             "promotion_start" => $row["fecha_inicio_promocion"],

@@ -8,6 +8,7 @@ $descripcion = trim($_POST['descripcion'] ?? '');
 $categoria_id = intval($_POST['categoria_id'] ?? 0);
 $precio = floatval($_POST['precio'] ?? 0);
 $stock = intval($_POST['stock'] ?? 0);
+$estrategia = $_POST['estrategia']; // NUEVO CAMPO
 $estatus = intval($_POST['estatus'] ?? 1);
 
 if ($id <= 0) {
@@ -15,9 +16,9 @@ if ($id <= 0) {
     exit;
 }
 
-$sql = "UPDATE productos SET categoria_id=?, nombre=?, descripcion=?, precio=?, stock=?, estatus=? WHERE id=?";
+$sql = "UPDATE productos SET categoria_id=?, nombre=?, descripcion=?, precio=?, stock=?, estrategia=?, estatus=? WHERE id=?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("issdiii", $categoria_id, $nombre, $descripcion, $precio, $stock, $estatus, $id);
+$stmt->bind_param("issdisii", $categoria_id, $nombre, $descripcion, $precio, $stock, $estrategia, $estatus, $id);
 
 if ($stmt->execute()) {
     echo json_encode(["status"=>"ok","msg"=>"Producto actualizado"]);
